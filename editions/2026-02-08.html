@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IA qu'à demander — 2026-02-08</title>
-<meta name="description" content="Revue de presse quotidienne — Tech, IA, Sciences, Startups">
+<meta name="description" content="Revue de presse quotidienne IA — Modeles, Produits, Business, Recherche, Societe, Marches">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@ a{color:inherit;text-decoration:none}
   font-family:var(--font-m);font-size:clamp(0.7rem,1.2vw,0.85rem);
   color:var(--text-2);display:flex;align-items:center;gap:1.5rem;
 }
-.masthead-nav{display:flex;align-items:center;gap:0.5rem}
+.masthead-nav{display:flex;align-items:center;gap:0.5rem;margin-left:auto}
 .masthead-btn{
   background:none;border:1px solid var(--border);color:var(--text-2);
   padding:0.4rem;cursor:pointer;transition:all .2s;
@@ -115,6 +115,9 @@ a{color:inherit;text-decoration:none}
   padding:0.2rem 0.6rem;display:inline-block;margin-bottom:1rem;
 }
 .grid-card.synthesis-grid{grid-column:1/-1}
+.grid-card.synthesis-grid .card-summary{
+  -webkit-line-clamp:unset;-webkit-box-orient:initial;overflow:visible;display:block;
+}
 
 /* CARD CONTENT */
 .card-tags{display:flex;gap:0.5rem;margin-bottom:1.2rem;flex-wrap:wrap}
@@ -243,7 +246,7 @@ a{color:inherit;text-decoration:none}
 @media(max-width:640px){
   .masthead{flex-direction:column;gap:0.3rem;padding:0.6rem 1rem}
   .masthead h1{font-size:clamp(1.8rem,6vw,2.5rem)}
-  .masthead-meta{gap:0.6rem;flex-wrap:wrap;font-size:0.65rem}
+  .masthead-meta{gap:0.6rem;flex-wrap:wrap;font-size:0.65rem;width:100%}
   .card{padding:1rem}
   .card-viewport{padding:0.5rem 0.8rem}
   .card-title{font-size:clamp(1.2rem,4.5vw,1.6rem)}
@@ -275,7 +278,7 @@ a{color:inherit;text-decoration:none}
   </div>
   <div class="masthead-meta">
     <span>Dimanche 8 février 2026</span>
-    <span>No. 14</span>
+    <span>No. 18</span>
     <nav class="masthead-nav">
       <button class="masthead-btn" onclick="goHome()" aria-label="Edito">
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -303,73 +306,81 @@ a{color:inherit;text-decoration:none}
     
     <article class="card synthesis-card" data-index="0">
       <span class="synth-tag">Le mot de Sandjab</span>
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title">Tech sous tension : régulation, consolidation et mutations industrielles</h2>
-      <p class="card-summary">Ce samedi 8 février 2026 marque un tournant symbolique pour l'internet américain : la Section 230, texte fondateur qui protège les plateformes de la responsabilité des contenus publiés, fête ses 30 ans dans un climat de remise en question sans précédent. Pendant ce temps, l'industrie du streaming connaît une consolidation brutale avec la fusion Netflix-Warner Bros, forçant les acteurs secondaires en mode survie. L'Inde ajuste sa réglementation pour soutenir ses startups deep tech face à la concurrence chinoise et américaine, tandis que les constructeurs automobiles accélèrent sur les clés numériques standardisées. Dans les médias, le Washington Post traverse une crise majeure avec le départ de son CEO après des licenciements massifs. Le Super Bowl devient l'arène du marketing IA, trois ans après le fiasco crypto. L'écosystème tech traverse une phase de maturation où régulation, concentration et réalignements stratégiques redéfinissent les équilibres de pouvoir.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">Modeles</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span></div>
+      <h2 class="card-title">L'IA agentique vaut 2 milliards, les PRs pourries 0</h2>
+      <p class="card-summary">Meta vient de claquer 2 milliards pour Manus. Quatre fois sa valorisation d'avril dernier. Pendant ce temps, Mitchell Hashimoto sort Vouch pour bloquer les PRs générées par IA qui polluent GitHub. Deux faces de la même pièce : l'IA agentique promet d'automatiser le travail intellectuel, mais on commence déjà par automatiser la merde.
+
+Ce qui me frappe, c'est la vitesse. Anthropic balance un fast mode à 6x le prix normal — parce qu'apparemment attendre 30 secondes au lieu de 10 est insupportable pour certains budgets. Moltbook monte un Reddit pour bots qui capote pendant 48h avant de s'effondrer. Le Super Bowl sera bourré de pubs IA comme il était bourré de pubs crypto en 2022. On accélère sans savoir où on va.
+
+Mais Thomas Ptacek dit un truc intéressant : « Ne pariez pas contre les LLMs en recherche de vulnérabilités. » Claude Opus 4.6 vient de trouver 500 zero-days dans l'open source. Pattern-driven, corpus public massif, boucle fermée. Le problème parfait pour un LLM. Si ça se confirme, on ne parle plus d'assistant de code. On parle d'un audit de sécurité automatisé à l'échelle de l'internet.
+
+Alors oui, l'IA agentique vaut peut-être 2 milliards. À condition qu'elle fasse autre chose que spammer des repos open source.
+
+— JPG (aka Sandjab)</p>
     </article>
     <article class="card" data-index="1">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Section 230 : les 30 ans d'un pilier de l'internet américain sous le feu des critiques</h2>
-      <div class="card-source">The Verge — il y a 51 min</div>
-      <p class="card-summary">La Section 230 du Communications Decency Act, texte fondateur qui immunise les plateformes de la responsabilité des contenus publiés par leurs utilisateurs, célèbre aujourd'hui ses 30 ans dans un contexte explosif. Ce bouclier juridique, crédité d'avoir permis l'essor de l'internet moderne, fait face à ses plus grands défis : procès pour addiction aux réseaux sociaux, pressions bipartisanes au Congrès, et remise en question de son interprétation par les tribunaux. Entre ceux qui veulent le réformer pour rendre les plateformes responsables des dégâts sociaux et ceux qui craignent une censure généralisée, la bataille juridique et politique autour de ce texte de 26 mots redéfinit l'avenir du web. Un anniversaire qui ressemble davantage à un procès qu'à une célébration.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span></div>
+      <h2 class="card-title">Meta rachète Manus pour 2 milliards et parie tout sur l'IA agentique</h2>
+      <div class="card-source">AI Magazine</div>
+      <p class="card-summary">Meta vient d'acquérir Manus, startup spécialisée dans l'IA agentique, pour plus de 2 milliards de dollars — quatre fois sa valorisation d'avril 2025. La technologie de Manus se concentre sur des systèmes autonomes capables de raisonner, planifier et exécuter des tâches digitales de bout en bout sans intervention humaine. C'est un signal fort : les GAFAM ne misent plus seulement sur les modèles de langage, mais sur des agents capables d'agir de manière autonome. Ce deal positionne Meta en concurrent direct d'OpenAI et Anthropic sur le terrain de l'automatisation intelligente, un marché qui pourrait redéfinir le travail de col blanc dans les 5 prochaines années.</p>
       
-      <a class="card-link" href="https://www.theverge.com/policy/875300/section-230-turns-30-social-media-addiction-cases-sunset" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://aimagazine.com/news/how-manus-puts-meta-ahead-in-the-agentic-ai-economy" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="2">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Fusion Netflix-Warner Bros : l'onde de choc qui met le streaming en mode survie</h2>
-      <div class="card-source">The Verge — il y a 1h</div>
-      <p class="card-summary">Le rapprochement entre Netflix et Warner Bros. Discovery rebat les cartes du streaming et plonge les acteurs secondaires dans l'urgence stratégique. Après l'euphorie des lancements entre 2019 et 2021, l'industrie entre dans une phase de consolidation brutale où seuls les mastodontes survivront. Disney+, Paramount+, Peacock et consorts doivent désormais choisir : fusionner, se vendre, ou accepter de rester des acteurs de niche face au nouveau géant. Cette recomposition accélère la fin de l'ère de la surabondance des plateformes et annonce un retour vers un oligopole, ironiquement proche du modèle câble que le streaming promettait de disrupter. Les consommateurs risquent de payer l'addition.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">Modeles</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Recherche</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span></div>
+      <h2 class="card-title">Claude Opus 4.6 détecte 500 zero-days : les LLMs deviennent des hackers</h2>
+      <div class="card-source">Simon Willison — il y a 13h</div>
+      <p class="card-summary">Thomas Ptacek, chercheur en sécurité réputé, lance un avertissement : « Ne pariez pas contre les LLMs en recherche de vulnérabilités. » Claude Opus 4.6 vient de découvrir 500 failles zero-day dans des projets open source, et selon Ptacek, ce n'est pas une blague. La détection de vulnérabilités serait le problème parfait pour les LLMs : pattern-driven, corpus public massif, boucles fermées. Contrairement au code générique où les hallucinations posent problème, ici le modèle peut vérifier ses hypothèses immédiatement. Si cette tendance se confirme, on ne parle plus d'assistants de code mais d'auditeurs de sécurité automatisés capables de scanner l'internet entier. Une perspective qui change la donne pour la cybersécurité — dans les deux sens.</p>
       
-      <a class="card-link" href="https://www.theverge.com/column/874781/netflix-warner-bros-merger-other-streamers" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="3">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title">L'Inde ajuste sa régulation pour propulser ses startups deep tech</h2>
-      <div class="card-source">TechCrunch — il y a 11h</div>
-      <p class="card-summary">New Delhi révise son cadre réglementaire pour les startups afin de favoriser l'émergence de champions nationaux dans les technologies de rupture (IA, quantique, biotech, semiconducteurs). Les nouvelles règles visent à faciliter l'accès au financement à long terme et à stabiliser l'environnement juridique pour des entreprises dont les cycles de développement dépassent largement ceux des startups logicielles classiques. Cette initiative s'inscrit dans la rivalité technologique sino-américaine : l'Inde cherche à se positionner comme troisième pôle d'innovation en capitalisant sur son vivier d'ingénieurs et sa démographie. Un signal fort pour les investisseurs internationaux qui misent sur le sous-continent comme alternative à la Chine.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">Modeles</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span></div>
+      <h2 class="card-title">Anthropic lance un mode rapide à 6x le prix : l'impatience se monnaie</h2>
+      <div class="card-source">Simon Willison — il y a 16h</div>
+      <p class="card-summary">Anthropic déploie un nouveau « fast mode » pour Claude Opus 4.6 qui coûte 6 fois plus cher que le modèle standard. Concrètement : 30$/million de tokens en entrée et 150$/million en sortie, contre 5$ et 25$ habituellement. Une réduction de 50% est offerte jusqu'au 16 février, ramenant le surcoût à « seulement » 3x. La promesse ? Des réponses significativement plus rapides. Le message implicite ? Certaines entreprises sont prêtes à payer une fortune pour gagner quelques secondes par requête. C'est une stratégie de segmentation tarifaire agressive : si vous avez besoin de vitesse et le budget pour, vous payez. Sinon, vous attendez. L'IA devient un service premium à paliers, exactement comme le cloud avant elle.</p>
       
-      <a class="card-link" href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://simonwillison.net/2026/Feb/7/claude-fast-mode/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="4">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Moltbook, le réseau social pour bots qui révèle le théâtre de l'IA</h2>
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#0D948820;color:#0D9488;opacity:0.85">Marches</span></div>
+      <h2 class="card-title">Intel et Vista Equity injectent des millions dans SambaNova, la bataille des puces IA s'intensifie</h2>
+      <div class="card-source">Reuters — il y a 1j</div>
+      <p class="card-summary">Vista Equity Partners et Intel s'apprêtent à mener un tour de financement majeur dans SambaNova, startup spécialisée dans les puces dédiées à l'IA. L'annonce intervient alors que le marché des semi-conducteurs pour l'IA explose et que Nvidia domine largement. SambaNova propose des architectures alternatives optimisées pour l'entraînement et l'inférence de modèles de langage, avec la promesse de meilleurs rapports performance/coût. Pour Intel, c'est un pari stratégique pour revenir dans la course après des années de retard face à Nvidia et AMD. Pour Vista, c'est un signal que les infrastructures IA sont devenues un secteur d'investissement aussi critique que le cloud l'était il y a 10 ans.</p>
+      
+      <a class="card-link" href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxOM3JncDg0RmY2ekpyaTE1bktpM0VEaEp2NnJ4aHBncjRfcktKZ25MS1ZNZzZpcVBncExyYUxPMEdlUlZ1OXlhRjRqSEdJMlprc0J3S0lmaDZMUTcwZVlRTDAyRGVubzFZSVM1N1VkZ0xLY0k2ZTNwMGREY09NUTJVRmw3VnI1blRjSWdYMXlDb29Mbmp4anRLQ21EVzRUY0gzZFNTTzRzODAwMmo3N1JxS1RaU01weU01bVZobUdETE8?oc=5" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="5">
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#0D948820;color:#0D9488;opacity:0.85">Marches</span></div>
+      <h2 class="card-title">Musk fusionne SpaceX et xAI : le conglomérat personnel devient réalité</h2>
+      <div class="card-source">TechCrunch — il y a 1j</div>
+      <p class="card-summary">Elon Musk vient de fusionner SpaceX et xAI, créant potentiellement un nouveau modèle de pouvoir entrepreneurial dans la Silicon Valley. Avec une fortune de 800 milliards de dollars qui rivalise déjà avec le pic de capitalisation de GE, Musk construit ce qu'on pourrait appeler un conglomérat personnel. Sa thèse : « La victoire tech se décide par la vélocité d'innovation. » En regroupant infrastructures spatiales et IA de pointe sous un même contrôle, il contourne les lenteurs administratives des grandes structures. La question n'est plus de savoir si un tel conglomérat peut exister, mais jusqu'où Musk peut le pousser. Et ce que ça signifie pour la concentration de pouvoir technologique entre quelques individus.</p>
+      
+      <a class="card-link" href="https://techcrunch.com/video/how-elon-musk-is-rewriting-the-rules-on-founder-power/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="6">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span><span class="tag-pill" style="background:#E11D4820;color:#E11D48;opacity:0.85">Societe</span></div>
+      <h2 class="card-title">Mitchell Hashimoto lance Vouch pour bloquer le spam de PRs générées par IA</h2>
+      <div class="card-source">Simon Willison — il y a 15h</div>
+      <p class="card-summary">Mitchell Hashimoto déploie Vouch, un système conçu pour endiguer le déluge de pull requests sans valeur générées par IA qui envahissent les projets open source. Le principe : les utilisateurs non « vouch » (cautionnés) ne peuvent pas contribuer. Les mauvais acteurs peuvent être explicitement « denounced » (dénoncés), équivalent d'un blocage. Les contributeurs existants cautionnent ou dénoncent via des commentaires GitHub ou en CLI. L'intégration est simple : adopter le pré-commit hook fourni. C'est une réponse pragmatique à un problème concret : maintenant que la friction pour contribuer a chuté, la qualité moyenne s'effondre. Hashimoto propose un système de réputation humaine pour filtrer le bruit automatisé. Reste à voir si ça suffira.</p>
+      
+      <a class="card-link" href="https://simonwillison.net/2026/Feb/7/vouch/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="7">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span><span class="tag-pill" style="background:#E11D4820;color:#E11D48;opacity:0.85">Societe</span></div>
+      <h2 class="card-title">Moltbook, le Reddit pour bots, implose après 48h de buzz</h2>
       <div class="card-source">MIT Technology Review — il y a 1j</div>
-      <p class="card-summary">Pendant quelques jours début février, Moltbook a été le nouveau terrain de jeu viral de la tech : un clone de Reddit où seuls des agents IA postent, commentent et upvotent, les humains étant relégués au rôle de spectateurs. Lancé le 28 janvier par Matt Schlicht, ce « réseau social pour bots » illustre parfaitement le « AI theater » : une mise en scène sophistiquée de l'intelligence artificielle qui fascine sans apporter de réelle utilité. MIT Technology Review décortique ce phénomène comme symptôme d'une industrie obsédée par la démonstration plutôt que par l'usage. Au-delà du buzz, Moltbook pose une vraie question : à quoi sert une conversation entre machines si personne ne peut y participer ?</p>
+      <p class="card-summary">Moltbook, un clone de Reddit présenté comme « réseau social pour agents IA », a connu son quart d'heure de gloire avant de s'effondrer. Lancé le 28 janvier par Matt Schlicht avec le slogan « Where AI agents share, discuss, and upvote. Humans welcome to observe », le site a attiré l'attention pendant quelques jours. Puis plus rien. MIT Technology Review qualifie l'expérience de « peak AI theater » — du théâtre IA pur. L'idée était séduisante sur le papier : observer des agents discuter entre eux. Mais sans véritable utilité ni communauté stable, le projet s'est dégonflé aussi vite qu'il était apparu. Un cas d'école de hype IA sans substance, parfaitement représentatif de 2026.</p>
       
       <a class="card-link" href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
-    <article class="card" data-index="5">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Les clés numériques automobiles franchissent un nouveau cap technologique</h2>
-      <div class="card-source">The Verge — il y a 1h</div>
-      <p class="card-summary">Le Car Connectivity Consortium a réuni en janvier à Palo Alto une douzaine de constructeurs et fabricants de smartphones pour son 16e « Plugfest », où s'affinent les standards des clés numériques de nouvelle génération. Ces systèmes permettent de verrouiller, déverrouiller et démarrer un véhicule via smartphone ou appareil connecté, avec des évolutions majeures en termes de sécurité (cryptographie renforcée), d'interopérabilité (partage de clés entre écosystèmes) et de fonctionnalités avancées (accès temporaire, gestion multi-utilisateurs). Rivian et d'autres acteurs testent des protocoles qui visent à standardiser l'expérience à travers marques et plateformes. Une étape décisive vers la disparition du trousseau de clés physique, avec les enjeux de cybersécurité que cela implique.</p>
-      
-      <a class="card-link" href="https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="6">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Après les licenciements massifs, le Washington Post change de direction</h2>
-      <div class="card-source">The Verge — il y a 15h</div>
-      <p class="card-summary">Jeff D'Onofrio, ancien CEO de Tumblr (2017-2022) et CFO du Washington Post depuis juin dernier, prend les rênes du quotidien en tant que CEO et publisher par intérim. Il succède à Will Lewis, dont le mandat aura été marqué par des tensions internes et des licenciements massifs cette semaine. Ce changement de leadership survient dans un contexte de crise existentielle pour le journal, pris entre modèle économique défaillant et pression éditoriale. D'Onofrio hérite d'un défi colossal : redresser les finances sans sacrifier la crédibilité journalistique, dans une industrie médiatique en pleine recomposition. Son passé chez Tumblr, plateforme culturellement iconique mais économiquement fragile, ne facilitera pas la tâche.</p>
-      
-      <a class="card-link" href="https://www.theverge.com/tech/875433/tumblr-jeff-donofrio-ceo-washington-post-layoffs" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="7">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Le Super Bowl 2026 devient la vitrine du marketing IA</h2>
-      <div class="card-source">The Verge — il y a 15h</div>
-      <p class="card-summary">Le Super Bowl LX qui oppose dimanche les Seattle Seahawks aux New England Patriots pourrait bien être dominé par l'intelligence artificielle… dans les publicités. Trois ans après l'invasion crypto (et son flop retentissant), l'IA s'impose comme le nouveau thème star des spots publicitaires à plusieurs millions de dollars. Google, qui s'était pris les pieds dans le tapis l'an dernier avec une publicité Gemini ratée, espère se racheter, tandis que les startups IA misent sur l'audience planétaire pour légitimer leurs outils. Entre opportunité de pédagogie et risque de backlash, les annonceurs tentent de surfer sur la vague IA sans répéter les erreurs de 2023. Le halftime show de Bad Bunny risque d'être éclipsé par les débats post-pub sur les réseaux.</p>
+    <article class="card" data-index="8">
+      <div class="card-tags"><span class="tag-pill" style="background:#E11D4820;color:#E11D48;opacity:0.85">Societe</span><span class="tag-pill" style="background:#0D948820;color:#0D9488;opacity:0.85">Marches</span></div>
+      <h2 class="card-title">Le Super Bowl LX sera bourré de pubs IA, comme le crypto en 2022</h2>
+      <div class="card-source">The Verge — il y a 16h</div>
+      <p class="card-summary">Le Super Bowl LX (Seahawks vs Patriots) approche, et les analystes prédisent que l'IA sera la star des pubs, exactement comme la crypto l'était il y a quelques années. Bad Bunny assurera le halftime show, mais l'entre-temps publicitaire pourrait être dominé par les annonces IA. L'an dernier, Google avait raté sa pub Gemini. Cette année, les marques vont probablement surjouer la carte « l'IA change tout ». C'est un indicateur culturel : quand une techno envahit le Super Bowl, soit elle est en phase de pic de hype, soit elle est déjà mainstream. Pour l'IA, on penche pour le pic. À voir si les pubs seront mémorables ou risibles.</p>
       
       <a class="card-link" href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="8">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">GOG accélère sur Linux et rapproche le gaming open source du mainstream</h2>
-      <div class="card-source">The Verge — il y a 18h</div>
-      <p class="card-summary">La plateforme de jeux GOG confirme dans un AMA Reddit que le support natif Linux pour son client Galaxy est déjà en développement, après la publication d'une offre d'emploi pour un ingénieur dédié au portage. Trop tôt pour une date de sortie, mais le signal est fort : GOG rejoint Steam dans l'effort de démocratiser le gaming sur Linux. Cette annonce intervient alors que Valve a considérablement amélioré l'expérience Linux via Proton et Steam Deck, prouvant la viabilité commerciale de l'écosystème. Pour les défenseurs de l'open source, c'est une victoire symbolique majeure : le gaming, dernier bastion Windows, commence sérieusement à basculer. Reste à voir si l'adoption suivra.</p>
-      
-      <a class="card-link" href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
   </div>
   <nav class="card-nav" id="cardNav">
@@ -382,96 +393,104 @@ a{color:inherit;text-decoration:none}
 
 <section class="grid-view" id="gridView">
   
-    <article class="grid-card synthesis-grid" data-index="0" onclick="toggleGridCard(this)">
+    <article class="grid-card synthesis-grid" data-index="0">
       <span class="synth-tag">Le mot de Sandjab</span>
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title">Tech sous tension : régulation, consolidation et mutations industrielles</h2>
-      <p class="card-summary">Ce samedi 8 février 2026 marque un tournant symbolique pour l'internet américain : la Section 230, texte fondateur qui protège les plateformes de la responsabilité des contenus publiés, fête ses 30 ans dans un climat de remise en question sans précédent. Pendant ce temps, l'industrie du streaming connaît une consolidation brutale avec la fusion Netflix-Warner Bros, forçant les acteurs secondaires en mode survie. L'Inde ajuste sa réglementation pour soutenir ses startups deep tech face à la concurrence chinoise et américaine, tandis que les constructeurs automobiles accélèrent sur les clés numériques standardisées. Dans les médias, le Washington Post traverse une crise majeure avec le départ de son CEO après des licenciements massifs. Le Super Bowl devient l'arène du marketing IA, trois ans après le fiasco crypto. L'écosystème tech traverse une phase de maturation où régulation, concentration et réalignements stratégiques redéfinissent les équilibres de pouvoir.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">Modeles</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span></div>
+      <h2 class="card-title">L'IA agentique vaut 2 milliards, les PRs pourries 0</h2>
+      <p class="card-summary">Meta vient de claquer 2 milliards pour Manus. Quatre fois sa valorisation d'avril dernier. Pendant ce temps, Mitchell Hashimoto sort Vouch pour bloquer les PRs générées par IA qui polluent GitHub. Deux faces de la même pièce : l'IA agentique promet d'automatiser le travail intellectuel, mais on commence déjà par automatiser la merde.
+
+Ce qui me frappe, c'est la vitesse. Anthropic balance un fast mode à 6x le prix normal — parce qu'apparemment attendre 30 secondes au lieu de 10 est insupportable pour certains budgets. Moltbook monte un Reddit pour bots qui capote pendant 48h avant de s'effondrer. Le Super Bowl sera bourré de pubs IA comme il était bourré de pubs crypto en 2022. On accélère sans savoir où on va.
+
+Mais Thomas Ptacek dit un truc intéressant : « Ne pariez pas contre les LLMs en recherche de vulnérabilités. » Claude Opus 4.6 vient de trouver 500 zero-days dans l'open source. Pattern-driven, corpus public massif, boucle fermée. Le problème parfait pour un LLM. Si ça se confirme, on ne parle plus d'assistant de code. On parle d'un audit de sécurité automatisé à l'échelle de l'internet.
+
+Alors oui, l'IA agentique vaut peut-être 2 milliards. À condition qu'elle fasse autre chose que spammer des repos open source.
+
+— JPG (aka Sandjab)</p>
     </article>
     <article class="grid-card" data-index="1" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/policy/875300/section-230-turns-30-social-media-addiction-cases-sunset" target="_blank" rel="noopener" onclick="event.stopPropagation()">Section 230 : les 30 ans d'un pilier de l'internet américain sous le feu des critiques</a></h2>
-      <div class="card-source">The Verge — il y a 51 min</div>
-      <p class="card-summary">La Section 230 du Communications Decency Act, texte fondateur qui immunise les plateformes de la responsabilité des contenus publiés par leurs utilisateurs, célèbre aujourd'hui ses 30 ans dans un contexte explosif. Ce bouclier juridique, crédité d'avoir permis l'essor de l'internet moderne, fait face à ses plus grands défis : procès pour addiction aux réseaux sociaux, pressions bipartisanes au Congrès, et remise en question de son interprétation par les tribunaux. Entre ceux qui veulent le réformer pour rendre les plateformes responsables des dégâts sociaux et ceux qui craignent une censure généralisée, la bataille juridique et politique autour de ce texte de 26 mots redéfinit l'avenir du web. Un anniversaire qui ressemble davantage à un procès qu'à une célébration.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span></div>
+      <h2 class="card-title"><a href="https://aimagazine.com/news/how-manus-puts-meta-ahead-in-the-agentic-ai-economy" target="_blank" rel="noopener" onclick="event.stopPropagation()">Meta rachète Manus pour 2 milliards et parie tout sur l'IA agentique</a></h2>
+      <div class="card-source">AI Magazine — </div>
+      <p class="card-summary">Meta vient d'acquérir Manus, startup spécialisée dans l'IA agentique, pour plus de 2 milliards de dollars — quatre fois sa valorisation d'avril 2025. La technologie de Manus se concentre sur des systèmes autonomes capables de raisonner, planifier et exécuter des tâches digitales de bout en bout sans intervention humaine. C'est un signal fort : les GAFAM ne misent plus seulement sur les modèles de langage, mais sur des agents capables d'agir de manière autonome. Ce deal positionne Meta en concurrent direct d'OpenAI et Anthropic sur le terrain de l'automatisation intelligente, un marché qui pourrait redéfinir le travail de col blanc dans les 5 prochaines années.</p>
       <div class="grid-card-extra">
         
-        <a class="card-link" href="https://www.theverge.com/policy/875300/section-230-turns-30-social-media-addiction-cases-sunset" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+        <a class="card-link" href="https://aimagazine.com/news/how-manus-puts-meta-ahead-in-the-agentic-ai-economy" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
       </div>
     </article>
     <article class="grid-card" data-index="2" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/column/874781/netflix-warner-bros-merger-other-streamers" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fusion Netflix-Warner Bros : l'onde de choc qui met le streaming en mode survie</a></h2>
-      <div class="card-source">The Verge — il y a 1h</div>
-      <p class="card-summary">Le rapprochement entre Netflix et Warner Bros. Discovery rebat les cartes du streaming et plonge les acteurs secondaires dans l'urgence stratégique. Après l'euphorie des lancements entre 2019 et 2021, l'industrie entre dans une phase de consolidation brutale où seuls les mastodontes survivront. Disney+, Paramount+, Peacock et consorts doivent désormais choisir : fusionner, se vendre, ou accepter de rester des acteurs de niche face au nouveau géant. Cette recomposition accélère la fin de l'ère de la surabondance des plateformes et annonce un retour vers un oligopole, ironiquement proche du modèle câble que le streaming promettait de disrupter. Les consommateurs risquent de payer l'addition.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">Modeles</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Recherche</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span></div>
+      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener" onclick="event.stopPropagation()">Claude Opus 4.6 détecte 500 zero-days : les LLMs deviennent des hackers</a></h2>
+      <div class="card-source">Simon Willison — il y a 13h</div>
+      <p class="card-summary">Thomas Ptacek, chercheur en sécurité réputé, lance un avertissement : « Ne pariez pas contre les LLMs en recherche de vulnérabilités. » Claude Opus 4.6 vient de découvrir 500 failles zero-day dans des projets open source, et selon Ptacek, ce n'est pas une blague. La détection de vulnérabilités serait le problème parfait pour les LLMs : pattern-driven, corpus public massif, boucles fermées. Contrairement au code générique où les hallucinations posent problème, ici le modèle peut vérifier ses hypothèses immédiatement. Si cette tendance se confirme, on ne parle plus d'assistants de code mais d'auditeurs de sécurité automatisés capables de scanner l'internet entier. Une perspective qui change la donne pour la cybersécurité — dans les deux sens.</p>
       <div class="grid-card-extra">
         
-        <a class="card-link" href="https://www.theverge.com/column/874781/netflix-warner-bros-merger-other-streamers" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+        <a class="card-link" href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
       </div>
     </article>
     <article class="grid-card" data-index="3" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener" onclick="event.stopPropagation()">L'Inde ajuste sa régulation pour propulser ses startups deep tech</a></h2>
-      <div class="card-source">TechCrunch — il y a 11h</div>
-      <p class="card-summary">New Delhi révise son cadre réglementaire pour les startups afin de favoriser l'émergence de champions nationaux dans les technologies de rupture (IA, quantique, biotech, semiconducteurs). Les nouvelles règles visent à faciliter l'accès au financement à long terme et à stabiliser l'environnement juridique pour des entreprises dont les cycles de développement dépassent largement ceux des startups logicielles classiques. Cette initiative s'inscrit dans la rivalité technologique sino-américaine : l'Inde cherche à se positionner comme troisième pôle d'innovation en capitalisant sur son vivier d'ingénieurs et sa démographie. Un signal fort pour les investisseurs internationaux qui misent sur le sous-continent comme alternative à la Chine.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">Modeles</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span></div>
+      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/7/claude-fast-mode/#atom-everything" target="_blank" rel="noopener" onclick="event.stopPropagation()">Anthropic lance un mode rapide à 6x le prix : l'impatience se monnaie</a></h2>
+      <div class="card-source">Simon Willison — il y a 16h</div>
+      <p class="card-summary">Anthropic déploie un nouveau « fast mode » pour Claude Opus 4.6 qui coûte 6 fois plus cher que le modèle standard. Concrètement : 30$/million de tokens en entrée et 150$/million en sortie, contre 5$ et 25$ habituellement. Une réduction de 50% est offerte jusqu'au 16 février, ramenant le surcoût à « seulement » 3x. La promesse ? Des réponses significativement plus rapides. Le message implicite ? Certaines entreprises sont prêtes à payer une fortune pour gagner quelques secondes par requête. C'est une stratégie de segmentation tarifaire agressive : si vous avez besoin de vitesse et le budget pour, vous payez. Sinon, vous attendez. L'IA devient un service premium à paliers, exactement comme le cloud avant elle.</p>
       <div class="grid-card-extra">
         
-        <a class="card-link" href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+        <a class="card-link" href="https://simonwillison.net/2026/Feb/7/claude-fast-mode/#atom-everything" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
       </div>
     </article>
     <article class="grid-card" data-index="4" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Moltbook, le réseau social pour bots qui révèle le théâtre de l'IA</a></h2>
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#0D948820;color:#0D9488;opacity:0.85">Marches</span></div>
+      <h2 class="card-title"><a href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxOM3JncDg0RmY2ekpyaTE1bktpM0VEaEp2NnJ4aHBncjRfcktKZ25MS1ZNZzZpcVBncExyYUxPMEdlUlZ1OXlhRjRqSEdJMlprc0J3S0lmaDZMUTcwZVlRTDAyRGVubzFZSVM1N1VkZ0xLY0k2ZTNwMGREY09NUTJVRmw3VnI1blRjSWdYMXlDb29Mbmp4anRLQ21EVzRUY0gzZFNTTzRzODAwMmo3N1JxS1RaU01weU01bVZobUdETE8?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">Intel et Vista Equity injectent des millions dans SambaNova, la bataille des puces IA s'intensifie</a></h2>
+      <div class="card-source">Reuters — il y a 1j</div>
+      <p class="card-summary">Vista Equity Partners et Intel s'apprêtent à mener un tour de financement majeur dans SambaNova, startup spécialisée dans les puces dédiées à l'IA. L'annonce intervient alors que le marché des semi-conducteurs pour l'IA explose et que Nvidia domine largement. SambaNova propose des architectures alternatives optimisées pour l'entraînement et l'inférence de modèles de langage, avec la promesse de meilleurs rapports performance/coût. Pour Intel, c'est un pari stratégique pour revenir dans la course après des années de retard face à Nvidia et AMD. Pour Vista, c'est un signal que les infrastructures IA sont devenues un secteur d'investissement aussi critique que le cloud l'était il y a 10 ans.</p>
+      <div class="grid-card-extra">
+        
+        <a class="card-link" href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxOM3JncDg0RmY2ekpyaTE1bktpM0VEaEp2NnJ4aHBncjRfcktKZ25MS1ZNZzZpcVBncExyYUxPMEdlUlZ1OXlhRjRqSEdJMlprc0J3S0lmaDZMUTcwZVlRTDAyRGVubzFZSVM1N1VkZ0xLY0k2ZTNwMGREY09NUTJVRmw3VnI1blRjSWdYMXlDb29Mbmp4anRLQ21EVzRUY0gzZFNTTzRzODAwMmo3N1JxS1RaU01weU01bVZobUdETE8?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+      </div>
+    </article>
+    <article class="grid-card" data-index="5" onclick="toggleGridCard(this)">
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Business</span><span class="tag-pill" style="background:#0D948820;color:#0D9488;opacity:0.85">Marches</span></div>
+      <h2 class="card-title"><a href="https://techcrunch.com/video/how-elon-musk-is-rewriting-the-rules-on-founder-power/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Musk fusionne SpaceX et xAI : le conglomérat personnel devient réalité</a></h2>
+      <div class="card-source">TechCrunch — il y a 1j</div>
+      <p class="card-summary">Elon Musk vient de fusionner SpaceX et xAI, créant potentiellement un nouveau modèle de pouvoir entrepreneurial dans la Silicon Valley. Avec une fortune de 800 milliards de dollars qui rivalise déjà avec le pic de capitalisation de GE, Musk construit ce qu'on pourrait appeler un conglomérat personnel. Sa thèse : « La victoire tech se décide par la vélocité d'innovation. » En regroupant infrastructures spatiales et IA de pointe sous un même contrôle, il contourne les lenteurs administratives des grandes structures. La question n'est plus de savoir si un tel conglomérat peut exister, mais jusqu'où Musk peut le pousser. Et ce que ça signifie pour la concentration de pouvoir technologique entre quelques individus.</p>
+      <div class="grid-card-extra">
+        
+        <a class="card-link" href="https://techcrunch.com/video/how-elon-musk-is-rewriting-the-rules-on-founder-power/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+      </div>
+    </article>
+    <article class="grid-card" data-index="6" onclick="toggleGridCard(this)">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span><span class="tag-pill" style="background:#E11D4820;color:#E11D48;opacity:0.85">Societe</span></div>
+      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/7/vouch/#atom-everything" target="_blank" rel="noopener" onclick="event.stopPropagation()">Mitchell Hashimoto lance Vouch pour bloquer le spam de PRs générées par IA</a></h2>
+      <div class="card-source">Simon Willison — il y a 15h</div>
+      <p class="card-summary">Mitchell Hashimoto déploie Vouch, un système conçu pour endiguer le déluge de pull requests sans valeur générées par IA qui envahissent les projets open source. Le principe : les utilisateurs non « vouch » (cautionnés) ne peuvent pas contribuer. Les mauvais acteurs peuvent être explicitement « denounced » (dénoncés), équivalent d'un blocage. Les contributeurs existants cautionnent ou dénoncent via des commentaires GitHub ou en CLI. L'intégration est simple : adopter le pré-commit hook fourni. C'est une réponse pragmatique à un problème concret : maintenant que la friction pour contribuer a chuté, la qualité moyenne s'effondre. Hashimoto propose un système de réputation humaine pour filtrer le bruit automatisé. Reste à voir si ça suffira.</p>
+      <div class="grid-card-extra">
+        
+        <a class="card-link" href="https://simonwillison.net/2026/Feb/7/vouch/#atom-everything" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+      </div>
+    </article>
+    <article class="grid-card" data-index="7" onclick="toggleGridCard(this)">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Produits</span><span class="tag-pill" style="background:#E11D4820;color:#E11D48;opacity:0.85">Societe</span></div>
+      <h2 class="card-title"><a href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Moltbook, le Reddit pour bots, implose après 48h de buzz</a></h2>
       <div class="card-source">MIT Technology Review — il y a 1j</div>
-      <p class="card-summary">Pendant quelques jours début février, Moltbook a été le nouveau terrain de jeu viral de la tech : un clone de Reddit où seuls des agents IA postent, commentent et upvotent, les humains étant relégués au rôle de spectateurs. Lancé le 28 janvier par Matt Schlicht, ce « réseau social pour bots » illustre parfaitement le « AI theater » : une mise en scène sophistiquée de l'intelligence artificielle qui fascine sans apporter de réelle utilité. MIT Technology Review décortique ce phénomène comme symptôme d'une industrie obsédée par la démonstration plutôt que par l'usage. Au-delà du buzz, Moltbook pose une vraie question : à quoi sert une conversation entre machines si personne ne peut y participer ?</p>
+      <p class="card-summary">Moltbook, un clone de Reddit présenté comme « réseau social pour agents IA », a connu son quart d'heure de gloire avant de s'effondrer. Lancé le 28 janvier par Matt Schlicht avec le slogan « Where AI agents share, discuss, and upvote. Humans welcome to observe », le site a attiré l'attention pendant quelques jours. Puis plus rien. MIT Technology Review qualifie l'expérience de « peak AI theater » — du théâtre IA pur. L'idée était séduisante sur le papier : observer des agents discuter entre eux. Mais sans véritable utilité ni communauté stable, le projet s'est dégonflé aussi vite qu'il était apparu. Un cas d'école de hype IA sans substance, parfaitement représentatif de 2026.</p>
       <div class="grid-card-extra">
         
         <a class="card-link" href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
       </div>
     </article>
-    <article class="grid-card" data-index="5" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian" target="_blank" rel="noopener" onclick="event.stopPropagation()">Les clés numériques automobiles franchissent un nouveau cap technologique</a></h2>
-      <div class="card-source">The Verge — il y a 1h</div>
-      <p class="card-summary">Le Car Connectivity Consortium a réuni en janvier à Palo Alto une douzaine de constructeurs et fabricants de smartphones pour son 16e « Plugfest », où s'affinent les standards des clés numériques de nouvelle génération. Ces systèmes permettent de verrouiller, déverrouiller et démarrer un véhicule via smartphone ou appareil connecté, avec des évolutions majeures en termes de sécurité (cryptographie renforcée), d'interopérabilité (partage de clés entre écosystèmes) et de fonctionnalités avancées (accès temporaire, gestion multi-utilisateurs). Rivian et d'autres acteurs testent des protocoles qui visent à standardiser l'expérience à travers marques et plateformes. Une étape décisive vers la disparition du trousseau de clés physique, avec les enjeux de cybersécurité que cela implique.</p>
-      <div class="grid-card-extra">
-        
-        <a class="card-link" href="https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
-      </div>
-    </article>
-    <article class="grid-card" data-index="6" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/tech/875433/tumblr-jeff-donofrio-ceo-washington-post-layoffs" target="_blank" rel="noopener" onclick="event.stopPropagation()">Après les licenciements massifs, le Washington Post change de direction</a></h2>
-      <div class="card-source">The Verge — il y a 15h</div>
-      <p class="card-summary">Jeff D'Onofrio, ancien CEO de Tumblr (2017-2022) et CFO du Washington Post depuis juin dernier, prend les rênes du quotidien en tant que CEO et publisher par intérim. Il succède à Will Lewis, dont le mandat aura été marqué par des tensions internes et des licenciements massifs cette semaine. Ce changement de leadership survient dans un contexte de crise existentielle pour le journal, pris entre modèle économique défaillant et pression éditoriale. D'Onofrio hérite d'un défi colossal : redresser les finances sans sacrifier la crédibilité journalistique, dans une industrie médiatique en pleine recomposition. Son passé chez Tumblr, plateforme culturellement iconique mais économiquement fragile, ne facilitera pas la tâche.</p>
-      <div class="grid-card-extra">
-        
-        <a class="card-link" href="https://www.theverge.com/tech/875433/tumblr-jeff-donofrio-ceo-washington-post-layoffs" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
-      </div>
-    </article>
-    <article class="grid-card" data-index="7" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener" onclick="event.stopPropagation()">Le Super Bowl 2026 devient la vitrine du marketing IA</a></h2>
-      <div class="card-source">The Verge — il y a 15h</div>
-      <p class="card-summary">Le Super Bowl LX qui oppose dimanche les Seattle Seahawks aux New England Patriots pourrait bien être dominé par l'intelligence artificielle… dans les publicités. Trois ans après l'invasion crypto (et son flop retentissant), l'IA s'impose comme le nouveau thème star des spots publicitaires à plusieurs millions de dollars. Google, qui s'était pris les pieds dans le tapis l'an dernier avec une publicité Gemini ratée, espère se racheter, tandis que les startups IA misent sur l'audience planétaire pour légitimer leurs outils. Entre opportunité de pédagogie et risque de backlash, les annonceurs tentent de surfer sur la vague IA sans répéter les erreurs de 2023. Le halftime show de Bad Bunny risque d'être éclipsé par les débats post-pub sur les réseaux.</p>
+    <article class="grid-card" data-index="8" onclick="toggleGridCard(this)">
+      <div class="card-tags"><span class="tag-pill" style="background:#E11D4820;color:#E11D48;opacity:0.85">Societe</span><span class="tag-pill" style="background:#0D948820;color:#0D9488;opacity:0.85">Marches</span></div>
+      <h2 class="card-title"><a href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener" onclick="event.stopPropagation()">Le Super Bowl LX sera bourré de pubs IA, comme le crypto en 2022</a></h2>
+      <div class="card-source">The Verge — il y a 16h</div>
+      <p class="card-summary">Le Super Bowl LX (Seahawks vs Patriots) approche, et les analystes prédisent que l'IA sera la star des pubs, exactement comme la crypto l'était il y a quelques années. Bad Bunny assurera le halftime show, mais l'entre-temps publicitaire pourrait être dominé par les annonces IA. L'an dernier, Google avait raté sa pub Gemini. Cette année, les marques vont probablement surjouer la carte « l'IA change tout ». C'est un indicateur culturel : quand une techno envahit le Super Bowl, soit elle est en phase de pic de hype, soit elle est déjà mainstream. Pour l'IA, on penche pour le pic. À voir si les pubs seront mémorables ou risibles.</p>
       <div class="grid-card-extra">
         
         <a class="card-link" href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
       </div>
     </article>
-    <article class="grid-card" data-index="8" onclick="toggleGridCard(this)">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener" onclick="event.stopPropagation()">GOG accélère sur Linux et rapproche le gaming open source du mainstream</a></h2>
-      <div class="card-source">The Verge — il y a 18h</div>
-      <p class="card-summary">La plateforme de jeux GOG confirme dans un AMA Reddit que le support natif Linux pour son client Galaxy est déjà en développement, après la publication d'une offre d'emploi pour un ingénieur dédié au portage. Trop tôt pour une date de sortie, mais le signal est fort : GOG rejoint Steam dans l'effort de démocratiser le gaming sur Linux. Cette annonce intervient alors que Valve a considérablement amélioré l'expérience Linux via Proton et Steam Deck, prouvant la viabilité commerciale de l'écosystème. Pour les défenseurs de l'open source, c'est une victoire symbolique majeure : le gaming, dernier bastion Windows, commence sérieusement à basculer. Reste à voir si l'adoption suivra.</p>
-      <div class="grid-card-extra">
-        
-        <a class="card-link" href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
-      </div>
-    </article>
 </section>
 
 <footer class="edition-footer">
-  <span>Genere par Claude — 15:51 CET</span>
+  <span>Genere par Claude — 16:50 CET</span>
   <nav class="footer-nav">
     <a href="editions/archives/index.html">Archives</a>
   </nav>
@@ -481,7 +500,7 @@ a{color:inherit;text-decoration:none}
 (function(){
   "use strict";
 
-  const articles = [{"is_synthesis": true, "editorial_title": "Tech sous tension : régulation, consolidation et mutations industrielles", "editorial_summary": "Ce samedi 8 février 2026 marque un tournant symbolique pour l'internet américain : la Section 230, texte fondateur qui protège les plateformes de la responsabilité des contenus publiés, fête ses 30 ans dans un climat de remise en question sans précédent. Pendant ce temps, l'industrie du streaming connaît une consolidation brutale avec la fusion Netflix-Warner Bros, forçant les acteurs secondaires en mode survie. L'Inde ajuste sa réglementation pour soutenir ses startups deep tech face à la concurrence chinoise et américaine, tandis que les constructeurs automobiles accélèrent sur les clés numériques standardisées. Dans les médias, le Washington Post traverse une crise majeure avec le départ de son CEO après des licenciements massifs. Le Super Bowl devient l'arène du marketing IA, trois ans après le fiasco crypto. L'écosystème tech traverse une phase de maturation où régulation, concentration et réalignements stratégiques redéfinissent les équilibres de pouvoir.", "topics": ["Tech", "IA", "Startups"], "source": "Editorial", "url": "#", "published": "2026-02-08T10:00:00+01:00"}, {"title": "Section 230 turns 30 as it faces its biggest tests yet", "editorial_title": "Section 230 : les 30 ans d'un pilier de l'internet américain sous le feu des critiques", "editorial_summary": "La Section 230 du Communications Decency Act, texte fondateur qui immunise les plateformes de la responsabilité des contenus publiés par leurs utilisateurs, célèbre aujourd'hui ses 30 ans dans un contexte explosif. Ce bouclier juridique, crédité d'avoir permis l'essor de l'internet moderne, fait face à ses plus grands défis : procès pour addiction aux réseaux sociaux, pressions bipartisanes au Congrès, et remise en question de son interprétation par les tribunaux. Entre ceux qui veulent le réformer pour rendre les plateformes responsables des dégâts sociaux et ceux qui craignent une censure généralisée, la bataille juridique et politique autour de ce texte de 26 mots redéfinit l'avenir du web. Un anniversaire qui ressemble davantage à un procès qu'à une célébration.", "url": "https://www.theverge.com/policy/875300/section-230-turns-30-social-media-addiction-cases-sunset", "source": "The Verge", "published": "2026-02-08T14:00:00+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 53}, {"title": "Netflix's Warner Bros. merger puts rival streamers in survival mode", "editorial_title": "Fusion Netflix-Warner Bros : l'onde de choc qui met le streaming en mode survie", "editorial_summary": "Le rapprochement entre Netflix et Warner Bros. Discovery rebat les cartes du streaming et plonge les acteurs secondaires dans l'urgence stratégique. Après l'euphorie des lancements entre 2019 et 2021, l'industrie entre dans une phase de consolidation brutale où seuls les mastodontes survivront. Disney+, Paramount+, Peacock et consorts doivent désormais choisir : fusionner, se vendre, ou accepter de rester des acteurs de niche face au nouveau géant. Cette recomposition accélère la fin de l'ère de la surabondance des plateformes et annonce un retour vers un oligopole, ironiquement proche du modèle câble que le streaming promettait de disrupter. Les consommateurs risquent de payer l'addition.", "url": "https://www.theverge.com/column/874781/netflix-warner-bros-merger-other-streamers", "source": "The Verge", "published": "2026-02-08T13:00:00+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 53}, {"title": "India has changed its startup rules for deep tech", "editorial_title": "L'Inde ajuste sa régulation pour propulser ses startups deep tech", "editorial_summary": "New Delhi révise son cadre réglementaire pour les startups afin de favoriser l'émergence de champions nationaux dans les technologies de rupture (IA, quantique, biotech, semiconducteurs). Les nouvelles règles visent à faciliter l'accès au financement à long terme et à stabiliser l'environnement juridique pour des entreprises dont les cycles de développement dépassent largement ceux des startups logicielles classiques. Cette initiative s'inscrit dans la rivalité technologique sino-américaine : l'Inde cherche à se positionner comme troisième pôle d'innovation en capitalisant sur son vivier d'ingénieurs et sa démographie. Un signal fort pour les investisseurs internationaux qui misent sur le sous-continent comme alternative à la Chine.", "url": "https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/", "source": "TechCrunch", "published": "2026-02-08T03:30:00+00:00", "topics": ["Tech", "Startups"], "matched_topics": ["Startups"], "authority": 20, "score": 40}, {"title": "Moltbook was peak AI theater", "editorial_title": "Moltbook, le réseau social pour bots qui révèle le théâtre de l'IA", "editorial_summary": "Pendant quelques jours début février, Moltbook a été le nouveau terrain de jeu viral de la tech : un clone de Reddit où seuls des agents IA postent, commentent et upvotent, les humains étant relégués au rôle de spectateurs. Lancé le 28 janvier par Matt Schlicht, ce « réseau social pour bots » illustre parfaitement le « AI theater » : une mise en scène sophistiquée de l'intelligence artificielle qui fascine sans apporter de réelle utilité. MIT Technology Review décortique ce phénomène comme symptôme d'une industrie obsédée par la démonstration plutôt que par l'usage. Au-delà du buzz, Moltbook pose une vraie question : à quoi sert une conversation entre machines si personne ne peut y participer ?", "url": "https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/", "source": "MIT Technology Review", "published": "2026-02-06T16:38:11+00:00", "topics": ["IA", "Tech", "Sciences"], "matched_topics": ["IA", "Tech"], "authority": 22, "score": 35}, {"title": "Digital car keys are getting more sophisticated", "editorial_title": "Les clés numériques automobiles franchissent un nouveau cap technologique", "editorial_summary": "Le Car Connectivity Consortium a réuni en janvier à Palo Alto une douzaine de constructeurs et fabricants de smartphones pour son 16e « Plugfest », où s'affinent les standards des clés numériques de nouvelle génération. Ces systèmes permettent de verrouiller, déverrouiller et démarrer un véhicule via smartphone ou appareil connecté, avec des évolutions majeures en termes de sécurité (cryptographie renforcée), d'interopérabilité (partage de clés entre écosystèmes) et de fonctionnalités avancées (accès temporaire, gestion multi-utilisateurs). Rivian et d'autres acteurs testent des protocoles qui visent à standardiser l'expérience à travers marques et plateformes. Une étape décisive vers la disparition du trousseau de clés physique, avec les enjeux de cybersécurité que cela implique.", "url": "https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian", "source": "The Verge", "published": "2026-02-08T13:00:00+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 53}, {"title": "Former Tumblr head Jeff D'Onofrio steps in as acting CEO at the Washington Post", "editorial_title": "Après les licenciements massifs, le Washington Post change de direction", "editorial_summary": "Jeff D'Onofrio, ancien CEO de Tumblr (2017-2022) et CFO du Washington Post depuis juin dernier, prend les rênes du quotidien en tant que CEO et publisher par intérim. Il succède à Will Lewis, dont le mandat aura été marqué par des tensions internes et des licenciements massifs cette semaine. Ce changement de leadership survient dans un contexte de crise existentielle pour le journal, pris entre modèle économique défaillant et pression éditoriale. D'Onofrio hérite d'un défi colossal : redresser les finances sans sacrifier la crédibilité journalistique, dans une industrie médiatique en pleine recomposition. Son passé chez Tumblr, plateforme culturellement iconique mais économiquement fragile, ne facilitera pas la tâche.", "url": "https://www.theverge.com/tech/875433/tumblr-jeff-donofrio-ceo-washington-post-layoffs", "source": "The Verge", "published": "2026-02-07T23:41:23+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 38}, {"title": "Super Bowl LX ads: all AI everything", "editorial_title": "Le Super Bowl 2026 devient la vitrine du marketing IA", "editorial_summary": "Le Super Bowl LX qui oppose dimanche les Seattle Seahawks aux New England Patriots pourrait bien être dominé par l'intelligence artificielle… dans les publicités. Trois ans après l'invasion crypto (et son flop retentissant), l'IA s'impose comme le nouveau thème star des spots publicitaires à plusieurs millions de dollars. Google, qui s'était pris les pieds dans le tapis l'an dernier avec une publicité Gemini ratée, espère se racheter, tandis que les startups IA misent sur l'audience planétaire pour légitimer leurs outils. Entre opportunité de pédagogie et risque de backlash, les annonceurs tentent de surfer sur la vague IA sans répéter les erreurs de 2023. Le halftime show de Bad Bunny risque d'être éclipsé par les débats post-pub sur les réseaux.", "url": "https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game", "source": "The Verge", "published": "2026-02-07T23:10:44+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 38}, {"title": "GOG is already working on native Linux support", "editorial_title": "GOG accélère sur Linux et rapproche le gaming open source du mainstream", "editorial_summary": "La plateforme de jeux GOG confirme dans un AMA Reddit que le support natif Linux pour son client Galaxy est déjà en développement, après la publication d'une offre d'emploi pour un ingénieur dédié au portage. Trop tôt pour une date de sortie, mais le signal est fort : GOG rejoint Steam dans l'effort de démocratiser le gaming sur Linux. Cette annonce intervient alors que Valve a considérablement amélioré l'expérience Linux via Proton et Steam Deck, prouvant la viabilité commerciale de l'écosystème. Pour les défenseurs de l'open source, c'est une victoire symbolique majeure : le gaming, dernier bastion Windows, commence sérieusement à basculer. Reste à voir si l'adoption suivra.", "url": "https://www.theverge.com/tech/875425/gog-native-linux-support", "source": "The Verge", "published": "2026-02-07T20:23:46+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 38}];
+  const articles = [{"is_synthesis": true, "editorial_title": "L'IA agentique vaut 2 milliards, les PRs pourries 0", "editorial_summary": "Meta vient de claquer 2 milliards pour Manus. Quatre fois sa valorisation d'avril dernier. Pendant ce temps, Mitchell Hashimoto sort Vouch pour bloquer les PRs générées par IA qui polluent GitHub. Deux faces de la même pièce : l'IA agentique promet d'automatiser le travail intellectuel, mais on commence déjà par automatiser la merde.\n\nCe qui me frappe, c'est la vitesse. Anthropic balance un fast mode à 6x le prix normal — parce qu'apparemment attendre 30 secondes au lieu de 10 est insupportable pour certains budgets. Moltbook monte un Reddit pour bots qui capote pendant 48h avant de s'effondrer. Le Super Bowl sera bourré de pubs IA comme il était bourré de pubs crypto en 2022. On accélère sans savoir où on va.\n\nMais Thomas Ptacek dit un truc intéressant : « Ne pariez pas contre les LLMs en recherche de vulnérabilités. » Claude Opus 4.6 vient de trouver 500 zero-days dans l'open source. Pattern-driven, corpus public massif, boucle fermée. Le problème parfait pour un LLM. Si ça se confirme, on ne parle plus d'assistant de code. On parle d'un audit de sécurité automatisé à l'échelle de l'internet.\n\nAlors oui, l'IA agentique vaut peut-être 2 milliards. À condition qu'elle fasse autre chose que spammer des repos open source.\n\n— JPG (aka Sandjab)", "topics": ["Modeles", "Produits", "Business"], "source": "Editorial", "url": "#", "published": "2026-02-08T10:00:00+01:00"}, {"title": "Meta acquires Manus for over $2 billion in major agentic AI deal", "editorial_title": "Meta rachète Manus pour 2 milliards et parie tout sur l'IA agentique", "editorial_summary": "Meta vient d'acquérir Manus, startup spécialisée dans l'IA agentique, pour plus de 2 milliards de dollars — quatre fois sa valorisation d'avril 2025. La technologie de Manus se concentre sur des systèmes autonomes capables de raisonner, planifier et exécuter des tâches digitales de bout en bout sans intervention humaine. C'est un signal fort : les GAFAM ne misent plus seulement sur les modèles de langage, mais sur des agents capables d'agir de manière autonome. Ce deal positionne Meta en concurrent direct d'OpenAI et Anthropic sur le terrain de l'automatisation intelligente, un marché qui pourrait redéfinir le travail de col blanc dans les 5 prochaines années.", "url": "https://aimagazine.com/news/how-manus-puts-meta-ahead-in-the-agentic-ai-economy", "source": "AI Magazine", "published": "2026-02-06T00:00:00Z", "topics": ["Business"], "matched_topics": ["Business", "Produits"], "authority": 15, "is_breaking": true, "score": 35}, {"title": "Quoting Thomas Ptacek", "editorial_title": "Claude Opus 4.6 détecte 500 zero-days : les LLMs deviennent des hackers", "editorial_summary": "Thomas Ptacek, chercheur en sécurité réputé, lance un avertissement : « Ne pariez pas contre les LLMs en recherche de vulnérabilités. » Claude Opus 4.6 vient de découvrir 500 failles zero-day dans des projets open source, et selon Ptacek, ce n'est pas une blague. La détection de vulnérabilités serait le problème parfait pour les LLMs : pattern-driven, corpus public massif, boucles fermées. Contrairement au code générique où les hallucinations posent problème, ici le modèle peut vérifier ses hypothèses immédiatement. Si cette tendance se confirme, on ne parle plus d'assistants de code mais d'auditeurs de sécurité automatisés capables de scanner l'internet entier. Une perspective qui change la donne pour la cybersécurité — dans les deux sens.", "url": "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything", "source": "Simon Willison", "topics": ["Modeles", "Produits"], "matched_topics": ["Modeles", "Recherche", "Produits"], "authority": 15, "score": 35, "published": "2026-02-08T02:25:53+00:00"}, {"title": "Claude: Speed up responses with fast mode", "editorial_title": "Anthropic lance un mode rapide à 6x le prix : l'impatience se monnaie", "editorial_summary": "Anthropic déploie un nouveau « fast mode » pour Claude Opus 4.6 qui coûte 6 fois plus cher que le modèle standard. Concrètement : 30$/million de tokens en entrée et 150$/million en sortie, contre 5$ et 25$ habituellement. Une réduction de 50% est offerte jusqu'au 16 février, ramenant le surcoût à « seulement » 3x. La promesse ? Des réponses significativement plus rapides. Le message implicite ? Certaines entreprises sont prêtes à payer une fortune pour gagner quelques secondes par requête. C'est une stratégie de segmentation tarifaire agressive : si vous avez besoin de vitesse et le budget pour, vous payez. Sinon, vous attendez. L'IA devient un service premium à paliers, exactement comme le cloud avant elle.", "url": "https://simonwillison.net/2026/Feb/7/claude-fast-mode/#atom-everything", "source": "Simon Willison", "topics": ["Modeles", "Produits"], "matched_topics": ["Modeles", "Business", "Produits"], "authority": 15, "score": 35, "published": "2026-02-07T23:10:33+00:00"}, {"title": "Exclusive: Vista Equity Partners and Intel to lead investment in AI chip startup SambaNova, sources say - Reuters", "editorial_title": "Intel et Vista Equity injectent des millions dans SambaNova, la bataille des puces IA s'intensifie", "editorial_summary": "Vista Equity Partners et Intel s'apprêtent à mener un tour de financement majeur dans SambaNova, startup spécialisée dans les puces dédiées à l'IA. L'annonce intervient alors que le marché des semi-conducteurs pour l'IA explose et que Nvidia domine largement. SambaNova propose des architectures alternatives optimisées pour l'entraînement et l'inférence de modèles de langage, avec la promesse de meilleurs rapports performance/coût. Pour Intel, c'est un pari stratégique pour revenir dans la course après des années de retard face à Nvidia et AMD. Pour Vista, c'est un signal que les infrastructures IA sont devenues un secteur d'investissement aussi critique que le cloud l'était il y a 10 ans.", "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOM3JncDg0RmY2ekpyaTE1bktpM0VEaEp2NnJ4aHBncjRfcktKZ25MS1ZNZzZpcVBncExyYUxPMEdlUlZ1OXlhRjRqSEdJMlprc0J3S0lmaDZMUTcwZVlRTDAyRGVubzFZSVM1N1VkZ0xLY0k2ZTNwMGREY09NUTJVRmw3VnI1blRjSWdYMXlDb29Mbmp4anRLQ21EVzRUY0gzZFNTTzRzODAwMmo3N1JxS1RaU01weU01bVZobUdETE8?oc=5", "source": "Reuters", "topics": ["Business", "Marches"], "matched_topics": ["Business", "Marches"], "authority": 20, "is_breaking": true, "score": 33, "published": "2026-02-06T21:07:14+00:00"}, {"title": "How Elon Musk is rewriting the rules on founder power", "editorial_title": "Musk fusionne SpaceX et xAI : le conglomérat personnel devient réalité", "editorial_summary": "Elon Musk vient de fusionner SpaceX et xAI, créant potentiellement un nouveau modèle de pouvoir entrepreneurial dans la Silicon Valley. Avec une fortune de 800 milliards de dollars qui rivalise déjà avec le pic de capitalisation de GE, Musk construit ce qu'on pourrait appeler un conglomérat personnel. Sa thèse : « La victoire tech se décide par la vélocité d'innovation. » En regroupant infrastructures spatiales et IA de pointe sous un même contrôle, il contourne les lenteurs administratives des grandes structures. La question n'est plus de savoir si un tel conglomérat peut exister, mais jusqu'où Musk peut le pousser. Et ce que ça signifie pour la concentration de pouvoir technologique entre quelques individus.", "url": "https://techcrunch.com/video/how-elon-musk-is-rewriting-the-rules-on-founder-power/", "source": "TechCrunch", "topics": ["Business", "Produits"], "matched_topics": ["Business", "Marches"], "authority": 20, "score": 33, "published": "2026-02-06T18:46:51+00:00"}, {"title": "Vouch", "editorial_title": "Mitchell Hashimoto lance Vouch pour bloquer le spam de PRs générées par IA", "editorial_summary": "Mitchell Hashimoto déploie Vouch, un système conçu pour endiguer le déluge de pull requests sans valeur générées par IA qui envahissent les projets open source. Le principe : les utilisateurs non « vouch » (cautionnés) ne peuvent pas contribuer. Les mauvais acteurs peuvent être explicitement « denounced » (dénoncés), équivalent d'un blocage. Les contributeurs existants cautionnent ou dénoncent via des commentaires GitHub ou en CLI. L'intégration est simple : adopter le pré-commit hook fourni. C'est une réponse pragmatique à un problème concret : maintenant que la friction pour contribuer a chuté, la qualité moyenne s'effondre. Hashimoto propose un système de réputation humaine pour filtrer le bruit automatisé. Reste à voir si ça suffira.", "url": "https://simonwillison.net/2026/Feb/7/vouch/#atom-everything", "source": "Simon Willison", "topics": ["Modeles", "Produits"], "matched_topics": ["Produits", "Societe"], "authority": 15, "score": 35, "published": "2026-02-07T23:57:57+00:00"}, {"title": "Moltbook was peak AI theater", "editorial_title": "Moltbook, le Reddit pour bots, implose après 48h de buzz", "editorial_summary": "Moltbook, un clone de Reddit présenté comme « réseau social pour agents IA », a connu son quart d'heure de gloire avant de s'effondrer. Lancé le 28 janvier par Matt Schlicht avec le slogan « Where AI agents share, discuss, and upvote. Humans welcome to observe », le site a attiré l'attention pendant quelques jours. Puis plus rien. MIT Technology Review qualifie l'expérience de « peak AI theater » — du théâtre IA pur. L'idée était séduisante sur le papier : observer des agents discuter entre eux. Mais sans véritable utilité ni communauté stable, le projet s'est dégonflé aussi vite qu'il était apparu. Un cas d'école de hype IA sans substance, parfaitement représentatif de 2026.", "url": "https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/", "source": "MIT Technology Review", "topics": ["Recherche", "Societe"], "matched_topics": ["Produits", "Societe"], "authority": 22, "score": 35, "published": "2026-02-06T16:38:11+00:00"}, {"title": "Super Bowl LX ads: all AI everything", "editorial_title": "Le Super Bowl LX sera bourré de pubs IA, comme le crypto en 2022", "editorial_summary": "Le Super Bowl LX (Seahawks vs Patriots) approche, et les analystes prédisent que l'IA sera la star des pubs, exactement comme la crypto l'était il y a quelques années. Bad Bunny assurera le halftime show, mais l'entre-temps publicitaire pourrait être dominé par les annonces IA. L'an dernier, Google avait raté sa pub Gemini. Cette année, les marques vont probablement surjouer la carte « l'IA change tout ». C'est un indicateur culturel : quand une techno envahit le Super Bowl, soit elle est en phase de pic de hype, soit elle est déjà mainstream. Pour l'IA, on penche pour le pic. À voir si les pubs seront mémorables ou risibles.", "url": "https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game", "source": "The Verge", "topics": ["Produits", "Societe"], "matched_topics": ["Societe", "Marches"], "authority": 18, "score": 38, "published": "2026-02-07T23:10:44+00:00"}];
 
   // State
   let current = 0;
@@ -490,6 +509,7 @@ a{color:inherit;text-decoration:none}
   let startX = 0;
   let deltaX = 0;
   let isDragging = false;
+  let isAnimating = false;
 
   const stack = document.getElementById('cardStack');
   const viewport = document.getElementById('cardViewport');
@@ -541,6 +561,7 @@ a{color:inherit;text-decoration:none}
   // Cards — direct show (no animation, used for init and filter reset)
   function showCard(idx){
     if(filtered.length === 0) return;
+    isAnimating = false;
     current = Math.max(0, Math.min(idx, filtered.length - 1));
     const cards = stack.querySelectorAll('.card');
     cards.forEach(c => {
@@ -556,13 +577,20 @@ a{color:inherit;text-decoration:none}
 
   // Navigate with bidirectional slide+fade spring transitions
   window.navigate = function(dir){
-    if(filtered.length === 0) return;
+    if(filtered.length === 0 || isAnimating) return;
     const next = current + dir;
     if(next < 0 || next >= filtered.length) return;
 
+    isAnimating = true;
+
     const prevCard = stack.querySelector(`[data-index="${filtered[current]}"]`);
     const nextCard = stack.querySelector(`[data-index="${filtered[next]}"]`);
-    if(!prevCard || !nextCard) return;
+    if(!prevCard || !nextCard){ isAnimating = false; return; }
+
+    // Clear any residual inline styles from swipe drag
+    prevCard.style.transform = '';
+    prevCard.style.opacity = '';
+    prevCard.style.transition = '';
 
     // Exit current card
     prevCard.classList.remove('active');
@@ -584,6 +612,7 @@ a{color:inherit;text-decoration:none}
     // Cleanup
     setTimeout(() => {
       prevCard.classList.remove('exit-left','exit-right');
+      isAnimating = false;
     }, 600);
   };
 
@@ -595,7 +624,7 @@ a{color:inherit;text-decoration:none}
   let swipeLocked = false; // once direction is determined, lock it
 
   function onPointerDown(e){
-    if(isGrid) return;
+    if(isGrid || isAnimating) return;
     const card = e.target.closest('.card.active');
     if(!card) return;
     if(activePointerId !== null) return;
@@ -646,13 +675,18 @@ a{color:inherit;text-decoration:none}
     const card = stack.querySelector('.card.active');
     if(!card) return;
     if(Math.abs(deltaX) > swipeThreshold()){
-      card.style.transition = `transform .4s var(--ease), opacity .35s ease-out`;
+      // Clear inline styles — navigate handles animation via CSS classes
+      card.style.transform = '';
       card.style.opacity = '';
+      card.style.transition = '';
       navigate(deltaX < 0 ? 1 : -1);
     } else {
+      // Snap back to center
+      isAnimating = true;
       card.style.transition = `transform .4s var(--ease), opacity .3s ease-out`;
       card.style.transform = '';
       card.style.opacity = '';
+      setTimeout(() => { isAnimating = false; card.style.transition = ''; }, 420);
     }
   }
   viewport.addEventListener('pointerdown', onPointerDown);
@@ -662,7 +696,7 @@ a{color:inherit;text-decoration:none}
 
   // Keyboard
   document.addEventListener('keydown', function(e){
-    if(isGrid) return;
+    if(isGrid || isAnimating) return;
     if(e.key === 'ArrowRight') navigate(1);
     else if(e.key === 'ArrowLeft') navigate(-1);
   });
@@ -674,10 +708,14 @@ a{color:inherit;text-decoration:none}
       const d = document.createElement('span');
       d.className = 'dot' + (i === current ? ' active' : '');
       d.addEventListener('click', () => {
-        if(i !== current){
+        if(i !== current && !isAnimating){
+          isAnimating = true;
           const dir = i > current ? 1 : -1;
           const prevCard = stack.querySelector(`[data-index="${filtered[current]}"]`);
           if(prevCard){
+            prevCard.style.transform = '';
+            prevCard.style.opacity = '';
+            prevCard.style.transition = '';
             prevCard.classList.remove('active');
             prevCard.classList.add(dir > 0 ? 'exit-left' : 'exit-right');
           }
@@ -694,6 +732,7 @@ a{color:inherit;text-decoration:none}
           updateNav();
           setTimeout(() => {
             if(prevCard) prevCard.classList.remove('exit-left','exit-right');
+            isAnimating = false;
           }, 600);
         }
       });
