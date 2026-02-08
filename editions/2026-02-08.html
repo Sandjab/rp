@@ -15,6 +15,8 @@
   --accent:#E63946;--border:#E5E5E3;
   --font-h:'Instrument Serif',serif;--font-b:'Inter',sans-serif;--font-m:'JetBrains Mono',monospace;
   --ease:cubic-bezier(0.25,0.46,0.45,0.94);
+  --spring:cubic-bezier(0.34,1.56,0.64,1);
+  --spring-back:cubic-bezier(0.25,1.2,0.5,1);
 }
 [data-theme="dark"]{
   --bg:#0F0F0F;--card:#1A1A1A;--text:#EDEDEB;--text-2:#999999;
@@ -98,17 +100,52 @@ a{color:inherit;text-decoration:none}
   background:var(--card);border:1px solid var(--border);
   padding:clamp(1.5rem,3vw,2.5rem);
   opacity:0;pointer-events:none;
-  transition:transform .45s var(--ease),opacity .35s var(--ease);
+  transition:transform .5s var(--spring),opacity .4s ease-out;
   touch-action:pan-y pinch-zoom;user-select:none;
-  will-change:transform;
+  will-change:transform,opacity;
 }
 .card.active{
   opacity:1;pointer-events:auto;position:relative;
-  animation:cardIn .4s var(--ease) both;
+  transform:translateX(0) rotate(0);
 }
-@keyframes cardIn{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
-.card.exit-left{transform:translateX(-120%) rotate(-4deg);opacity:0}
-.card.exit-right{transform:translateX(120%) rotate(4deg);opacity:0}
+.card.enter-left{transform:translateX(-110%) rotate(-3deg);opacity:0}
+.card.enter-right{transform:translateX(110%) rotate(3deg);opacity:0}
+.card.exit-left{transform:translateX(-110%) rotate(-3deg);opacity:0}
+.card.exit-right{transform:translateX(110%) rotate(3deg);opacity:0}
+/* Page-curl 3D exit */
+.card.curl-exit-left{
+  transform:perspective(1200px) rotateY(45deg) translateX(-60%) scale(0.9);
+  transform-origin:left center;opacity:0.3;
+  transition:transform .6s var(--spring),opacity .5s ease-out;
+}
+.card.curl-exit-right{
+  transform:perspective(1200px) rotateY(-45deg) translateX(60%) scale(0.9);
+  transform-origin:right center;opacity:0.3;
+  transition:transform .6s var(--spring),opacity .5s ease-out;
+}
+/* Synthesis card */
+.card.synthesis-card{
+  border-left:4px solid var(--accent);
+  background:var(--card);
+  background:color-mix(in srgb,var(--accent) 4%,var(--card));
+}
+.synth-tag{
+  font-family:var(--font-m);font-size:0.6rem;
+  text-transform:uppercase;letter-spacing:0.12em;
+  background:var(--accent);color:#fff;
+  padding:0.2rem 0.6rem;display:inline-block;margin-bottom:1rem;
+}
+.synth-refs{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)}
+.synth-refs-label{
+  font-family:var(--font-m);font-size:0.7rem;color:var(--text-2);
+  text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.6rem;
+}
+.synth-ref{
+  display:block;font-family:var(--font-b);font-size:0.9rem;
+  color:var(--accent);padding:0.4rem 0;cursor:pointer;transition:opacity .2s;
+}
+.synth-ref:hover{opacity:0.7}
+.grid-card.synthesis-grid{grid-column:1/-1}
 
 /* CARD CONTENT */
 .card-tags{display:flex;gap:0.5rem;margin-bottom:1.2rem;flex-wrap:wrap}
@@ -225,20 +262,6 @@ a{color:inherit;text-decoration:none}
   }
 }
 
-/* SWIPE HINT — mobile only */
-.swipe-hint{
-  display:none;text-align:center;
-  font-family:var(--font-m);font-size:0.7rem;color:var(--text-2);
-  padding:0.5rem 0 0;opacity:0;transition:opacity .6s;
-}
-.swipe-hint.visible{opacity:1}
-.swipe-hint span{display:inline-block;animation:swipeHint 2s var(--ease) 2}
-@keyframes swipeHint{
-  0%,100%{transform:translateX(0)}
-  30%{transform:translateX(-12px)}
-  60%{transform:translateX(8px)}
-}
-
 /* MOBILE */
 @media(max-width:640px){
   .masthead{flex-direction:column;gap:0.5rem}
@@ -250,17 +273,23 @@ a{color:inherit;text-decoration:none}
   .filter-bar{
     gap:0.5rem;padding:0.8rem 1rem;
     overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;
   }
-  .filter-pill{flex-shrink:0;padding:0.5rem 0.9rem;font-size:0.7rem}
+  .filter-bar::-webkit-scrollbar{display:none}
+  .filter-pill{flex-shrink:0;padding:0.5rem 0.9rem;font-size:0.7rem;scroll-snap-align:start}
   .nav-btn{width:48px;height:48px;font-size:1.4rem}
   .card-nav{gap:1rem;padding:1rem 0}
-  .dots{display:none}
-  .swipe-hint{display:block}
+  .card-counter{display:none}
+  .dots{gap:5px}
+  .dot{width:5px;height:5px}
+  .dot.active{width:8px;height:8px}
+  .card-link{font-size:0.9rem;padding:0.6rem 0;min-height:44px;display:inline-flex;align-items:center}
   .grid-view{grid-template-columns:1fr}
   .grid-card{padding:1.2rem}
   .context-toggle{padding:0.3rem 0;font-size:0.8rem}
-  .card-link{font-size:0.85rem;padding:0.2rem 0}
   .breaking{font-size:0.75rem;padding:0.6rem 1rem}
+  .card.synthesis-card{padding:1.5rem 1rem;border-left-width:3px}
+  .synth-ref{font-size:0.85rem;padding:0.5rem 0}
 }
 </style>
 </head>
@@ -270,7 +299,7 @@ a{color:inherit;text-decoration:none}
   <h1>REVUE DE PRESSE</h1>
   <div class="masthead-meta">
     <span>Sunday 08 february 2026</span>
-    <span>No. 2</span>
+    <span>No. 4</span>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer le theme">Light</button>
   </div>
 </header>
@@ -293,125 +322,84 @@ a{color:inherit;text-decoration:none}
 <section class="card-viewport" id="cardViewport">
   <div class="card-stack" id="cardStack">
     
-    <article class="card" data-index="0">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">Les LLM comme compilateurs de langage : les lecons de Fortran pour l'avenir du code</h2>
-      <div class="card-source">Hacker News — il y a 2h</div>
-      <p class="card-summary">Un essai provocateur trace un parallele entre la revolution des compilateurs Fortran dans les annees 1950 et les grands modeles de langage actuels. L'auteur soutient que les LLM representent une nouvelle couche d'abstraction qui transforme le role du developpeur, comme Fortran l'avait fait en son temps. Une reflexion qui interroge sur ce que signifie encore programmer.</p>
+    <article class="card synthesis-card" data-index="0">
+      <span class="synth-tag">Synthese</span>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">IA et securite au coeur d'une semaine decisive pour la tech</h2>
+      <p class="card-summary">L'intelligence artificielle franchit un nouveau cap cette semaine, entre prouesses collaboratives d'agents IA et montee des inquietudes sur la securite des modeles de langage. Seize agents Claude ont concu un compilateur C fonctionnel, tandis que des chercheurs alertent sur les backdoors indectectables dans les LLM. Le secteur de la conduite autonome accelere avec Waymo qui integre un modele de monde pour simuler des scenarios extremes. Pendant ce temps, l'accessibilite numerique progresse grace a de nouveaux outils de modelisation 3D pour les developpeurs malvoyants, et l'Inde redessine son cadre reglementaire pour attirer les startups deep tech.</p>
       
-      <a class="card-link" href="https://cyber-omelette.com/posts/the-abstraction-rises.html" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    <div class="synth-refs">
+      <span class="synth-refs-label">Articles cites</span>
+      <a class="synth-ref" href="javascript:void(0)" onclick="goToCard(1)">Seize agents Claude collaborent pour creer un compilateur C fonctionnel</a>
+<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(2)">Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA</a>
+<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(3)">Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome</a>
+<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(6)">Trois signes que votre LLM pourrait etre piege par une backdoor</a>
+
+    </div>
     </article>
     <article class="card" data-index="1">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">Dans l'outback australien, des capteurs a l'ecoute des essais nucleaires</h2>
-      <div class="card-source">Hacker News — il y a 1h</div>
-      <p class="card-summary">L'Australie exploite une station de surveillance dans l'outback pour detecter les essais nucleaires clandestins partout dans le monde. Ce dispositif fait partie du reseau international du CTBTO, qui utilise des technologies sismiques et infrasonores pour garantir le respect du traite d'interdiction des essais.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Seize agents Claude collaborent pour creer un compilateur C fonctionnel</h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Une equipe a orchestre seize instances de Claude, l'IA d'Anthropic, pour concevoir un compilateur C capable de compiler le noyau Linux. L'experience, qui a coute 20 000 dollars, demontre le potentiel des systemes multi-agents pour des taches d'ingenierie complexes. Toutefois, une supervision humaine approfondie reste indispensable a chaque etape du processus.</p>
       
-      <a class="card-link" href="https://www.abc.net.au/news/2026-02-08/australian-outback-nuclear-tests-listening-warramunga-facility/106307478" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="2">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">Retro-ingenierie complete du jeu Raiders of the Lost Ark sur Atari 2600</h2>
-      <div class="card-source">Hacker News — il y a 1h</div>
-      <p class="card-summary">Un passionné a entierement desassemble et documente le code source du jeu Raiders of the Lost Ark sorti en 1982 sur Atari 2600. Le projet, heberge sur GitHub, offre un regard fascinant sur les contraintes de programmation de l'epoque, ou chaque octet comptait.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA</h2>
+      <div class="card-source">MIT Technology Review — il y a 1j</div>
+      <p class="card-summary">Moltbook, un clone de Reddit entierement peuple par des agents IA, a enflamme le web pendant quelques jours avant de reveler les limites du concept. Lance comme un espace ou les bots discutent et votent entre eux, le projet illustre la fascination actuelle pour l'IA generative poussee a l'absurde. La MIT Technology Review y voit un symptome de l'ere du spectacle IA, ou la viralite prime sur l'utilite reelle.</p>
       
-      <a class="card-link" href="https://github.com/joshuanwalker/Raiders2600" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="3">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">Matchlock : un outil de sandboxing Linux concu pour isoler les agents IA</h2>
-      <div class="card-source">Hacker News — il y a 2h</div>
-      <p class="card-summary">Le projet open source Matchlock propose un mecanisme de sandboxing sous Linux specifiquement concu pour les agents IA autonomes. Face a la multiplication des systemes agentiques qui executent du code et accedent a des ressources, cet outil repond a un besoin critique de securite en limitant les capacites des agents.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome</h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Waymo integre Genie 3, un modele de monde developpe par Google DeepMind, pour generer des scenarios de conduite rares ou impossibles a reproduire dans la realite. Cette approche permet d'entrainer les vehicules autonomes face a des situations extremes sans risque. La technologie marque une evolution significative vers une conduite autonome plus robuste et plus sure.</p>
       
-      <a class="card-link" href="https://github.com/jingkaihe/matchlock" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="4">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Super Bowl LX : l'intelligence artificielle envahit les coupures publicitaires</h2>
-      <div class="card-source">The Verge — il y a 11h</div>
-      <p class="card-summary">Le Super Bowl LX opposera les Seattle Seahawks aux New England Patriots ce dimanche, mais l'IA pourrait bien voler la vedette durant les pauses publicitaires. Apres le fiasco de la publicite Google Gemini l'an dernier, les geants de la tech reviennent en force avec de nouvelles demonstrations de leurs modeles.</p>
-      
-      <a class="card-link" href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="5">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">DoNotNotify passe en open source : reprendre le controle de ses notifications</h2>
-      <div class="card-source">Hacker News — il y a 3h</div>
-      <p class="card-summary">Le service DoNotNotify, qui permet de filtrer et controler les notifications excessives des applications, vient de passer en open source. L'outil repond a un probleme grandissant de fatigue numerique, alors que les utilisateurs sont submerges par les alertes de dizaines d'applications au quotidien.</p>
-      
-      <a class="card-link" href="https://donotnotify.com/opensource.html" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="6">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">LocalGPT : un assistant IA local ecrit en Rust avec memoire persistante</h2>
-      <div class="card-source">Hacker News — il y a 9h</div>
-      <p class="card-summary">Un developpeur a cree LocalGPT en quatre nuits, un assistant IA local compile en un seul binaire de 27 Mo en Rust. Le projet s'inspire du pattern OpenClaw avec memoire persistante en Markdown, recherche semantique locale et systeme de heartbeat autonome. Une alternative sans dependances cloud a ChatGPT.</p>
-      
-      <a class="card-link" href="https://github.com/localgpt-app/localgpt" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="7">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title">L'Inde assouplit ses regles pour soutenir les startups deep tech</h2>
-      <div class="card-source">TechCrunch — il y a 7h</div>
-      <p class="card-summary">Le gouvernement indien a modifie sa reglementation pour mieux accompagner les startups deep tech, notamment en matiere de financement et de cadre juridique. Cette reforme vise a combler le retard du pays dans les technologies de pointe comme l'IA, la quantique et les biotechnologies.</p>
-      
-      <a class="card-link" href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="8">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">Claude Opus 4.6 decouvre 500 failles zero-day dans le code open source</h2>
-      <div class="card-source">Simon Willison — il y a 8h</div>
-      <p class="card-summary">Anthropic annonce que son modele Claude Opus 4.6 a identifie 500 vulnerabilites zero-day dans des projets open source. Thomas Ptacek, figure reconnue de la securite informatique, estime que la recherche de vulnerabilites pourrait etre le domaine le plus adapte aux LLM. La securite logicielle entre dans une nouvelle ere.</p>
-      
-      <a class="card-link" href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="9">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">L'ancien patron de Tumblr prend la tete du Washington Post apres des licenciements massifs</h2>
-      <div class="card-source">The Verge — il y a 11h</div>
-      <p class="card-summary">Jeff D'Onofrio, ancien CEO de Tumblr de 2017 a 2022, devient directeur general par interim du Washington Post. Il remplace Will Lewis, dont le mandat a ete marque par des controverses et des licenciements massifs cette semaine. D'Onofrio etait CFO du Post depuis juin dernier.</p>
-      
-      <a class="card-link" href="https://www.theverge.com/tech/875433/tumblr-jeff-donofrio-ceo-washington-post-layoffs" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="10">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">LineageOS 23.2 : la ROM Android alternative poursuit son evolution</h2>
-      <div class="card-source">Hacker News — il y a 5h</div>
-      <p class="card-summary">LineageOS publie sa version 23.2, apportant de nouvelles fonctionnalites et un support elargi pour de nombreux appareils. Ce projet open source reste la principale alternative a Android pour les utilisateurs soucieux de vie privee et de controle sur leur telephone.</p>
-      
-      <a class="card-link" href="https://lineageos.org/Changelog-31/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="11">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title">Fuite de donnees chez Substack : emails et numeros de telephone exposes</h2>
-      <div class="card-source">Hacker News — il y a 6h</div>
-      <p class="card-summary">La plateforme de newsletters Substack confirme une fuite de donnees affectant les adresses email et numeros de telephone de ses utilisateurs. L'incident souleve des questions sur la securite des plateformes de publication independante, qui gerent des donnees personnelles sensibles d'un nombre croissant de createurs.</p>
-      
-      <a class="card-link" href="https://techcrunch.com/2026/02/05/substack-confirms-data-breach-affecting-email-addresses-and-phone-numbers/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="12">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Les patrons de la tech se donnent rendez-vous au Super Bowl</h2>
-      <div class="card-source">TechCrunch — il y a 9h</div>
-      <p class="card-summary">Neal Mohan (YouTube) et Tim Cook (Apple) figurent parmi les dirigeants technologiques attendus au Super Bowl LX. L'evenement sportif est devenu un lieu incontournable de networking pour la Silicon Valley, ou les deals se negocient en tribune autant que dans les bureaux.</p>
-      
-      <a class="card-link" href="https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="13">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Les programmeurs malvoyants peuvent desormais concevoir des modeles 3D de maniere autonome</h2>
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
+      <h2 class="card-title">De nouveaux outils permettent aux developpeurs malvoyants de concevoir des modeles 3D</h2>
       <div class="card-source">IEEE Spectrum — il y a 21h</div>
-      <p class="card-summary">Des chercheurs ont developpe un outil permettant aux programmeurs aveugles ou malvoyants de creer des modeles 3D sans interface visuelle. La plupart des logiciels de conception 3D reposent sur le glisser-deposer et la rotation visuelle, excluant de fait ces utilisateurs du design materiel et de la robotique.</p>
+      <p class="card-summary">Les logiciels de modelisation 3D traditionnels reposent sur des interactions visuelles de type glisser-deposer, excluant de fait les programmeurs aveugles ou malvoyants. De nouveaux outils accessibles changent la donne en permettant la conception et la verification de composants physiques et virtuels par le code. Cette avancee ouvre des pans entiers de l'ingenierie materielle et de la robotique a des talents jusqu'ici exclus.</p>
       
       <a class="card-link" href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
-    <article class="card" data-index="14">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Vouch : la riposte de Mitchell Hashimoto contre les pull requests generees par IA</h2>
-      <div class="card-source">Simon Willison — il y a 11h</div>
-      <p class="card-summary">Mitchell Hashimoto, createur de Terraform et Vagrant, lance Vouch, un systeme de verification pour lutter contre le deluge de pull requests sans valeur generees par IA dans les projets open source. Face a la chute du cout de contribution, les mainteneurs ont besoin de filtrer le signal du bruit.</p>
+    <article class="card" data-index="5">
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">L'Inde refond ses regles pour accelerer ses startups deep tech</h2>
+      <div class="card-source">TechCrunch — il y a 8h</div>
+      <p class="card-summary">Le gouvernement indien a modifie son cadre reglementaire pour faciliter le financement et le developpement a long terme des startups technologiques de pointe. Les nouvelles regles visent a combler le retard du pays dans les domaines de l'IA, de la biotechnologie et du quantique. Cette reforme positionne l'Inde comme un concurrent serieux dans la course mondiale a l'innovation profonde.</p>
       
-      <a class="card-link" href="https://simonwillison.net/2026/Feb/7/vouch/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="6">
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Trois signes que votre LLM pourrait etre piege par une backdoor</h2>
+      <div class="card-source">The Register — il y a 3j</div>
+      <p class="card-summary">Des chercheurs en securite alertent sur la menace croissante des backdoors de type « agent dormant » dissimulees dans les modeles de langage lors de l'entrainement. Le responsable de la red team IA de Microsoft qualifie la detection de ces portes derobees de defi quasi impossible a relever. Cette vulnerabilite souleve des questions fondamentales sur la confiance que les entreprises peuvent accorder aux modeles d'IA tiers.</p>
+      
+      <a class="card-link" href="https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="7">
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Claude Opus 4.6 decouvre 500 failles zero-day : les experts en securite prennent l'IA au serieux</h2>
+      <div class="card-source">Simon Willison — il y a 9h</div>
+      <p class="card-summary">Thomas Ptacek, figure respectee de la recherche en vulnerabilites, affirme que la decouverte par Claude Opus 4.6 de 500 failles zero-day dans des projets open source ne doit pas etre prise a la legere. Selon lui, la recherche de vulnerabilites est peut-etre le domaine d'ingenierie logicielle le plus adapte aux capacites des LLM. Cette analyse tranche avec le scepticisme ambiant et suggere un tournant dans l'usage offensif et defensif de l'IA en cybersecurite.</p>
+      
+      <a class="card-link" href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="8">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Des paquets malveillants ciblent l'exchange dYdX et vident les portefeuilles</h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Des paquets frauduleux imitant les bibliotheques officielles de la plateforme d'echange dYdX ont siphonne les fonds des utilisateurs imprudents. Il s'agit de la troisieme attaque de ce type visant cette plateforme de finance decentralisee. L'incident rappelle la fragilite de la chaine d'approvisionnement logicielle dans l'ecosysteme crypto.</p>
+      
+      <a class="card-link" href="https://arstechnica.com/security/2026/02/malicious-packages-for-dydx-cryptocurrency-exchange-empties-user-wallets/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
   </div>
   <nav class="card-nav" id="cardNav">
@@ -420,105 +408,68 @@ a{color:inherit;text-decoration:none}
     <div class="dots" id="dots"></div>
     <button class="nav-btn" id="nextBtn" onclick="navigate(1)" aria-label="Suivant">&#8594;</button>
   </nav>
-  <div class="swipe-hint" id="swipeHint"><span>&#8592; swiper pour naviguer &#8594;</span></div>
 </section>
 
 <section class="grid-view" id="gridView">
   
-    <article class="grid-card" data-index="0">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://cyber-omelette.com/posts/the-abstraction-rises.html" target="_blank" rel="noopener">Les LLM comme compilateurs de langage : les lecons de Fortran pour l'avenir du code</a></h2>
-      <div class="card-source">Hacker News — il y a 2h</div>
-      <p class="card-summary">Un essai provocateur trace un parallele entre la revolution des compilateurs Fortran dans les annees 1950 et les grands modeles de langage actuels. L'auteur soutient que les LLM representent une nouvelle couche d'abstraction qui transforme le role du developpeur, comme Fortran l'avait fait en son temps. Une reflexion qui interroge sur ce que signifie encore programmer.</p>
+    <article class="grid-card synthesis-grid" data-index="0">
+      <span class="synth-tag">Synthese</span>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">IA et securite au coeur d'une semaine decisive pour la tech</h2>
+      <p class="card-summary">L'intelligence artificielle franchit un nouveau cap cette semaine, entre prouesses collaboratives d'agents IA et montee des inquietudes sur la securite des modeles de langage. Seize agents Claude ont concu un compilateur C fonctionnel, tandis que des chercheurs alertent sur les backdoors indectectables dans les LLM. Le secteur de la conduite autonome accelere avec Waymo qui integre un modele de monde pour simuler des scenarios extremes. Pendant ce temps, l'accessibilite numerique progresse grace a de nouveaux outils de modelisation 3D pour les developpeurs malvoyants, et l'Inde redessine son cadre reglementaire pour attirer les startups deep tech.</p>
     </article>
     <article class="grid-card" data-index="1">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://www.abc.net.au/news/2026-02-08/australian-outback-nuclear-tests-listening-warramunga-facility/106307478" target="_blank" rel="noopener">Dans l'outback australien, des capteurs a l'ecoute des essais nucleaires</a></h2>
-      <div class="card-source">Hacker News — il y a 1h</div>
-      <p class="card-summary">L'Australie exploite une station de surveillance dans l'outback pour detecter les essais nucleaires clandestins partout dans le monde. Ce dispositif fait partie du reseau international du CTBTO, qui utilise des technologies sismiques et infrasonores pour garantir le respect du traite d'interdiction des essais.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/" target="_blank" rel="noopener">Seize agents Claude collaborent pour creer un compilateur C fonctionnel</a></h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Une equipe a orchestre seize instances de Claude, l'IA d'Anthropic, pour concevoir un compilateur C capable de compiler le noyau Linux. L'experience, qui a coute 20 000 dollars, demontre le potentiel des systemes multi-agents pour des taches d'ingenierie complexes. Toutefois, une supervision humaine approfondie reste indispensable a chaque etape du processus.</p>
     </article>
     <article class="grid-card" data-index="2">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://github.com/joshuanwalker/Raiders2600" target="_blank" rel="noopener">Retro-ingenierie complete du jeu Raiders of the Lost Ark sur Atari 2600</a></h2>
-      <div class="card-source">Hacker News — il y a 1h</div>
-      <p class="card-summary">Un passionné a entierement desassemble et documente le code source du jeu Raiders of the Lost Ark sorti en 1982 sur Atari 2600. Le projet, heberge sur GitHub, offre un regard fascinant sur les contraintes de programmation de l'epoque, ou chaque octet comptait.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA</a></h2>
+      <div class="card-source">MIT Technology Review — il y a 1j</div>
+      <p class="card-summary">Moltbook, un clone de Reddit entierement peuple par des agents IA, a enflamme le web pendant quelques jours avant de reveler les limites du concept. Lance comme un espace ou les bots discutent et votent entre eux, le projet illustre la fascination actuelle pour l'IA generative poussee a l'absurde. La MIT Technology Review y voit un symptome de l'ere du spectacle IA, ou la viralite prime sur l'utilite reelle.</p>
     </article>
     <article class="grid-card" data-index="3">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://github.com/jingkaihe/matchlock" target="_blank" rel="noopener">Matchlock : un outil de sandboxing Linux concu pour isoler les agents IA</a></h2>
-      <div class="card-source">Hacker News — il y a 2h</div>
-      <p class="card-summary">Le projet open source Matchlock propose un mecanisme de sandboxing sous Linux specifiquement concu pour les agents IA autonomes. Face a la multiplication des systemes agentiques qui executent du code et accedent a des ressources, cet outil repond a un besoin critique de securite en limitant les capacites des agents.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/" target="_blank" rel="noopener">Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome</a></h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Waymo integre Genie 3, un modele de monde developpe par Google DeepMind, pour generer des scenarios de conduite rares ou impossibles a reproduire dans la realite. Cette approche permet d'entrainer les vehicules autonomes face a des situations extremes sans risque. La technologie marque une evolution significative vers une conduite autonome plus robuste et plus sure.</p>
     </article>
     <article class="grid-card" data-index="4">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener">Super Bowl LX : l'intelligence artificielle envahit les coupures publicitaires</a></h2>
-      <div class="card-source">The Verge — il y a 11h</div>
-      <p class="card-summary">Le Super Bowl LX opposera les Seattle Seahawks aux New England Patriots ce dimanche, mais l'IA pourrait bien voler la vedette durant les pauses publicitaires. Apres le fiasco de la publicite Google Gemini l'an dernier, les geants de la tech reviennent en force avec de nouvelles demonstrations de leurs modeles.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
+      <h2 class="card-title"><a href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">De nouveaux outils permettent aux developpeurs malvoyants de concevoir des modeles 3D</a></h2>
+      <div class="card-source">IEEE Spectrum — il y a 21h</div>
+      <p class="card-summary">Les logiciels de modelisation 3D traditionnels reposent sur des interactions visuelles de type glisser-deposer, excluant de fait les programmeurs aveugles ou malvoyants. De nouveaux outils accessibles changent la donne en permettant la conception et la verification de composants physiques et virtuels par le code. Cette avancee ouvre des pans entiers de l'ingenierie materielle et de la robotique a des talents jusqu'ici exclus.</p>
     </article>
     <article class="grid-card" data-index="5">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://donotnotify.com/opensource.html" target="_blank" rel="noopener">DoNotNotify passe en open source : reprendre le controle de ses notifications</a></h2>
-      <div class="card-source">Hacker News — il y a 3h</div>
-      <p class="card-summary">Le service DoNotNotify, qui permet de filtrer et controler les notifications excessives des applications, vient de passer en open source. L'outil repond a un probleme grandissant de fatigue numerique, alors que les utilisateurs sont submerges par les alertes de dizaines d'applications au quotidien.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">L'Inde refond ses regles pour accelerer ses startups deep tech</a></h2>
+      <div class="card-source">TechCrunch — il y a 8h</div>
+      <p class="card-summary">Le gouvernement indien a modifie son cadre reglementaire pour faciliter le financement et le developpement a long terme des startups technologiques de pointe. Les nouvelles regles visent a combler le retard du pays dans les domaines de l'IA, de la biotechnologie et du quantique. Cette reforme positionne l'Inde comme un concurrent serieux dans la course mondiale a l'innovation profonde.</p>
     </article>
     <article class="grid-card" data-index="6">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://github.com/localgpt-app/localgpt" target="_blank" rel="noopener">LocalGPT : un assistant IA local ecrit en Rust avec memoire persistante</a></h2>
-      <div class="card-source">Hacker News — il y a 9h</div>
-      <p class="card-summary">Un developpeur a cree LocalGPT en quatre nuits, un assistant IA local compile en un seul binaire de 27 Mo en Rust. Le projet s'inspire du pattern OpenClaw avec memoire persistante en Markdown, recherche semantique locale et systeme de heartbeat autonome. Une alternative sans dependances cloud a ChatGPT.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/" target="_blank" rel="noopener">Trois signes que votre LLM pourrait etre piege par une backdoor</a></h2>
+      <div class="card-source">The Register — il y a 3j</div>
+      <p class="card-summary">Des chercheurs en securite alertent sur la menace croissante des backdoors de type « agent dormant » dissimulees dans les modeles de langage lors de l'entrainement. Le responsable de la red team IA de Microsoft qualifie la detection de ces portes derobees de defi quasi impossible a relever. Cette vulnerabilite souleve des questions fondamentales sur la confiance que les entreprises peuvent accorder aux modeles d'IA tiers.</p>
     </article>
     <article class="grid-card" data-index="7">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">L'Inde assouplit ses regles pour soutenir les startups deep tech</a></h2>
-      <div class="card-source">TechCrunch — il y a 7h</div>
-      <p class="card-summary">Le gouvernement indien a modifie sa reglementation pour mieux accompagner les startups deep tech, notamment en matiere de financement et de cadre juridique. Cette reforme vise a combler le retard du pays dans les technologies de pointe comme l'IA, la quantique et les biotechnologies.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Claude Opus 4.6 decouvre 500 failles zero-day : les experts en securite prennent l'IA au serieux</a></h2>
+      <div class="card-source">Simon Willison — il y a 9h</div>
+      <p class="card-summary">Thomas Ptacek, figure respectee de la recherche en vulnerabilites, affirme que la decouverte par Claude Opus 4.6 de 500 failles zero-day dans des projets open source ne doit pas etre prise a la legere. Selon lui, la recherche de vulnerabilites est peut-etre le domaine d'ingenierie logicielle le plus adapte aux capacites des LLM. Cette analyse tranche avec le scepticisme ambiant et suggere un tournant dans l'usage offensif et defensif de l'IA en cybersecurite.</p>
     </article>
     <article class="grid-card" data-index="8">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Claude Opus 4.6 decouvre 500 failles zero-day dans le code open source</a></h2>
-      <div class="card-source">Simon Willison — il y a 8h</div>
-      <p class="card-summary">Anthropic annonce que son modele Claude Opus 4.6 a identifie 500 vulnerabilites zero-day dans des projets open source. Thomas Ptacek, figure reconnue de la securite informatique, estime que la recherche de vulnerabilites pourrait etre le domaine le plus adapte aux LLM. La securite logicielle entre dans une nouvelle ere.</p>
-    </article>
-    <article class="grid-card" data-index="9">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/tech/875433/tumblr-jeff-donofrio-ceo-washington-post-layoffs" target="_blank" rel="noopener">L'ancien patron de Tumblr prend la tete du Washington Post apres des licenciements massifs</a></h2>
-      <div class="card-source">The Verge — il y a 11h</div>
-      <p class="card-summary">Jeff D'Onofrio, ancien CEO de Tumblr de 2017 a 2022, devient directeur general par interim du Washington Post. Il remplace Will Lewis, dont le mandat a ete marque par des controverses et des licenciements massifs cette semaine. D'Onofrio etait CFO du Post depuis juin dernier.</p>
-    </article>
-    <article class="grid-card" data-index="10">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://lineageos.org/Changelog-31/" target="_blank" rel="noopener">LineageOS 23.2 : la ROM Android alternative poursuit son evolution</a></h2>
-      <div class="card-source">Hacker News — il y a 5h</div>
-      <p class="card-summary">LineageOS publie sa version 23.2, apportant de nouvelles fonctionnalites et un support elargi pour de nombreux appareils. Ce projet open source reste la principale alternative a Android pour les utilisateurs soucieux de vie privee et de controle sur leur telephone.</p>
-    </article>
-    <article class="grid-card" data-index="11">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
-      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/05/substack-confirms-data-breach-affecting-email-addresses-and-phone-numbers/" target="_blank" rel="noopener">Fuite de donnees chez Substack : emails et numeros de telephone exposes</a></h2>
-      <div class="card-source">Hacker News — il y a 6h</div>
-      <p class="card-summary">La plateforme de newsletters Substack confirme une fuite de donnees affectant les adresses email et numeros de telephone de ses utilisateurs. L'incident souleve des questions sur la securite des plateformes de publication independante, qui gerent des donnees personnelles sensibles d'un nombre croissant de createurs.</p>
-    </article>
-    <article class="grid-card" data-index="12">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/" target="_blank" rel="noopener">Les patrons de la tech se donnent rendez-vous au Super Bowl</a></h2>
-      <div class="card-source">TechCrunch — il y a 9h</div>
-      <p class="card-summary">Neal Mohan (YouTube) et Tim Cook (Apple) figurent parmi les dirigeants technologiques attendus au Super Bowl LX. L'evenement sportif est devenu un lieu incontournable de networking pour la Silicon Valley, ou les deals se negocient en tribune autant que dans les bureaux.</p>
-    </article>
-    <article class="grid-card" data-index="13">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Les programmeurs malvoyants peuvent desormais concevoir des modeles 3D de maniere autonome</a></h2>
-      <div class="card-source">IEEE Spectrum — il y a 21h</div>
-      <p class="card-summary">Des chercheurs ont developpe un outil permettant aux programmeurs aveugles ou malvoyants de creer des modeles 3D sans interface visuelle. La plupart des logiciels de conception 3D reposent sur le glisser-deposer et la rotation visuelle, excluant de fait ces utilisateurs du design materiel et de la robotique.</p>
-    </article>
-    <article class="grid-card" data-index="14">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/7/vouch/#atom-everything" target="_blank" rel="noopener">Vouch : la riposte de Mitchell Hashimoto contre les pull requests generees par IA</a></h2>
-      <div class="card-source">Simon Willison — il y a 11h</div>
-      <p class="card-summary">Mitchell Hashimoto, createur de Terraform et Vagrant, lance Vouch, un systeme de verification pour lutter contre le deluge de pull requests sans valeur generees par IA dans les projets open source. Face a la chute du cout de contribution, les mainteneurs ont besoin de filtrer le signal du bruit.</p>
+      <h2 class="card-title"><a href="https://arstechnica.com/security/2026/02/malicious-packages-for-dydx-cryptocurrency-exchange-empties-user-wallets/" target="_blank" rel="noopener">Des paquets malveillants ciblent l'exchange dYdX et vident les portefeuilles</a></h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Des paquets frauduleux imitant les bibliotheques officielles de la plateforme d'echange dYdX ont siphonne les fonds des utilisateurs imprudents. Il s'agit de la troisieme attaque de ce type visant cette plateforme de finance decentralisee. L'incident rappelle la fragilite de la chaine d'approvisionnement logicielle dans l'ecosysteme crypto.</p>
     </article>
 </section>
 
 <footer class="edition-footer">
-  <span>Genere par Claude — 12:01 CET</span>
+  <span>Genere par Claude — 12:37 CET</span>
   <nav class="footer-nav">
     <a href="editions/archives/index.html">Archives</a>
   </nav>
@@ -528,7 +479,7 @@ a{color:inherit;text-decoration:none}
 (function(){
   "use strict";
 
-  const articles = [{"title": "LLMs as Language Compilers: Lessons from Fortran for the Future of Coding", "url": "https://cyber-omelette.com/posts/the-abstraction-rises.html", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "", "published": "2026-02-08T08:15:36+00:00", "authority": 18, "matched_topics": ["IA"], "score": 50, "editorial_title": "Les LLM comme compilateurs de langage : les lecons de Fortran pour l'avenir du code", "editorial_summary": "Un essai provocateur trace un parallele entre la revolution des compilateurs Fortran dans les annees 1950 et les grands modeles de langage actuels. L'auteur soutient que les LLM representent une nouvelle couche d'abstraction qui transforme le role du developpeur, comme Fortran l'avait fait en son temps. Une reflexion qui interroge sur ce que signifie encore programmer."}, {"title": "In the Australian outback, we're listening for nuclear tests", "url": "https://www.abc.net.au/news/2026-02-08/australian-outback-nuclear-tests-listening-warramunga-facility/106307478", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "", "published": "2026-02-08T09:44:55+00:00", "authority": 18, "score": 48, "matched_topics": ["Tech", "IA"], "editorial_title": "Dans l'outback australien, des capteurs a l'ecoute des essais nucleaires", "editorial_summary": "L'Australie exploite une station de surveillance dans l'outback pour detecter les essais nucleaires clandestins partout dans le monde. Ce dispositif fait partie du reseau international du CTBTO, qui utilise des technologies sismiques et infrasonores pour garantir le respect du traite d'interdiction des essais."}, {"title": "Reverse Engineering Raiders of the Lost Ark for the Atari 2600", "url": "https://github.com/joshuanwalker/Raiders2600", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "", "published": "2026-02-08T09:10:18+00:00", "authority": 18, "score": 48, "matched_topics": ["Tech", "IA"], "editorial_title": "Retro-ingenierie complete du jeu Raiders of the Lost Ark sur Atari 2600", "editorial_summary": "Un passionné a entierement desassemble et documente le code source du jeu Raiders of the Lost Ark sorti en 1982 sur Atari 2600. Le projet, heberge sur GitHub, offre un regard fascinant sur les contraintes de programmation de l'epoque, ou chaque octet comptait."}, {"title": "Matchlock: Linux-based sandboxing for AI agents", "url": "https://github.com/jingkaihe/matchlock", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "", "published": "2026-02-08T08:07:55+00:00", "authority": 18, "score": 48, "matched_topics": ["Tech", "IA"], "editorial_title": "Matchlock : un outil de sandboxing Linux concu pour isoler les agents IA", "editorial_summary": "Le projet open source Matchlock propose un mecanisme de sandboxing sous Linux specifiquement concu pour les agents IA autonomes. Face a la multiplication des systemes agentiques qui executent du code et accedent a des ressources, cet outil repond a un besoin critique de securite en limitant les capacites des agents."}, {"title": "Super Bowl LX ads: all AI everything", "url": "https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game", "source": "The Verge", "topics": ["Tech"], "summary": "Super Bowl LX is nearly here, with the Seattle Seahawks taking on the New England Patriots. While Bad Bunny will be the star of the halftime show, AI could be the star of the commercial breaks, much like crypto was a few years ago. Last year’s Super Bowl featured a Google Gemini ad that fumbled [&#8230;]", "published": "2026-02-07T23:10:44+00:00", "authority": 18, "matched_topics": ["Tech"], "score": 45, "editorial_title": "Super Bowl LX : l'intelligence artificielle envahit les coupures publicitaires", "editorial_summary": "Le Super Bowl LX opposera les Seattle Seahawks aux New England Patriots ce dimanche, mais l'IA pourrait bien voler la vedette durant les pauses publicitaires. Apres le fiasco de la publicite Google Gemini l'an dernier, les geants de la tech reviennent en force avec de nouvelles demonstrations de leurs modeles."}, {"title": "DoNotNotify is now Open Source", "url": "https://donotnotify.com/opensource.html", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "", "published": "2026-02-08T07:39:49+00:00", "authority": 18, "matched_topics": ["Tech"], "score": 45, "editorial_title": "DoNotNotify passe en open source : reprendre le controle de ses notifications", "editorial_summary": "Le service DoNotNotify, qui permet de filtrer et controler les notifications excessives des applications, vient de passer en open source. L'outil repond a un probleme grandissant de fatigue numerique, alors que les utilisateurs sont submerges par les alertes de dizaines d'applications au quotidien."}, {"title": "Show HN: LocalGPT – A local-first AI assistant in Rust with persistent memory", "url": "https://github.com/localgpt-app/localgpt", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "I built LocalGPT over 4 nights as a Rust reimagining of the OpenClaw assistant pattern (markdown-based persistent memory, autonomous heartbeat tasks, skills system). It compiles to a single ~27MB binary — no Node.js, Docker, or Python required. Key features: - Persistent memory via markdown files (MEMORY, HEARTBEAT, SOUL markdown files) — compatible with OpenClaw's format - Full-text search (SQLite FTS5) + semantic search (local embeddings, no API key needed) - Autonomous heartbeat runner that checks tasks on a configurable interval - CLI + web interface + desktop GUI - Multi-provider: Anthropic, OpenAI, Ollama etc - Apache 2.0 Install: `cargo install localgpt` I use it daily as a knowledge accumulator, research assistant, and autonomous task runner for my side projects. The memory compounds — every session makes the next one better. GitHub: https://github.com/localgpt-app/localgpt Website: https://localgpt.app Would love feedback on the architecture or feature ideas.", "published": "2026-02-08T01:26:38+00:00", "authority": 18, "matched_topics": ["IA"], "score": 45, "editorial_title": "LocalGPT : un assistant IA local ecrit en Rust avec memoire persistante", "editorial_summary": "Un developpeur a cree LocalGPT en quatre nuits, un assistant IA local compile en un seul binaire de 27 Mo en Rust. Le projet s'inspire du pattern OpenClaw avec memoire persistante en Markdown, recherche semantique locale et systeme de heartbeat autonome. Une alternative sans dependances cloud a ChatGPT."}, {"title": "India has changed its startup rules for deep tech", "url": "https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/", "source": "TechCrunch", "topics": ["Tech", "Startups"], "summary": "India is adjusting startup rules to help more of its deep tech startups with funding and long-term success.", "published": "2026-02-08T03:30:00+00:00", "authority": 20, "matched_topics": ["Startups"], "score": 44, "editorial_title": "L'Inde assouplit ses regles pour soutenir les startups deep tech", "editorial_summary": "Le gouvernement indien a modifie sa reglementation pour mieux accompagner les startups deep tech, notamment en matiere de financement et de cadre juridique. Cette reforme vise a combler le retard du pays dans les technologies de pointe comme l'IA, la quantique et les biotechnologies."}, {"title": "Quoting Thomas Ptacek", "url": "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything", "source": "Simon Willison", "topics": ["IA", "Tech"], "summary": "People on the orange site are laughing at this, assuming it's just an ad and that there's nothing to it. Vulnerability researchers I talk to do not think this is a joke. As an erstwhile vuln researcher myself: do not bet against LLMs on this. Axios: Anthropic's Claude Opus 4.6 uncovers 500 zero-day flaws in open-source I think vulnerability research might be THE MOST LLM-amenable software engineering problem. Pattern-driven. Huge corpus of operational public patterns. Closed loops. Forward pr...", "published": "2026-02-08T02:25:53+00:00", "authority": 15, "matched_topics": ["IA"], "score": 44, "editorial_title": "Claude Opus 4.6 decouvre 500 failles zero-day dans le code open source", "editorial_summary": "Anthropic annonce que son modele Claude Opus 4.6 a identifie 500 vulnerabilites zero-day dans des projets open source. Thomas Ptacek, figure reconnue de la securite informatique, estime que la recherche de vulnerabilites pourrait etre le domaine le plus adapte aux LLM. La securite logicielle entre dans une nouvelle ere."}, {"title": "Former Tumblr head Jeff D’Onofrio steps in as acting CEO at the Washington Post", "url": "https://www.theverge.com/tech/875433/tumblr-jeff-donofrio-ceo-washington-post-layoffs", "source": "The Verge", "topics": ["Tech"], "summary": "After what can generously be called a contentious tenure as the CEO of The Washington Post, Will Lewis is stepping down following mass layoffs this week. Jeff D'Onofrio, former CEO of Tumblr from 2017 to 2022, will step in as acting CEO and publisher. D'Onofrio has been CFO at the Post since June of last [&#8230;]", "published": "2026-02-07T23:41:23+00:00", "authority": 18, "score": 43, "matched_topics": ["Tech"], "editorial_title": "L'ancien patron de Tumblr prend la tete du Washington Post apres des licenciements massifs", "editorial_summary": "Jeff D'Onofrio, ancien CEO de Tumblr de 2017 a 2022, devient directeur general par interim du Washington Post. Il remplace Will Lewis, dont le mandat a ete marque par des controverses et des licenciements massifs cette semaine. D'Onofrio etait CFO du Post depuis juin dernier."}, {"title": "LineageOS 23.2", "url": "https://lineageos.org/Changelog-31/", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "", "published": "2026-02-08T05:33:15+00:00", "authority": 18, "score": 43, "matched_topics": ["Tech", "IA"], "editorial_title": "LineageOS 23.2 : la ROM Android alternative poursuit son evolution", "editorial_summary": "LineageOS publie sa version 23.2, apportant de nouvelles fonctionnalites et un support elargi pour de nombreux appareils. Ce projet open source reste la principale alternative a Android pour les utilisateurs soucieux de vie privee et de controle sur leur telephone."}, {"title": "Substack confirms data breach affects users’ email addresses and phone numbers", "url": "https://techcrunch.com/2026/02/05/substack-confirms-data-breach-affecting-email-addresses-and-phone-numbers/", "source": "Hacker News", "topics": ["Tech", "IA"], "summary": "", "published": "2026-02-08T04:34:50+00:00", "authority": 18, "is_breaking": true, "score": 43, "matched_topics": ["Tech", "IA"], "editorial_title": "Fuite de donnees chez Substack : emails et numeros de telephone exposes", "editorial_summary": "La plateforme de newsletters Substack confirme une fuite de donnees affectant les adresses email et numeros de telephone de ses utilisateurs. L'incident souleve des questions sur la securite des plateformes de publication independante, qui gerent des donnees personnelles sensibles d'un nombre croissant de createurs."}, {"title": "The kids ‘picked last in gym class’ gear up for Super Bowl", "url": "https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/", "source": "TechCrunch", "topics": ["Tech", "Startups"], "summary": "YouTube CEO Neal Mohan is expected to be there. Apple's Tim Cook, too.", "published": "2026-02-08T01:26:49+00:00", "authority": 20, "matched_topics": ["Tech"], "score": 42, "editorial_title": "Les patrons de la tech se donnent rendez-vous au Super Bowl", "editorial_summary": "Neal Mohan (YouTube) et Tim Cook (Apple) figurent parmi les dirigeants technologiques attendus au Super Bowl LX. L'evenement sportif est devenu un lieu incontournable de networking pour la Silicon Valley, ou les deals se negocient en tribune autant que dans les bureaux."}, {"title": "Low-Vision Programmers Can Now Design 3D Models Independently", "url": "https://spectrum.ieee.org/3d-modeling-blind-programmers", "source": "IEEE Spectrum", "topics": ["Tech", "Sciences"], "summary": "Most 3D design software requires visual dragging and rotating—posing a challenge for blind and low-vision users. As a result, a range of hardware design, robotics, coding, and engineering work is inaccessible to interested programmers. A visually-impaired programmer might write great code. But because of the lack of accessible modeling software , the coder can’t model, design, and verify physical and virtual components of their system. However, new 3D modeling tools are beginning to change th...", "published": "2026-02-07T14:00:01+00:00", "authority": 20, "matched_topics": ["Tech"], "score": 42, "editorial_title": "Les programmeurs malvoyants peuvent desormais concevoir des modeles 3D de maniere autonome", "editorial_summary": "Des chercheurs ont developpe un outil permettant aux programmeurs aveugles ou malvoyants de creer des modeles 3D sans interface visuelle. La plupart des logiciels de conception 3D reposent sur le glisser-deposer et la rotation visuelle, excluant de fait ces utilisateurs du design materiel et de la robotique."}, {"title": "Vouch", "url": "https://simonwillison.net/2026/Feb/7/vouch/#atom-everything", "source": "Simon Willison", "topics": ["IA", "Tech"], "summary": "Vouch Mitchell Hashimoto's new system to help address the deluge of worthless AI-generated PRs faced by open source projects now that the friction involved in contributing has dropped so low. He says : The idea is simple: Unvouched users can't contribute to your projects. Very bad users can be explicitly \"denounced\", effectively blocked. Users are vouched or denounced by contributors via GitHub issue or discussion comments or via the CLI. Integration into GitHub is as simple as adopting the p...", "published": "2026-02-07T23:57:57+00:00", "authority": 15, "matched_topics": ["Tech"], "score": 42, "editorial_title": "Vouch : la riposte de Mitchell Hashimoto contre les pull requests generees par IA", "editorial_summary": "Mitchell Hashimoto, createur de Terraform et Vagrant, lance Vouch, un systeme de verification pour lutter contre le deluge de pull requests sans valeur generees par IA dans les projets open source. Face a la chute du cout de contribution, les mainteneurs ont besoin de filtrer le signal du bruit."}];
+  const articles = [{"is_synthesis": true, "editorial_title": "IA et securite au coeur d'une semaine decisive pour la tech", "editorial_summary": "L'intelligence artificielle franchit un nouveau cap cette semaine, entre prouesses collaboratives d'agents IA et montee des inquietudes sur la securite des modeles de langage. Seize agents Claude ont concu un compilateur C fonctionnel, tandis que des chercheurs alertent sur les backdoors indectectables dans les LLM. Le secteur de la conduite autonome accelere avec Waymo qui integre un modele de monde pour simuler des scenarios extremes. Pendant ce temps, l'accessibilite numerique progresse grace a de nouveaux outils de modelisation 3D pour les developpeurs malvoyants, et l'Inde redessine son cadre reglementaire pour attirer les startups deep tech.", "article_refs": [1, 2, 3, 6], "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech"], "source": "Editorial", "url": "#", "published": "2026-02-08T12:00:00+01:00"}, {"title": "Sixteen Claude AI agents working together created a new C compiler", "editorial_title": "Seize agents Claude collaborent pour creer un compilateur C fonctionnel", "editorial_summary": "Une equipe a orchestre seize instances de Claude, l'IA d'Anthropic, pour concevoir un compilateur C capable de compiler le noyau Linux. L'experience, qui a coute 20 000 dollars, demontre le potentiel des systemes multi-agents pour des taches d'ingenierie complexes. Toutefois, une supervision humaine approfondie reste indispensable a chaque etape du processus.", "url": "https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/", "source": "Ars Technica", "topics": ["Tech", "IA"], "matched_topics": ["IA", "Tech"], "summary": "The $20,000 experiment compiled a Linux kernel but needed deep human management.", "published": "2026-02-06T23:40:58+00:00", "authority": 22}, {"title": "Moltbook was peak AI theater", "editorial_title": "Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA", "editorial_summary": "Moltbook, un clone de Reddit entierement peuple par des agents IA, a enflamme le web pendant quelques jours avant de reveler les limites du concept. Lance comme un espace ou les bots discutent et votent entre eux, le projet illustre la fascination actuelle pour l'IA generative poussee a l'absurde. La MIT Technology Review y voit un symptome de l'ere du spectacle IA, ou la viralite prime sur l'utilite reelle.", "url": "https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/", "source": "MIT Technology Review", "topics": ["IA", "Tech", "Sciences"], "matched_topics": ["IA", "Tech"], "summary": "A vibe-coded Reddit clone where AI agents share, discuss, and upvote.", "published": "2026-02-06T16:38:11+00:00", "authority": 22}, {"title": "Waymo leverages Genie 3 to create a world model for self-driving cars", "editorial_title": "Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome", "editorial_summary": "Waymo integre Genie 3, un modele de monde developpe par Google DeepMind, pour generer des scenarios de conduite rares ou impossibles a reproduire dans la realite. Cette approche permet d'entrainer les vehicules autonomes face a des situations extremes sans risque. La technologie marque une evolution significative vers une conduite autonome plus robuste et plus sure.", "url": "https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/", "source": "Ars Technica", "topics": ["Tech", "IA"], "matched_topics": ["IA", "Tech"], "summary": "With Genie 3, Waymo wants to explore rare and even impossible driving conditions.", "published": "2026-02-06T20:44:35+00:00", "authority": 22}, {"title": "Low-Vision Programmers Can Now Design 3D Models Independently", "editorial_title": "De nouveaux outils permettent aux developpeurs malvoyants de concevoir des modeles 3D", "editorial_summary": "Les logiciels de modelisation 3D traditionnels reposent sur des interactions visuelles de type glisser-deposer, excluant de fait les programmeurs aveugles ou malvoyants. De nouveaux outils accessibles changent la donne en permettant la conception et la verification de composants physiques et virtuels par le code. Cette avancee ouvre des pans entiers de l'ingenierie materielle et de la robotique a des talents jusqu'ici exclus.", "url": "https://spectrum.ieee.org/3d-modeling-blind-programmers", "source": "IEEE Spectrum", "topics": ["Tech", "Sciences"], "matched_topics": ["Tech", "Sciences"], "summary": "New 3D modeling tools are beginning to change accessibility for blind programmers.", "published": "2026-02-07T14:00:01+00:00", "authority": 20}, {"title": "India has changed its startup rules for deep tech", "editorial_title": "L'Inde refond ses regles pour accelerer ses startups deep tech", "editorial_summary": "Le gouvernement indien a modifie son cadre reglementaire pour faciliter le financement et le developpement a long terme des startups technologiques de pointe. Les nouvelles regles visent a combler le retard du pays dans les domaines de l'IA, de la biotechnologie et du quantique. Cette reforme positionne l'Inde comme un concurrent serieux dans la course mondiale a l'innovation profonde.", "url": "https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/", "source": "TechCrunch", "topics": ["Tech", "Startups"], "matched_topics": ["Startups", "Tech"], "summary": "India is adjusting startup rules to help more of its deep tech startups.", "published": "2026-02-08T03:30:00+00:00", "authority": 20}, {"title": "Three clues your LLM may be poisoned", "editorial_title": "Trois signes que votre LLM pourrait etre piege par une backdoor", "editorial_summary": "Des chercheurs en securite alertent sur la menace croissante des backdoors de type « agent dormant » dissimulees dans les modeles de langage lors de l'entrainement. Le responsable de la red team IA de Microsoft qualifie la detection de ces portes derobees de defi quasi impossible a relever. Cette vulnerabilite souleve des questions fondamentales sur la confiance que les entreprises peuvent accorder aux modeles d'IA tiers.", "url": "https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/", "source": "The Register", "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech"], "summary": "Sleeper agent-style backdoors in AI LLMs pose a security threat.", "published": "2026-02-05T10:00:00+00:00", "authority": 15}, {"title": "Quoting Thomas Ptacek", "editorial_title": "Claude Opus 4.6 decouvre 500 failles zero-day : les experts en securite prennent l'IA au serieux", "editorial_summary": "Thomas Ptacek, figure respectee de la recherche en vulnerabilites, affirme que la decouverte par Claude Opus 4.6 de 500 failles zero-day dans des projets open source ne doit pas etre prise a la legere. Selon lui, la recherche de vulnerabilites est peut-etre le domaine d'ingenierie logicielle le plus adapte aux capacites des LLM. Cette analyse tranche avec le scepticisme ambiant et suggere un tournant dans l'usage offensif et defensif de l'IA en cybersecurite.", "url": "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything", "source": "Simon Willison", "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech"], "summary": "Vulnerability researchers do not think Claude finding 500 zero-days is a joke.", "published": "2026-02-08T02:25:53+00:00", "authority": 15}, {"title": "Malicious packages for dYdX cryptocurrency exchange empties user wallets", "editorial_title": "Des paquets malveillants ciblent l'exchange dYdX et vident les portefeuilles", "editorial_summary": "Des paquets frauduleux imitant les bibliotheques officielles de la plateforme d'echange dYdX ont siphonne les fonds des utilisateurs imprudents. Il s'agit de la troisieme attaque de ce type visant cette plateforme de finance decentralisee. L'incident rappelle la fragilite de la chaine d'approvisionnement logicielle dans l'ecosysteme crypto.", "url": "https://arstechnica.com/security/2026/02/malicious-packages-for-dydx-cryptocurrency-exchange-empties-user-wallets/", "source": "Ars Technica", "topics": ["Tech", "IA"], "matched_topics": ["Tech"], "summary": "Third time the exchange has been targeted by thieves via malicious packages.", "published": "2026-02-06T22:16:51+00:00", "authority": 22}];
 
   // State
   let current = 0;
@@ -557,8 +508,8 @@ a{color:inherit;text-decoration:none}
     updateToggleLabel(theme);
   }
   window.toggleTheme = function(){
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('rp-theme', next);
     updateToggleLabel(next);
@@ -574,14 +525,26 @@ a{color:inherit;text-decoration:none}
     document.getElementById('breaking-text').textContent = breaking.title;
   }
 
-  // Filters
+  // Navigation helper
+  function updateNav(){
+    counterNum.textContent = current + 1;
+    totalNum.textContent = filtered.length;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current >= filtered.length - 1;
+    updateDots();
+  }
+
+  // Filters — always include synthesis card
   document.querySelectorAll('.filter-pill').forEach(btn => {
     btn.addEventListener('click', function(){
       document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
       const f = this.dataset.filter;
       if(f === 'all') filtered = articles.map((_,i) => i);
-      else filtered = articles.reduce((acc,a,i) => { if(a.topics.includes(f)) acc.push(i); return acc; }, []);
+      else filtered = articles.reduce((acc,a,i) => {
+        if(a.is_synthesis || a.topics.includes(f)) acc.push(i);
+        return acc;
+      }, []);
       current = 0;
       showCard(0);
       buildDots();
@@ -589,35 +552,83 @@ a{color:inherit;text-decoration:none}
     });
   });
 
-  // Cards
+  // Cards — direct show (no animation, used for init and filter reset)
   function showCard(idx){
     if(filtered.length === 0) return;
     current = Math.max(0, Math.min(idx, filtered.length - 1));
     const cards = stack.querySelectorAll('.card');
     cards.forEach(c => {
-      c.classList.remove('active','exit-left','exit-right');
+      c.classList.remove('active','exit-left','exit-right','enter-left','enter-right','curl-exit-left','curl-exit-right');
       c.style.transform = '';
+      c.style.transition = '';
+      c.style.opacity = '';
     });
     const activeCard = stack.querySelector(`[data-index="${filtered[current]}"]`);
     if(activeCard) activeCard.classList.add('active');
-    counterNum.textContent = current + 1;
-    totalNum.textContent = filtered.length;
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === filtered.length - 1;
-    updateDots();
+    updateNav();
   }
 
+  // Navigate with bidirectional slide+fade spring transitions
   window.navigate = function(dir){
-    const prev = current;
+    if(filtered.length === 0) return;
     const next = current + dir;
     if(next < 0 || next >= filtered.length) return;
-    const prevCard = stack.querySelector(`[data-index="${filtered[prev]}"]`);
-    if(prevCard) prevCard.classList.add(dir > 0 ? 'exit-left' : 'exit-right');
+
+    const prevCard = stack.querySelector(`[data-index="${filtered[current]}"]`);
+    const nextCard = stack.querySelector(`[data-index="${filtered[next]}"]`);
+    if(!prevCard || !nextCard) return;
+
+    // Exit current card
+    prevCard.classList.remove('active');
+    prevCard.classList.add(dir > 0 ? 'exit-left' : 'exit-right');
+
+    // Position next card off-screen without transition
+    nextCard.classList.add(dir > 0 ? 'enter-right' : 'enter-left');
+    nextCard.style.transition = 'none';
+    nextCard.offsetHeight; // force reflow
+    nextCard.style.transition = '';
+
+    // Animate entry
+    nextCard.classList.remove('enter-left','enter-right');
+    nextCard.classList.add('active');
+
     current = next;
-    setTimeout(() => showCard(current), 50);
+    updateNav();
+
+    // Cleanup
+    setTimeout(() => {
+      prevCard.classList.remove('exit-left','exit-right','curl-exit-left','curl-exit-right');
+    }, 600);
   };
 
-  // Swipe — with pointer capture for reliable touch
+  // goToCard — for synthesis refs (jump directly)
+  window.goToCard = function(articleIndex){
+    const pos = filtered.indexOf(articleIndex);
+    if(pos < 0 || pos === current) return;
+    const dir = pos > current ? 1 : -1;
+
+    const prevCard = stack.querySelector(`[data-index="${filtered[current]}"]`);
+    if(prevCard){
+      prevCard.classList.remove('active');
+      prevCard.classList.add(dir > 0 ? 'exit-left' : 'exit-right');
+    }
+    const nextCard = stack.querySelector(`[data-index="${filtered[pos]}"]`);
+    if(nextCard){
+      nextCard.classList.add(dir > 0 ? 'enter-right' : 'enter-left');
+      nextCard.style.transition = 'none';
+      nextCard.offsetHeight;
+      nextCard.style.transition = '';
+      nextCard.classList.remove('enter-left','enter-right');
+      nextCard.classList.add('active');
+    }
+    current = pos;
+    updateNav();
+    setTimeout(() => {
+      if(prevCard) prevCard.classList.remove('exit-left','exit-right');
+    }, 600);
+  };
+
+  // Swipe — pointer events with spring physics
   let activePointerId = null;
   const swipeThreshold = () => Math.min(80, window.innerWidth * 0.2);
 
@@ -625,7 +636,6 @@ a{color:inherit;text-decoration:none}
     if(isGrid) return;
     const card = e.target.closest('.card.active');
     if(!card) return;
-    // Ignore multi-touch (pinch-zoom etc)
     if(activePointerId !== null) return;
     activePointerId = e.pointerId;
     isDragging = true;
@@ -641,9 +651,8 @@ a{color:inherit;text-decoration:none}
     if(!card) return;
     const progress = Math.min(Math.abs(deltaX) / (window.innerWidth * 0.45), 1);
     const opacity = 1 - progress * 0.4;
-    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.02}deg)`;
+    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.03}deg)`;
     card.style.opacity = opacity;
-    // Prevent vertical scroll while swiping horizontally
     if(Math.abs(deltaX) > 10) e.preventDefault();
   }
   function onPointerUp(e){
@@ -652,12 +661,14 @@ a{color:inherit;text-decoration:none}
     activePointerId = null;
     const card = stack.querySelector('.card.active');
     if(!card) return;
-    card.style.transition = '';
-    card.style.opacity = '';
     if(Math.abs(deltaX) > swipeThreshold()){
+      card.style.transition = `transform .5s var(--spring), opacity .4s ease-out`;
+      card.style.opacity = '';
       navigate(deltaX < 0 ? 1 : -1);
     } else {
+      card.style.transition = `transform .5s var(--spring-back), opacity .3s ease-out`;
       card.style.transform = '';
+      card.style.opacity = '';
     }
   }
   viewport.addEventListener('pointerdown', onPointerDown);
@@ -675,11 +686,33 @@ a{color:inherit;text-decoration:none}
   // Dots
   function buildDots(){
     dotsEl.innerHTML = '';
-    const max = Math.min(filtered.length, 12);
-    for(let i = 0; i < max; i++){
+    for(let i = 0; i < filtered.length; i++){
       const d = document.createElement('span');
       d.className = 'dot' + (i === current ? ' active' : '');
-      d.addEventListener('click', () => showCard(i));
+      d.addEventListener('click', () => {
+        if(i !== current){
+          const dir = i > current ? 1 : -1;
+          const prevCard = stack.querySelector(`[data-index="${filtered[current]}"]`);
+          if(prevCard){
+            prevCard.classList.remove('active');
+            prevCard.classList.add(dir > 0 ? 'exit-left' : 'exit-right');
+          }
+          const nextCard = stack.querySelector(`[data-index="${filtered[i]}"]`);
+          if(nextCard){
+            nextCard.classList.add(dir > 0 ? 'enter-right' : 'enter-left');
+            nextCard.style.transition = 'none';
+            nextCard.offsetHeight;
+            nextCard.style.transition = '';
+            nextCard.classList.remove('enter-left','enter-right');
+            nextCard.classList.add('active');
+          }
+          current = i;
+          updateNav();
+          setTimeout(() => {
+            if(prevCard) prevCard.classList.remove('exit-left','exit-right');
+          }, 600);
+        }
+      });
       dotsEl.appendChild(d);
     }
   }
@@ -714,32 +747,10 @@ a{color:inherit;text-decoration:none}
     });
   }
 
-  // Swipe hint — show on mobile, hide after first swipe
-  const swipeHint = document.getElementById('swipeHint');
-  let hintDismissed = false;
-  function showSwipeHint(){
-    if(hintDismissed || !swipeHint) return;
-    if(window.innerWidth <= 640){
-      swipeHint.classList.add('visible');
-    }
-  }
-  function dismissSwipeHint(){
-    if(hintDismissed) return;
-    hintDismissed = true;
-    if(swipeHint) swipeHint.classList.remove('visible');
-  }
-  // Dismiss on first navigation
-  const origNavigate = window.navigate;
-  window.navigate = function(dir){
-    dismissSwipeHint();
-    return origNavigate(dir);
-  };
-
   // Init
   initTheme();
   showCard(0);
   buildDots();
-  setTimeout(showSwipeHint, 800);
 })();
 </script>
 </body>
