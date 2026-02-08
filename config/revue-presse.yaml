@@ -1,0 +1,117 @@
+edition:
+  title: "REVUE DE PRESSE"
+  max_articles: 15
+  timezone: "Europe/Paris"
+
+github:
+  repo: "Sandjab/rp"
+  branch: "gh-pages"
+  url: "https://sandjab.github.io/rp/"
+
+topics:
+  - name: "Intelligence Artificielle"
+    tag: "IA"
+    color: "#7C3AED"
+    keywords:
+      - "intelligence artificielle"
+      - "machine learning"
+      - "deep learning"
+      - "LLM"
+      - "GPT"
+      - "Claude"
+      - "neural network"
+      - "AI safety"
+      - "generative AI"
+      - "transformer"
+    queries:
+      - "AI artificial intelligence breakthroughs today"
+      - "LLM large language model news"
+
+  - name: "Tech"
+    tag: "Tech"
+    color: "#2563EB"
+    keywords:
+      - "software"
+      - "programming"
+      - "open source"
+      - "cloud"
+      - "cybersecurity"
+      - "Apple"
+      - "Google"
+      - "Microsoft"
+      - "developer"
+      - "API"
+    queries:
+      - "technology news today software engineering"
+      - "big tech companies announcements"
+
+  - name: "Sciences"
+    tag: "Sciences"
+    color: "#059669"
+    keywords:
+      - "research"
+      - "study"
+      - "discovery"
+      - "physics"
+      - "biology"
+      - "climate"
+      - "space"
+      - "quantum"
+      - "neuroscience"
+      - "genome"
+    queries:
+      - "scientific discovery research breakthrough today"
+
+  - name: "Startups"
+    tag: "Startups"
+    color: "#D97706"
+    keywords:
+      - "startup"
+      - "funding"
+      - "venture capital"
+      - "seed"
+      - "series A"
+      - "Y Combinator"
+      - "unicorn"
+      - "IPO"
+      - "acquisition"
+      - "founder"
+    queries:
+      - "startup funding news today tech"
+
+source_authority:
+  Nature: 25
+  Science: 25
+  ArXiv: 22
+  Ars Technica: 22
+  TechCrunch: 20
+  The Verge: 18
+  Hacker News: 18
+  Wired: 18
+  MIT Technology Review: 22
+  Reuters: 20
+  Simon Willison: 15
+  IEEE Spectrum: 20
+  Science Magazine: 24
+  default: 10
+
+styling:
+  fonts:
+    heading: "Instrument Serif"
+    body: "Inter"
+    mono: "JetBrains Mono"
+  colors:
+    light:
+      background: "#FAFAF8"
+      card: "#FFFFFF"
+      text: "#1A1A1A"
+      text_secondary: "#6B6B6B"
+      accent: "#E63946"
+      border: "#E5E5E3"
+    dark:
+      background: "#0F0F0F"
+      card: "#1A1A1A"
+      text: "#EDEDEB"
+      text_secondary: "#999999"
+      accent: "#FF6B6B"
+      border: "#2A2A2A"

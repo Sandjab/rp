@@ -1,0 +1,48 @@
+feeds:
+  - name: "Ars Technica"
+    url: "https://feeds.arstechnica.com/arstechnica/index"
+    topics: ["Tech", "IA"]
+
+  - name: "Nature"
+    url: "https://www.nature.com/nature.rss"
+    topics: ["Sciences"]
+
+  - name: "ArXiv CS.AI"
+    url: "https://rss.arxiv.org/rss/cs.AI"
+    topics: ["IA"]
+
+  - name: "TechCrunch"
+    url: "https://techcrunch.com/feed/"
+    topics: ["Tech", "Startups"]
+
+  - name: "The Verge"
+    url: "https://www.theverge.com/rss/index.xml"
+    topics: ["Tech"]
+
+  - name: "Hacker News"
+    url: "https://hnrss.org/frontpage"
+    topics: ["Tech", "IA"]
+
+  - name: "Simon Willison"
+    url: "https://simonwillison.net/atom/everything/"
+    topics: ["IA", "Tech"]
+
+  - name: "MIT Technology Review"
+    url: "https://www.technologyreview.com/feed/"
+    topics: ["IA", "Tech", "Sciences"]
+
+  - name: "Wired"
+    url: "https://www.wired.com/feed/rss"
+    topics: ["Tech", "Sciences"]
+
+  - name: "IEEE Spectrum"
+    url: "https://spectrum.ieee.org/feeds/feed.rss"
+    topics: ["Tech", "Sciences"]
+
+  - name: "Science Magazine"
+    url: "https://www.science.org/rss/news_current.xml"
+    topics: ["Sciences"]
+
+  - name: "Reuters Technology"
+    url: "https://www.reutersagency.com/feed/?taxonomy=best-sectors&post_type=best"
+    topics: ["Tech", "Startups"]
