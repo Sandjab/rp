@@ -99,7 +99,7 @@ a{color:inherit;text-decoration:none}
   padding:clamp(1.5rem,3vw,2.5rem);
   opacity:0;pointer-events:none;
   transition:transform .45s var(--ease),opacity .35s var(--ease);
-  touch-action:pan-y;user-select:none;
+  touch-action:pan-y pinch-zoom;user-select:none;
   will-change:transform;
 }
 .card.active{
@@ -225,11 +225,42 @@ a{color:inherit;text-decoration:none}
   }
 }
 
+/* SWIPE HINT — mobile only */
+.swipe-hint{
+  display:none;text-align:center;
+  font-family:var(--font-m);font-size:0.7rem;color:var(--text-2);
+  padding:0.5rem 0 0;opacity:0;transition:opacity .6s;
+}
+.swipe-hint.visible{opacity:1}
+.swipe-hint span{display:inline-block;animation:swipeHint 2s var(--ease) 2}
+@keyframes swipeHint{
+  0%,100%{transform:translateX(0)}
+  30%{transform:translateX(-12px)}
+  60%{transform:translateX(8px)}
+}
+
 /* MOBILE */
 @media(max-width:640px){
   .masthead{flex-direction:column;gap:0.5rem}
+  .masthead-meta{gap:0.8rem;flex-wrap:wrap}
   .card{padding:1.2rem}
+  .card-viewport{min-height:auto;padding:1rem}
+  .card-title{font-size:clamp(1.3rem,5vw,1.8rem)}
+  .card-summary{font-size:0.95rem;line-height:1.6}
+  .filter-bar{
+    gap:0.5rem;padding:0.8rem 1rem;
+    overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
+  }
+  .filter-pill{flex-shrink:0;padding:0.5rem 0.9rem;font-size:0.7rem}
+  .nav-btn{width:48px;height:48px;font-size:1.4rem}
+  .card-nav{gap:1rem;padding:1rem 0}
   .dots{display:none}
+  .swipe-hint{display:block}
+  .grid-view{grid-template-columns:1fr}
+  .grid-card{padding:1.2rem}
+  .context-toggle{padding:0.3rem 0;font-size:0.8rem}
+  .card-link{font-size:0.85rem;padding:0.2rem 0}
+  .breaking{font-size:0.75rem;padding:0.6rem 1rem}
 }
 </style>
 </head>
@@ -265,6 +296,7 @@ a{color:inherit;text-decoration:none}
     <div class="dots" id="dots"></div>
     <button class="nav-btn" id="nextBtn" onclick="navigate(1)" aria-label="Suivant">&#8594;</button>
   </nav>
+  <div class="swipe-hint" id="swipeHint"><span>&#8592; swiper pour naviguer &#8594;</span></div>
 </section>
 
 <section class="grid-view" id="gridView">
@@ -371,31 +403,44 @@ a{color:inherit;text-decoration:none}
     setTimeout(() => showCard(current), 50);
   };
 
-  // Swipe
+  // Swipe — with pointer capture for reliable touch
+  let activePointerId = null;
+  const swipeThreshold = () => Math.min(80, window.innerWidth * 0.2);
+
   function onPointerDown(e){
     if(isGrid) return;
     const card = e.target.closest('.card.active');
     if(!card) return;
+    // Ignore multi-touch (pinch-zoom etc)
+    if(activePointerId !== null) return;
+    activePointerId = e.pointerId;
     isDragging = true;
     startX = e.clientX;
     deltaX = 0;
     card.style.transition = 'none';
+    card.setPointerCapture(e.pointerId);
   }
   function onPointerMove(e){
-    if(!isDragging) return;
+    if(!isDragging || e.pointerId !== activePointerId) return;
     deltaX = e.clientX - startX;
     const card = stack.querySelector('.card.active');
-    if(card){
-      card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.02}deg)`;
-    }
+    if(!card) return;
+    const progress = Math.min(Math.abs(deltaX) / (window.innerWidth * 0.45), 1);
+    const opacity = 1 - progress * 0.4;
+    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.02}deg)`;
+    card.style.opacity = opacity;
+    // Prevent vertical scroll while swiping horizontally
+    if(Math.abs(deltaX) > 10) e.preventDefault();
   }
-  function onPointerUp(){
-    if(!isDragging) return;
+  function onPointerUp(e){
+    if(!isDragging || e.pointerId !== activePointerId) return;
     isDragging = false;
+    activePointerId = null;
     const card = stack.querySelector('.card.active');
     if(!card) return;
     card.style.transition = '';
-    if(Math.abs(deltaX) > 80){
+    card.style.opacity = '';
+    if(Math.abs(deltaX) > swipeThreshold()){
       navigate(deltaX < 0 ? 1 : -1);
     } else {
       card.style.transform = '';
@@ -455,10 +500,32 @@ a{color:inherit;text-decoration:none}
     });
   }
 
+  // Swipe hint — show on mobile, hide after first swipe
+  const swipeHint = document.getElementById('swipeHint');
+  let hintDismissed = false;
+  function showSwipeHint(){
+    if(hintDismissed || !swipeHint) return;
+    if(window.innerWidth <= 640){
+      swipeHint.classList.add('visible');
+    }
+  }
+  function dismissSwipeHint(){
+    if(hintDismissed) return;
+    hintDismissed = true;
+    if(swipeHint) swipeHint.classList.remove('visible');
+  }
+  // Dismiss on first navigation
+  const origNavigate = window.navigate;
+  window.navigate = function(dir){
+    dismissSwipeHint();
+    return origNavigate(dir);
+  };
+
   // Init
   initTheme();
   showCard(0);
   buildDots();
+  setTimeout(showSwipeHint, 800);
 })();
 </script>
 </body>
