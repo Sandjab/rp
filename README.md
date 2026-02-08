@@ -18,9 +18,11 @@ flowchart TD
 
     subgraph Production
         A1 --> ED{{Phase 2 — Selection + edito\nclaude -p}}
-        ED --> A2[(02_editorial.json\n1 synthese + 8 articles)]
+        ED --> A2[(02_editorial.json\n1 synthese + 10 articles)]
         A2 --> GEN[Phase 3 — Generation HTML]
         GEN --> HTML[(editions/YYYY-MM-DD.html)]
+        A2 --> LI{{Phase 3b — LinkedIn post\nclaude -p + NanoBanana}}
+        LI --> LIF[(linkedin/\npost + image)]
         HTML --> DEP[Phase 4 — Deploy gh-pages]
         DEP --> SITE([sandjab.github.io/rp/])
     end
@@ -30,13 +32,26 @@ flowchart TD
     classDef artifact fill:#dfe6e9,color:#2d3436,stroke:#b2bec3
     classDef site fill:#00b894,color:#fff,stroke:#00a381
 
-    class WS,ED llm
+    class WS,ED,LI llm
     class COL,GEN,DEP script
-    class A0,A1,A2,HTML,RSS artifact
+    class A0,A1,A2,HTML,RSS,LIF artifact
     class SITE site
 ```
 
 **Legende** : hexagones violets = LLM (`claude -p`) · rectangles gris = scripts Python · documents clairs = artefacts `.pipeline/`
+
+## Installation
+
+```bash
+uv venv && source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+Prerequis :
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
+- `claude` CLI (pour les phases LLM)
+- `GOOGLE_API_KEY` dans l'environnement (pour la generation d'images LinkedIn)
 
 ## Lancer une edition
 
@@ -48,6 +63,12 @@ Sans deploiement (test local) :
 
 ```bash
 bash scripts/run_edition.sh --no-deploy
+```
+
+Sans deploy ni LinkedIn :
+
+```bash
+bash scripts/run_edition.sh --no-deploy --no-linkedin
 ```
 
 ## Structure
@@ -62,22 +83,26 @@ scripts/
   collect.py           # Phase 1 : RSS + merge + dedup + rank
   write_editorial.py   # Phase 2 : selection + edito via claude -p
   generate_edition.py  # Phase 3 : generation HTML
+  linkedin_post.py     # Phase 3b : post LinkedIn via claude -p + NanoBanana
   deploy.py            # Phase 4 : push gh-pages
   validate.py          # Validation JSON inter-phases
   prompts/             # Prompts pour claude -p
+    linkedin.md        # Prompt pour le post LinkedIn
 templates/
   edition.html         # Template HTML (CSS + JS inline)
 editions/              # HTML generes
   archives/
     manifest.json      # Metadonnees des editions (date, numero, titre)
 .pipeline/             # Artefacts intermediaires (gitignore)
+  linkedin/            # Post LinkedIn (post.txt, comment.txt, image.png)
+requirements.txt       # Dependances Python
 ```
 
 ## Scripts
 
 ### `run_edition.sh` — Orchestrateur
 
-Lance les 5 phases sequentiellement. Accepte `--no-deploy` pour sauter le deploiement. Recree `.pipeline/` a chaque run. La Phase 0 est tolerante : si elle echoue, le pipeline continue avec les RSS seuls.
+Lance les 5 phases sequentiellement. Accepte `--no-deploy` pour sauter le deploiement et `--no-linkedin` pour sauter la Phase 3b. Recree `.pipeline/` a chaque run. Les Phases 0 et 3b sont tolerantes : si elles echouent, le pipeline continue.
 
 ### `websearch_collect.py` — Phase 0 : recherche web
 
@@ -113,6 +138,10 @@ Appelle `claude -p` avec le prompt `prompts/editorial.md` et les 20 candidats. L
 
 Remplit le template `templates/edition.html` avec les articles editorialises. Genere les cards pour le carrousel desktop et la grille mobile, les timestamps relatifs en francais ("il y a 2h"), le numero d'edition. Produit l'edition datee, une copie archivee horodatee, et `latest.html` pour le deploy. Met a jour `editions/archives/manifest.json` avec les metadonnees de l'edition (date, numero, titre editorial).
 
+### `linkedin_post.py` — Phase 3b : post LinkedIn
+
+Genere un post LinkedIn optimise a partir de l'edition du jour. Appelle `claude -p` avec le prompt `prompts/linkedin.md` pour produire un texte adapte au format LinkedIn (hook ≤210 chars, corps 800-1200 chars, CTA subtil). Genere une image editoriale via NanoBanana Pro (SDK `google-genai`). Ecrit `.pipeline/linkedin/post.txt`, `comment.txt`, `image.png`. Copie le post dans le presse-papier. Tolerant : si l'image ou le post echouent, le pipeline continue.
+
 ### `deploy.py` — Phase 4 : publication
 
 Clone la branche `gh-pages` en shallow, copie `latest.html` comme `index.html`, ajoute l'edition datee et les archives. Genere `editions/archives/index.html` depuis `manifest.json` avec numero, titre editorial et date pour chaque edition. Commit et push vers GitHub Pages.
@@ -127,3 +156,5 @@ Verifie la structure JSON entre les phases. Pour les candidats : tableau, ≥5 a
 - **Claude Opus via `claude -p`** — recherche web, selection editoriale, redaction
 - **Templating HTML** — template unique avec CSS + JS inline
 - **GitHub Pages** — hebergement statique via branche `gh-pages`
+- **NanoBanana Pro via `google-genai`** — generation d'images editoriales
+- **uv** — gestion de l'environnement virtuel Python
