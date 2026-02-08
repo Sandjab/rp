@@ -194,6 +194,12 @@ def main():
     else:
         articles = json.load(sys.stdin)
 
+    # Warn about missing editorial content
+    missing_editorial = [a for a in articles if not a.get("editorial_title") or not a.get("editorial_summary")]
+    if missing_editorial:
+        print(f"[WARN] {len(missing_editorial)}/{len(articles)} articles missing editorial_title or editorial_summary.", file=sys.stderr)
+        print(f"[WARN] Run the skill Phase 4 (editorial rewriting) to add French titles and summaries.", file=sys.stderr)
+
     tz = ZoneInfo(config["edition"]["timezone"])
     now = datetime.now(tz)
     date_str = now.strftime("%Y-%m-%d")
