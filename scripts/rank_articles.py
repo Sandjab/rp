@@ -6,6 +6,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import os
+
 import yaml
 
 BREAKING_KEYWORDS = [
@@ -95,21 +97,29 @@ def assign_topics(article, topics_config):
         article["matched_topics"] = article["topics"][:2]
 
 def rank(articles, config):
-    """Score all articles and return top N sorted by score."""
+    """Score all articles and return top N sorted by score.
+
+    Scoring: recency(0-30) + authority(0-25) + depth(0-15) + breaking(0-10) = max 80.
+    topic_relevance_score is NOT included — topic matching is too naive
+    (keyword-based) and lets irrelevant articles rank high. The LLM
+    editorial phase handles intelligent selection instead.
+    """
     topics_config = config.get("topics", [])
-    max_articles = config.get("edition", {}).get("max_articles", 15)
+    max_candidates = int(os.environ.get(
+        "RP_MAX_CANDIDATES",
+        config.get("edition", {}).get("max_articles", 15),
+    ))
 
     for article in articles:
         s1 = recency_score(article.get("published"))
         s2 = authority_score(article)
-        s3 = topic_relevance_score(article, topics_config)
         s4 = depth_score(article)
         s5 = breaking_score(article)
-        article["score"] = s1 + s2 + s3 + s4 + s5
+        article["score"] = s1 + s2 + s4 + s5
         assign_topics(article, topics_config)
 
     articles.sort(key=lambda a: a["score"], reverse=True)
-    return articles[:max_articles]
+    return articles[:max_candidates]
 
 def main():
     config = load_config()

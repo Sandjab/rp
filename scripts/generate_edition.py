@@ -49,6 +49,48 @@ def time_ago(published_str, now):
     except Exception:
         return ""
 
+def build_synthesis_card_html(article, index, articles, config, now):
+    """Build the synthesis card HTML block with clickable article refs."""
+    topics_config = {t["tag"]: t for t in config.get("topics", [])}
+    tags_html = ""
+    for tag in article.get("matched_topics", article.get("topics", []))[:3]:
+        tc = topics_config.get(tag, {})
+        color = tc.get("color", "#666")
+        tags_html += f'<span class="tag-pill" style="background:{color}20;color:{color};opacity:0.85">{tag}</span>'
+
+    title = article.get("editorial_title", article.get("title", ""))
+    summary = article.get("editorial_summary", article.get("summary", ""))
+
+    return f'''
+    <article class="card synthesis-card" data-index="{index}">
+      <span class="synth-tag">Le mot de Sandjab</span>
+      <div class="card-tags">{tags_html}</div>
+      <h2 class="card-title">{title}</h2>
+      <p class="card-summary">{summary}</p>
+    </article>'''
+
+
+def build_synthesis_grid_card_html(article, index, articles, config, now):
+    """Build the synthesis grid card HTML block."""
+    topics_config = {t["tag"]: t for t in config.get("topics", [])}
+    tags_html = ""
+    for tag in article.get("matched_topics", article.get("topics", []))[:3]:
+        tc = topics_config.get(tag, {})
+        color = tc.get("color", "#666")
+        tags_html += f'<span class="tag-pill" style="background:{color}20;color:{color};opacity:0.85">{tag}</span>'
+
+    title = article.get("editorial_title", article.get("title", ""))
+    summary = article.get("editorial_summary", article.get("summary", ""))
+
+    return f'''
+    <article class="grid-card synthesis-grid" data-index="{index}">
+      <span class="synth-tag">Le mot de Sandjab</span>
+      <div class="card-tags">{tags_html}</div>
+      <h2 class="card-title">{title}</h2>
+      <p class="card-summary">{summary}</p>
+    </article>'''
+
+
 def build_card_html(article, index, config, now):
     """Build a single card HTML block."""
     topics_config = {t["tag"]: t for t in config.get("topics", [])}
@@ -103,21 +145,29 @@ def build_grid_card_html(article, index, config, now):
     ago = time_ago(article.get("published"), now)
     summary = article.get("editorial_summary", article.get("summary", ""))
     url = article.get("url", "#")
+    context = article.get("research_context", "")
+
+    context_html = ""
+    if context:
+        context_html = f'''
+      <button class="context-toggle" onclick="event.stopPropagation();toggleContext(this)">
+        <span class="arrow">&#9656;</span> <span class="ctx-label">Contexte approfondi</span>
+      </button>
+      <div class="card-context">
+        <div class="card-context-inner">{context}</div>
+      </div>'''
 
     return f'''
-    <article class="grid-card" data-index="{index}">
+    <article class="grid-card" data-index="{index}" onclick="toggleGridCard(this)">
       <div class="card-tags">{tags_html}</div>
-      <h2 class="card-title"><a href="{url}" target="_blank" rel="noopener">{title}</a></h2>
+      <h2 class="card-title"><a href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">{title}</a></h2>
       <div class="card-source">{source} — {ago}</div>
       <p class="card-summary">{summary}</p>
+      <div class="grid-card-extra">
+        {context_html}
+        <a class="card-link" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+      </div>
     </article>'''
-
-def build_filter_pills(config):
-    """Build filter pill buttons from topics config."""
-    pills = ""
-    for topic in config.get("topics", []):
-        pills += f'<button class="filter-pill" data-filter="{topic["tag"]}">{topic["tag"]}</button>\n  '
-    return pills
 
 def build_archive_page(archives_dir, config):
     """Generate archive index page."""
@@ -160,7 +210,13 @@ a{{color:inherit;text-decoration:none}}
 .masthead{{padding:clamp(1.5rem,4vw,3rem) clamp(1rem,5vw,4rem);border-bottom:2px solid var(--text);
 display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem}}
 .masthead h1{{font-family:var(--font-h);font-size:clamp(2rem,5vw,3.5rem);font-weight:400;letter-spacing:-0.02em}}
-.masthead a{{font-family:var(--font-m);font-size:0.8rem;color:var(--accent)}}
+.masthead-link{{
+  font-family:var(--font-m);font-size:0.8rem;
+  color:var(--text-2);display:inline-flex;align-items:center;gap:0.3rem;
+  transition:color .2s;border:none;background:none;cursor:pointer;text-decoration:none;
+}}
+.masthead-link:hover{{color:var(--text)}}
+.masthead-link svg{{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}}
 .archives{{max-width:720px;margin:2rem auto;padding:0 clamp(1rem,5vw,4rem)}}
 .archive-item{{display:block;padding:1rem 0;border-bottom:1px solid var(--border);
 font-family:var(--font-m);font-size:0.9rem;transition:color .2s}}
@@ -170,7 +226,7 @@ font-family:var(--font-m);font-size:0.9rem;transition:color .2s}}
 <body>
 <header class="masthead">
   <h1>Archives</h1>
-  <a href="../index.html">&larr; Derniere edition</a>
+  <a href="../index.html" class="masthead-link"><svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M18 18h-8M18 10h-8"/></svg> edito</a>
 </header>
 <main class="archives">
 {items_html}
@@ -204,7 +260,14 @@ def main():
     now = datetime.now(tz)
     date_str = now.strftime("%Y-%m-%d")
     timestamp_str = now.strftime("%Y-%m-%d.%H%M%S")
-    date_display = now.strftime("%A %d %B %Y").capitalize()
+    JOURS = {"Monday":"Lundi","Tuesday":"Mardi","Wednesday":"Mercredi",
+             "Thursday":"Jeudi","Friday":"Vendredi","Saturday":"Samedi","Sunday":"Dimanche"}
+    MOIS = {"January":"janvier","February":"février","March":"mars","April":"avril",
+            "May":"mai","June":"juin","July":"juillet","August":"août",
+            "September":"septembre","October":"octobre","November":"novembre","December":"décembre"}
+    day_en = now.strftime("%A")
+    month_en = now.strftime("%B")
+    date_display = f"{JOURS[day_en]} {now.day} {MOIS[month_en]} {now.year}"
 
     editions_dir = Path(__file__).parent.parent / "editions"
     editions_dir.mkdir(exist_ok=True)
@@ -216,10 +279,15 @@ def main():
     cards_html = ""
     grid_cards_html = ""
     for i, article in enumerate(articles):
-        cards_html += build_card_html(article, i, config, now)
-        grid_cards_html += build_grid_card_html(article, i, config, now)
+        if article.get("is_synthesis"):
+            cards_html += build_synthesis_card_html(article, i, articles, config, now)
+            grid_cards_html += build_synthesis_grid_card_html(article, i, articles, config, now)
+        else:
+            cards_html += build_card_html(article, i, config, now)
+            grid_cards_html += build_grid_card_html(article, i, config, now)
 
-    filter_pills = build_filter_pills(config)
+    # Masthead nav — edition page shows archives link only
+    masthead_nav = '<a href="editions/archives/index.html" class="masthead-btn" aria-label="Archives"><svg viewBox="0 0 24 24"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg></a>'
 
     # Footer nav
     footer_nav = f'<a href="editions/archives/index.html">Archives</a>'
@@ -230,7 +298,7 @@ def main():
     html = html.replace("{{EDITION_DATE}}", date_str)
     html = html.replace("{{EDITION_DATE_DISPLAY}}", date_display)
     html = html.replace("{{EDITION_NUMBER}}", str(edition_number))
-    html = html.replace("{{FILTER_PILLS}}", filter_pills)
+    html = html.replace("{{MASTHEAD_NAV}}", masthead_nav)
     html = html.replace("{{CARDS}}", cards_html)
     html = html.replace("{{GRID_CARDS}}", grid_cards_html)
     html = html.replace("{{ARTICLES_JSON}}", json.dumps(articles, ensure_ascii=False))
