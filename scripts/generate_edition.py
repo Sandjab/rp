@@ -20,12 +20,11 @@ def load_template():
     with open(tpl_path) as f:
         return f.read()
 
-def get_edition_number(editions_dir):
+def get_edition_number(archives_dir):
     """Count existing editions + 1."""
-    if not editions_dir.exists():
+    if not archives_dir.exists():
         return 1
-    existing = list(editions_dir.glob("*.html"))
-    # Exclude archive index
+    existing = list(archives_dir.glob("*.html"))
     existing = [f for f in existing if f.name != "index.html"]
     return len(existing) + 1
 
@@ -120,18 +119,28 @@ def build_filter_pills(config):
         pills += f'<button class="filter-pill" data-filter="{topic["tag"]}">{topic["tag"]}</button>\n  '
     return pills
 
-def build_archive_page(editions_dir, config):
+def build_archive_page(archives_dir, config):
     """Generate archive index page."""
-    editions = sorted(editions_dir.glob("????-??-??.html"), reverse=True)
+    editions = sorted(archives_dir.glob("????-??-??.??????.html"), reverse=True)
+    if not editions:
+        # Also try legacy format
+        editions = sorted(archives_dir.glob("????-??-??.html"), reverse=True)
     if not editions:
         return
 
     items_html = ""
     for ed in editions:
-        date_str = ed.stem  # YYYY-MM-DD
+        # Filename format: YYYY-MM-DD.hhmmss.html
+        name = ed.stem  # YYYY-MM-DD.hhmmss
+        parts = name.split(".")
+        date_part = parts[0]
+        time_part = parts[1] if len(parts) > 1 else ""
+        display = date_part
+        if time_part and len(time_part) == 6:
+            display += f" {time_part[:2]}:{time_part[2:4]}:{time_part[4:6]}"
         items_html += f'''
     <a href="{ed.name}" class="archive-item">
-      <span class="archive-date">{date_str}</span>
+      <span class="archive-date">{display}</span>
     </a>'''
 
     archive_html = f'''<!DOCTYPE html>
@@ -169,7 +178,7 @@ font-family:var(--font-m);font-size:0.9rem;transition:color .2s}}
 </body>
 </html>'''
 
-    archive_path = editions_dir / "index.html"
+    archive_path = archives_dir / "index.html"
     with open(archive_path, "w") as f:
         f.write(archive_html)
     print(f"[INFO] Archive page updated: {archive_path}", file=sys.stderr)
@@ -188,11 +197,14 @@ def main():
     tz = ZoneInfo(config["edition"]["timezone"])
     now = datetime.now(tz)
     date_str = now.strftime("%Y-%m-%d")
+    timestamp_str = now.strftime("%Y-%m-%d.%H%M%S")
     date_display = now.strftime("%A %d %B %Y").capitalize()
 
     editions_dir = Path(__file__).parent.parent / "editions"
     editions_dir.mkdir(exist_ok=True)
-    edition_number = get_edition_number(editions_dir)
+    archives_dir = editions_dir / "archives"
+    archives_dir.mkdir(exist_ok=True)
+    edition_number = get_edition_number(archives_dir)
 
     # Build HTML blocks
     cards_html = ""
@@ -204,7 +216,7 @@ def main():
     filter_pills = build_filter_pills(config)
 
     # Footer nav
-    footer_nav = f'<a href="editions/index.html">Archives</a>'
+    footer_nav = f'<a href="editions/archives/index.html">Archives</a>'
 
     # Replace placeholders
     html = template
@@ -219,20 +231,27 @@ def main():
     html = html.replace("{{GENERATION_TIME}}", now.strftime("%H:%M %Z"))
     html = html.replace("{{FOOTER_NAV}}", footer_nav)
 
-    # Write edition file
+    # Write edition file in editions/
     output_path = editions_dir / f"{date_str}.html"
     with open(output_path, "w") as f:
         f.write(html)
 
     print(f"[INFO] Edition generated: {output_path}", file=sys.stderr)
 
+    # Archive with timestamp
+    archive_path = archives_dir / f"{timestamp_str}.html"
+    with open(archive_path, "w") as f:
+        f.write(html)
+
+    print(f"[INFO] Archived: {archive_path}", file=sys.stderr)
+
     # Also write latest.html for deploy script
     latest_path = editions_dir / "latest.html"
     with open(latest_path, "w") as f:
         f.write(html)
 
-    # Update archive
-    build_archive_page(editions_dir, config)
+    # Update archive index
+    build_archive_page(archives_dir, config)
 
     # Output path to stdout
     print(str(output_path))

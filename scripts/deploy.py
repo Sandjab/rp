@@ -42,8 +42,9 @@ def main():
     tz = ZoneInfo(config["edition"]["timezone"])
     now = datetime.now(tz)
     date_str = now.strftime("%Y-%m-%d")
+    timestamp_str = now.strftime("%Y-%m-%d.%H%M%S")
     edition_file = editions_dir / f"{date_str}.html"
-    archive_index = editions_dir / "index.html"
+    archives_dir = editions_dir / "archives"
 
     # Clone into temp dir
     tmp_dir = tempfile.mkdtemp(prefix="rp-deploy-")
@@ -57,17 +58,20 @@ def main():
         # Copy latest as index.html
         shutil.copy2(str(latest), f"{tmp_dir}/index.html")
 
-        # Create editions dir in deploy
+        # Create editions dir structure in deploy
         deploy_editions = Path(tmp_dir) / "editions"
         deploy_editions.mkdir(exist_ok=True)
+        deploy_archives = deploy_editions / "archives"
+        deploy_archives.mkdir(exist_ok=True)
 
         # Copy dated edition
         if edition_file.exists():
             shutil.copy2(str(edition_file), str(deploy_editions / edition_file.name))
 
-        # Copy archive index
-        if archive_index.exists():
-            shutil.copy2(str(archive_index), str(deploy_editions / "index.html"))
+        # Copy all archives
+        if archives_dir.exists():
+            for f in archives_dir.glob("*.html"):
+                shutil.copy2(str(f), str(deploy_archives / f.name))
 
         # Git add, commit, push
         run(["git", "add", "-A"], cwd=tmp_dir)
@@ -78,7 +82,7 @@ def main():
             print("[INFO] No changes to deploy.", file=sys.stderr)
             return
 
-        run(["git", "commit", "-m", f"Edition {date_str}"], cwd=tmp_dir)
+        run(["git", "commit", "-m", f"Edition {timestamp_str}"], cwd=tmp_dir)
         run(["git", "push", "origin", branch], cwd=tmp_dir)
 
         print(f"[INFO] Deployed to https://sandjab.github.io/rp/", file=sys.stderr)
