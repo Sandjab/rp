@@ -13,7 +13,10 @@ import os
 import re
 import subprocess
 import sys
+from datetime import datetime, timedelta, timezone
+from difflib import SequenceMatcher
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -73,6 +76,83 @@ def filter_ai_relevant(articles):
     return kept
 
 
+def normalize_url(url):
+    """Normalize URL for comparison (same logic as deduplicate.py)."""
+    parsed = urlparse(url)
+    host = parsed.netloc.lower().replace("www.", "")
+    path = parsed.path.rstrip("/")
+    return f"{host}{path}"
+
+
+def filter_already_published(articles):
+    """Remove articles already published in recent editions (cross-edition dedup).
+
+    Reads manifest.json for URLs/titles from the last N days (configurable via
+    history_days in config). Excludes today's date to allow intra-day re-runs.
+    Graceful degradation: returns articles unchanged if manifest is missing/unreadable.
+    """
+    config_path = PROJECT_DIR / "config" / "revue-presse.yaml"
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    history_days = config.get("edition", {}).get("history_days", 3)
+
+    manifest_path = PROJECT_DIR / "editions" / "archives" / "manifest.json"
+    if not manifest_path.exists():
+        print(f"[COLLECT] No manifest found, skipping history dedup", file=sys.stderr)
+        return articles
+
+    try:
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+    except (json.JSONDecodeError, Exception) as e:
+        print(f"[WARN] Could not read manifest: {e}", file=sys.stderr)
+        return articles
+
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=history_days)).strftime("%Y-%m-%d")
+
+    # Collect published URLs and titles from recent editions (excluding today)
+    published_urls = set()
+    published_titles = []
+    for entry in manifest:
+        entry_date = entry.get("date", "")
+        if entry_date == today_str:
+            continue  # Exclude today to allow re-runs
+        if entry_date < cutoff:
+            continue  # Too old
+        for url in entry.get("urls", []):
+            published_urls.add(normalize_url(url))
+        published_titles.extend(entry.get("titles", []))
+
+    if not published_urls and not published_titles:
+        return articles
+
+    kept = []
+    for article in articles:
+        url = article.get("url", "")
+        title = article.get("title", "")
+
+        # Check exact URL match
+        if url and normalize_url(url) in published_urls:
+            continue
+
+        # Check title similarity (cross-domain: same news, different source)
+        if title and any(
+            SequenceMatcher(None, title.lower(), pt.lower()).ratio() >= 0.85
+            for pt in published_titles
+        ):
+            continue
+
+        kept.append(article)
+
+    removed = len(articles) - len(kept)
+    print(
+        f"[COLLECT] History dedup ({history_days}d): {len(articles)} -> {len(kept)} articles ({removed} removed)",
+        file=sys.stderr,
+    )
+    return kept
+
+
 def run_script(script_name, input_data=None, env_extra=None):
     """Run a sibling script, passing JSON via stdin, returning parsed JSON."""
     script_path = SCRIPTS_DIR / script_name
@@ -126,6 +206,9 @@ def main():
 
     # 3b. AI relevance filter
     deduped = filter_ai_relevant(deduped)
+
+    # 3c. Cross-edition dedup (filter articles published in recent editions)
+    deduped = filter_already_published(deduped)
 
     # 4. Rank — propagate RP_MAX_CANDIDATES (default 20 for pipeline)
     print("[COLLECT] Phase 3: Ranking...", file=sys.stderr)

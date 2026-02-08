@@ -1,7 +1,9 @@
 edition:
   title: "IA qu'à demander"
-  max_articles: 8
+  signature: "JPG (aka Sandjab)"
+  max_articles: 10
   timezone: "Europe/Paris"
+  history_days: 3
 
 github:
   repo: "Sandjab/rp"
@@ -36,6 +38,7 @@ topics:
     queries:
       - "AI new model release benchmark"
       - "LLM large language model architecture breakthrough"
+      - "site:x.com AI model release announcement"
 
   - name: "Produits & Outils"
     tag: "Produits"
@@ -61,6 +64,7 @@ topics:
     queries:
       - "AI product launch new feature tool"
       - "AI developer tools API agent release"
+      - "site:x.com AI product launch tool announcement"
 
   - name: "Business & Industrie"
     tag: "Business"
@@ -85,6 +89,7 @@ topics:
     queries:
       - "AI startup funding acquisition deal"
       - "OpenAI Anthropic Google AI business news"
+      - "site:x.com OpenAI Anthropic AI funding deal"
 
   - name: "Recherche & Science"
     tag: "Recherche"
@@ -107,6 +112,7 @@ topics:
     queries:
       - "AI research paper breakthrough discovery"
       - "artificial intelligence scientific study arXiv"
+      - "site:x.com AI research breakthrough paper"
 
   - name: "Societe & Regulation"
     tag: "Societe"
@@ -131,6 +137,7 @@ topics:
     queries:
       - "AI regulation law ethics policy"
       - "artificial intelligence society impact employment"
+      - "site:x.com AI regulation policy ethics"
 
   - name: "Marches & Finance"
     tag: "Marches"
@@ -155,6 +162,7 @@ topics:
     queries:
       - "AI stock market Nvidia GPU investment"
       - "artificial intelligence market valuation infrastructure"
+      - "site:x.com Nvidia AI chip investment market"
 
 source_authority:
   Nature: 25
@@ -169,6 +177,7 @@ source_authority:
   Simon Willison: 15
   IEEE Spectrum: 20
   Science Magazine: 24
+  X: 12
   default: 10
 
 styling:
@@ -191,3 +200,8 @@ styling:
       text_secondary: "#999999"
       accent: "#FF6B6B"
       border: "#2A2A2A"
+
+linkedin:
+  enabled: true
+  hashtags: "#IA #IntelligenceArtificielle #Tech #AI #RevueDePresse"
+  clipboard: true

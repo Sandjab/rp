@@ -54,7 +54,10 @@ a{color:inherit;text-decoration:none}
   font-family:var(--font-m);font-size:clamp(0.7rem,1.2vw,0.85rem);
   color:var(--text-2);display:flex;align-items:center;gap:1.5rem;
 }
-.masthead-nav{display:flex;align-items:center;gap:0.5rem;margin-left:auto}
+.masthead-right{display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem;margin-left:auto}
+.hit-counter{height:20px;opacity:0.7;transition:opacity .2s}
+.hit-counter:hover{opacity:1}
+.masthead-nav{display:flex;align-items:center;gap:0.5rem}
 .masthead-btn{
   background:none;border:1px solid var(--border);color:var(--text-2);
   padding:0.4rem;cursor:pointer;transition:all .2s;
@@ -144,7 +147,7 @@ a{color:inherit;text-decoration:none}
   font-size:clamp(0.95rem,1.5vw,1.05rem);line-height:1.7;
   color:var(--text);margin-bottom:1.5rem;
 }
-.edito-signature{display:block;text-align:right;margin-top:0.5rem}
+.edito-signature{display:block;text-align:right;margin-top:1rem;font-style:italic}
 .card-context{
   overflow:hidden;max-height:0;transition:max-height .4s var(--ease);
   margin-bottom:1rem;
@@ -266,6 +269,7 @@ a{color:inherit;text-decoration:none}
   .grid-view{grid-template-columns:1fr}
   .grid-card{padding:1.2rem}
   .context-toggle{padding:0.2rem 0;font-size:0.75rem}
+  .hit-counter{height:16px}
   .breaking{font-size:0.75rem;padding:0.5rem 1rem}
   .card.synthesis-card{padding:1rem 0.8rem;border-left-width:3px}
   .card-source{margin-bottom:0.8rem;font-size:0.7rem}
@@ -284,23 +288,26 @@ a{color:inherit;text-decoration:none}
   <div class="masthead-meta">
     <span>{{EDITION_DATE_DISPLAY}}</span>
     <span>No. {{EDITION_NUMBER}}</span>
-    <nav class="masthead-nav">
-      <a class="masthead-btn" href="https://sandjab.github.io/rp/" aria-label="Accueil">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </a>
-      <button class="masthead-btn" onclick="goHome()" aria-label="Edito">
-        <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M18 18h-8M18 10h-8"/></svg>
-      </button>
-      {{MASTHEAD_NAV}}
-      <button class="masthead-btn view-toggle" onclick="toggleView()" aria-label="Basculer la vue">
-        <svg class="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        <svg class="icon-cards" style="display:none" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 9h20"/></svg>
-      </button>
-      <button class="masthead-btn theme-toggle" onclick="toggleTheme()" aria-label="Basculer le theme">
-        <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        <svg class="icon-moon" style="display:none" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-      </button>
-    </nav>
+    <div class="masthead-right">
+      <img class="hit-counter" src="https://hitscounter.dev/api/hit?url=sandjab.github.io%2Frp&label=Visiteurs&icon=eye&color=%23dc3545&message=&style=social&tz=localtime" alt="Visiteurs">
+      <nav class="masthead-nav">
+        <a class="masthead-btn" href="https://sandjab.github.io/rp/" aria-label="Accueil">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <button class="masthead-btn" onclick="goHome()" aria-label="Edito">
+          <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M18 18h-8M18 10h-8"/></svg>
+        </button>
+        {{MASTHEAD_NAV}}
+        <button class="masthead-btn view-toggle" onclick="toggleView()" aria-label="Basculer la vue">
+          <svg class="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          <svg class="icon-cards" style="display:none" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 9h20"/></svg>
+        </button>
+        <button class="masthead-btn theme-toggle" onclick="toggleTheme()" aria-label="Basculer le theme">
+          <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" style="display:none" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
   </div>
 </header>
 

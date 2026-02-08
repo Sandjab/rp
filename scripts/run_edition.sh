@@ -13,9 +13,11 @@ PIPELINE_DIR="$PROJECT_DIR/.pipeline"
 
 # Parse args
 DEPLOY=true
+LINKEDIN=true
 for arg in "$@"; do
   case "$arg" in
     --no-deploy) DEPLOY=false ;;
+    --no-linkedin) LINKEDIN=false ;;
     *) echo "[ERROR] Unknown argument: $arg" >&2; exit 1 ;;
   esac
 done
@@ -57,6 +59,20 @@ echo ""
 echo "── Phase 3: Generate HTML ──"
 python3 "$SCRIPT_DIR/generate_edition.py" "$PIPELINE_DIR/02_editorial.json"
 echo "[OK] Phase 3 complete"
+
+# ── Phase 3b: LinkedIn post (tolerant) ──
+if [ "$LINKEDIN" = true ]; then
+  echo ""
+  echo "── Phase 3b: LinkedIn post ──"
+  if python3 "$SCRIPT_DIR/linkedin_post.py"; then
+    echo "[OK] Phase 3b complete"
+  else
+    echo "[WARN] Phase 3b failed (LinkedIn), continuing"
+  fi
+else
+  echo ""
+  echo "── Phase 3b: LinkedIn (skipped: --no-linkedin) ──"
+fi
 
 # ── Phase 4: Deploy ──
 if [ "$DEPLOY" = true ]; then

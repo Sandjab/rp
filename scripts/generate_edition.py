@@ -69,14 +69,19 @@ def build_synthesis_card_html(article, index, articles, config, now):
 
     title = article.get("editorial_title", article.get("title", ""))
     summary = article.get("editorial_summary", article.get("summary", ""))
-    summary = re.sub(r'\s*— JPG \(aka Sandjab\)\s*$', '<br><em class="edito-signature">— JPG (aka Sandjab)</em>', summary)
+
+    signature = config.get("edition", {}).get("signature", "")
+    if signature:
+        summary = re.sub(r'\s*—\s*' + re.escape(signature) + r'\s*$', '', summary)
+    signature_html = f'\n      <span class="edito-signature">— {signature}</span>' if signature else ""
+    author_short = signature.split()[0] if signature else "l'auteur"
 
     return f'''
     <article class="card synthesis-card" data-index="{index}">
-      <span class="synth-tag">L'edito de Sandjab</span>
+      <span class="synth-tag">L'edito de {author_short}</span>
       <div class="card-tags">{tags_html}</div>
       <h2 class="card-title">{title}</h2>
-      <p class="card-summary">{summary}</p>
+      <p class="card-summary">{summary}</p>{signature_html}
     </article>'''
 
 
@@ -91,14 +96,19 @@ def build_synthesis_grid_card_html(article, index, articles, config, now):
 
     title = article.get("editorial_title", article.get("title", ""))
     summary = article.get("editorial_summary", article.get("summary", ""))
-    summary = re.sub(r'\s*— JPG \(aka Sandjab\)\s*$', '<br><em class="edito-signature">— JPG (aka Sandjab)</em>', summary)
+
+    signature = config.get("edition", {}).get("signature", "")
+    if signature:
+        summary = re.sub(r'\s*—\s*' + re.escape(signature) + r'\s*$', '', summary)
+    signature_html = f'\n      <span class="edito-signature">— {signature}</span>' if signature else ""
+    author_short = signature.split()[0] if signature else "l'auteur"
 
     return f'''
     <article class="grid-card synthesis-grid" data-index="{index}">
-      <span class="synth-tag">L'edito de Sandjab</span>
+      <span class="synth-tag">L'edito de {author_short}</span>
       <div class="card-tags">{tags_html}</div>
       <h2 class="card-title">{title}</h2>
-      <p class="card-summary">{summary}</p>
+      <p class="card-summary">{summary}</p>{signature_html}
     </article>'''
 
 
@@ -139,7 +149,7 @@ def build_card_html(article, index, config, now):
       <div class="card-source">{source_line}</div>
       <p class="card-summary">{summary}</p>
       {context_html}
-      <a class="card-link" href="{url}" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="{url}" target="_blank" rel="noopener">{"Voir le post" if "x.com/" in url or "twitter.com/" in url else "Lire l'article"} <span>&rarr;</span></a>
     </article>'''
 
 def build_grid_card_html(article, index, config, now):
@@ -176,7 +186,7 @@ def build_grid_card_html(article, index, config, now):
       <p class="card-summary">{summary}</p>
       <div class="grid-card-extra">
         {context_html}
-        <a class="card-link" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire l'article <span>&rarr;</span></a>
+        <a class="card-link" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">{"Voir le post" if "x.com/" in url or "twitter.com/" in url else "Lire l'article"} <span>&rarr;</span></a>
       </div>
     </article>'''
 
@@ -341,7 +351,17 @@ def main():
     synth = next((a for a in articles if a.get("is_synthesis")), None)
     editorial_title = synth.get("editorial_title", synth.get("title", "")) if synth else ""
 
-    entry = {"date": date_str, "number": edition_number, "title": editorial_title}
+    real_articles = [a for a in articles if not a.get("is_synthesis")]
+    published_urls = [a["url"] for a in real_articles if a.get("url") and a["url"] != "#"]
+    published_titles = [a.get("title", "") for a in real_articles if a.get("title")]
+
+    entry = {
+        "date": date_str,
+        "number": edition_number,
+        "title": editorial_title,
+        "urls": published_urls,
+        "titles": published_titles,
+    }
     manifest = [e for e in manifest if e.get("date") != date_str]
     manifest.append(entry)
     manifest.sort(key=lambda e: e.get("date", ""), reverse=True)

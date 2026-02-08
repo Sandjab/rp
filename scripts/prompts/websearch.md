@@ -25,6 +25,18 @@ Reponds UNIQUEMENT avec un bloc JSON (pas de texte avant ou apres). Le JSON doit
 ]
 ```
 
+## Sources X (ex-Twitter)
+
+Cherche aussi les annonces importantes faites sur X (x.com) par des acteurs cles :
+- CEOs/fondateurs : @sama (OpenAI), @daborrettech (Anthropic), @ylecun (Meta), @demis_hassabis (DeepMind), @EMostaque (Stability)
+- Chercheurs : @karpathy, @hardmaru, @jimfan
+- Comptes officiels : @OpenAI, @AnthropicAI, @GoogleDeepMind, @MistralAI, @huggingface
+
+Criteres pour inclure un post X :
+- Annonce produit, publication recherche, prise de position majeure
+- PAS les opinions banales, memes, retweets sans valeur ajoutee
+- Pour les posts X, mettre `"source": "X"` dans le JSON
+
 ## Regles
 
 - Ne retourne que des articles des 48 dernieres heures

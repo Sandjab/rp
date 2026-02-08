@@ -33,7 +33,7 @@ A partir des {{MAX_ARTICLES}} candidats ci-dessous, tu dois :
    - Accroche : une phrase forte qui donne le la (question, constat percutant, anecdote)
    - Developpement : connecter 2-3 themes majeurs du jour avec un fil conducteur personnel. Digresser intelligemment si necessaire.
    - Chute : phrase memorable, punchline, ouverture ou question au lecteur
-   - Signature : terminer par une ligne vide puis `— JPG (aka Sandjab)`
+   - NE PAS ajouter de signature a la fin du billet. La signature est ajoutee automatiquement par le systeme.
 
    **Ton adaptatif — choisir selon l'actualite du jour :**
    - Si l'actu est absurde ou contradictoire → ironie, sarcasme leger
@@ -93,6 +93,7 @@ Chaque article selectionne DOIT conserver tous ses champs originaux (title, url,
 - Les articles DOIVENT etre tries par importance decroissante (position 1 = le plus important).
 - Ne modifie JAMAIS les URLs originales.
 - Seuls les articles traitant d'IA sont acceptes. En cas de doute, exclure.
+- Si un candidat provient de X (source = "X"), developpe le contexte dans l'editorial_summary : qui est l'auteur, pourquoi cette annonce compte, implications. Un tweet seul ne suffit pas comme article.
 
 ## Date du jour : {{DATE}}
 ## Topics couverts : {{TOPICS}}
