@@ -99,7 +99,7 @@ a{color:inherit;text-decoration:none}
   padding:clamp(1.5rem,3vw,2.5rem);
   opacity:0;pointer-events:none;
   transition:transform .45s var(--ease),opacity .35s var(--ease);
-  touch-action:pan-y;user-select:none;
+  touch-action:pan-y pinch-zoom;user-select:none;
   will-change:transform;
 }
 .card.active{
@@ -225,11 +225,42 @@ a{color:inherit;text-decoration:none}
   }
 }
 
+/* SWIPE HINT — mobile only */
+.swipe-hint{
+  display:none;text-align:center;
+  font-family:var(--font-m);font-size:0.7rem;color:var(--text-2);
+  padding:0.5rem 0 0;opacity:0;transition:opacity .6s;
+}
+.swipe-hint.visible{opacity:1}
+.swipe-hint span{display:inline-block;animation:swipeHint 2s var(--ease) 2}
+@keyframes swipeHint{
+  0%,100%{transform:translateX(0)}
+  30%{transform:translateX(-12px)}
+  60%{transform:translateX(8px)}
+}
+
 /* MOBILE */
 @media(max-width:640px){
   .masthead{flex-direction:column;gap:0.5rem}
+  .masthead-meta{gap:0.8rem;flex-wrap:wrap}
   .card{padding:1.2rem}
+  .card-viewport{min-height:auto;padding:1rem}
+  .card-title{font-size:clamp(1.3rem,5vw,1.8rem)}
+  .card-summary{font-size:0.95rem;line-height:1.6}
+  .filter-bar{
+    gap:0.5rem;padding:0.8rem 1rem;
+    overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
+  }
+  .filter-pill{flex-shrink:0;padding:0.5rem 0.9rem;font-size:0.7rem}
+  .nav-btn{width:48px;height:48px;font-size:1.4rem}
+  .card-nav{gap:1rem;padding:1rem 0}
   .dots{display:none}
+  .swipe-hint{display:block}
+  .grid-view{grid-template-columns:1fr}
+  .grid-card{padding:1.2rem}
+  .context-toggle{padding:0.3rem 0;font-size:0.8rem}
+  .card-link{font-size:0.85rem;padding:0.2rem 0}
+  .breaking{font-size:0.75rem;padding:0.6rem 1rem}
 }
 </style>
 </head>
@@ -273,7 +304,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="1">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title">LLMs as Language Compilers: Lessons from Fortran for the Future of Coding</h2>
-      <div class="card-source">Hacker News — il y a 1h</div>
+      <div class="card-source">Hacker News — il y a 2h</div>
       <p class="card-summary">Article URL: https://cyber-omelette.com/posts/the-abstraction-rises.html Comments URL: https://news.ycombinator.com/item?id=46932388 Points: 5 # Comments: 0</p>
       
       <a class="card-link" href="https://cyber-omelette.com/posts/the-abstraction-rises.html" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -289,7 +320,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="3">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title">Super Bowl LX ads: all AI everything</h2>
-      <div class="card-source">The Verge — il y a 10h</div>
+      <div class="card-source">The Verge — il y a 11h</div>
       <p class="card-summary">Super Bowl LX is nearly here, with the Seattle Seahawks taking on the New England Patriots. While Bad Bunny will be the star of the halftime show, AI could be the star of the commercial breaks, much like crypto was a few years ago. Last year’s Super Bowl featured a Google Gemini ad that fumbled [&#8230;]</p>
       
       <a class="card-link" href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -297,7 +328,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="4">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title">Show HN: LocalGPT – A local-first AI assistant in Rust with persistent memory</h2>
-      <div class="card-source">Hacker News — il y a 8h</div>
+      <div class="card-source">Hacker News — il y a 9h</div>
       <p class="card-summary">I built LocalGPT over 4 nights as a Rust reimagining of the OpenClaw assistant pattern (markdown-based persistent memory, autonomous heartbeat tasks, skills system). It compiles to a single ~27MB binary — no Node.js, Docker, or Python required. Key features: - Persistent memory via markdown files (MEMORY, HEARTBEAT, SOUL markdown files) — compatible with OpenClaw's format - Full-text search (SQLite FTS5) + semantic search (local embeddings, no API key needed) - Autonomous heartbeat runner tha...</p>
       
       <a class="card-link" href="https://github.com/localgpt-app/localgpt" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -313,7 +344,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="6">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title">Quoting Thomas Ptacek</h2>
-      <div class="card-source">Simon Willison — il y a 7h</div>
+      <div class="card-source">Simon Willison — il y a 8h</div>
       <p class="card-summary">People on the orange site are laughing at this, assuming it's just an ad and that there's nothing to it. Vulnerability researchers I talk to do not think this is a joke. As an erstwhile vuln researcher myself: do not bet against LLMs on this. Axios: Anthropic's Claude Opus 4.6 uncovers 500 zero-day flaws in open-source I think vulnerability research might be THE MOST LLM-amenable software engineering problem. Pattern-driven. Huge corpus of operational public patterns. Closed loops. Forward pr...</p>
       
       <a class="card-link" href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -337,7 +368,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="9">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title">Roger Ebert Reviews "The Shawshank Redemption" (1999)</h2>
-      <div class="card-source">Hacker News — il y a 4h</div>
+      <div class="card-source">Hacker News — il y a 5h</div>
       <p class="card-summary">Article URL: https://www.rogerebert.com/reviews/great-movie-the-shawshank-redemption-1994 Comments URL: https://news.ycombinator.com/item?id=46931559 Points: 31 # Comments: 32</p>
       
       <a class="card-link" href="https://www.rogerebert.com/reviews/great-movie-the-shawshank-redemption-1994" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -345,7 +376,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="10">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title">The kids ‘picked last in gym class’ gear up for Super Bowl</h2>
-      <div class="card-source">TechCrunch — il y a 8h</div>
+      <div class="card-source">TechCrunch — il y a 9h</div>
       <p class="card-summary">YouTube CEO Neal Mohan is expected to be there. Apple's Tim Cook, too.</p>
       
       <a class="card-link" href="https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -353,7 +384,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="11">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title">Low-Vision Programmers Can Now Design 3D Models Independently</h2>
-      <div class="card-source">IEEE Spectrum — il y a 19h</div>
+      <div class="card-source">IEEE Spectrum — il y a 20h</div>
       <p class="card-summary">Most 3D design software requires visual dragging and rotating—posing a challenge for blind and low-vision users. As a result, a range of hardware design, robotics, coding, and engineering work is inaccessible to interested programmers. A visually-impaired programmer might write great code. But because of the lack of accessible modeling software , the coder can’t model, design, and verify physical and virtual components of their system. However, new 3D modeling tools are beginning to change th...</p>
       
       <a class="card-link" href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -361,7 +392,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="12">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title">Vouch</h2>
-      <div class="card-source">Simon Willison — il y a 9h</div>
+      <div class="card-source">Simon Willison — il y a 10h</div>
       <p class="card-summary">Vouch Mitchell Hashimoto's new system to help address the deluge of worthless AI-generated PRs faced by open source projects now that the friction involved in contributing has dropped so low. He says : The idea is simple: Unvouched users can't contribute to your projects. Very bad users can be explicitly "denounced", effectively blocked. Users are vouched or denounced by contributors via GitHub issue or discussion comments or via the CLI. Integration into GitHub is as simple as adopting the p...</p>
       
       <a class="card-link" href="https://simonwillison.net/2026/Feb/7/vouch/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -369,7 +400,7 @@ a{color:inherit;text-decoration:none}
     <article class="card" data-index="13">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title">GOG is already working on native Linux support</h2>
-      <div class="card-source">The Verge — il y a 13h</div>
+      <div class="card-source">The Verge — il y a 14h</div>
       <p class="card-summary">GOG recently posted a job listing for a senior software engineer focused on porting its Galaxy desktop client to Linux. Now, in reply to a Reddit AMA, the GOG team has revealed that work on native Linux support is already underway. It's still too early to give an ETA, according to the Reddit thread. But [&#8230;]</p>
       
       <a class="card-link" href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
@@ -389,6 +420,7 @@ a{color:inherit;text-decoration:none}
     <div class="dots" id="dots"></div>
     <button class="nav-btn" id="nextBtn" onclick="navigate(1)" aria-label="Suivant">&#8594;</button>
   </nav>
+  <div class="swipe-hint" id="swipeHint"><span>&#8592; swiper pour naviguer &#8594;</span></div>
 </section>
 
 <section class="grid-view" id="gridView">
@@ -402,7 +434,7 @@ a{color:inherit;text-decoration:none}
     <article class="grid-card" data-index="1">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title"><a href="https://cyber-omelette.com/posts/the-abstraction-rises.html" target="_blank" rel="noopener">LLMs as Language Compilers: Lessons from Fortran for the Future of Coding</a></h2>
-      <div class="card-source">Hacker News — il y a 1h</div>
+      <div class="card-source">Hacker News — il y a 2h</div>
       <p class="card-summary">Article URL: https://cyber-omelette.com/posts/the-abstraction-rises.html Comments URL: https://news.ycombinator.com/item?id=46932388 Points: 5 # Comments: 0</p>
     </article>
     <article class="grid-card" data-index="2">
@@ -414,13 +446,13 @@ a{color:inherit;text-decoration:none}
     <article class="grid-card" data-index="3">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title"><a href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener">Super Bowl LX ads: all AI everything</a></h2>
-      <div class="card-source">The Verge — il y a 10h</div>
+      <div class="card-source">The Verge — il y a 11h</div>
       <p class="card-summary">Super Bowl LX is nearly here, with the Seattle Seahawks taking on the New England Patriots. While Bad Bunny will be the star of the halftime show, AI could be the star of the commercial breaks, much like crypto was a few years ago. Last year’s Super Bowl featured a Google Gemini ad that fumbled [&#8230;]</p>
     </article>
     <article class="grid-card" data-index="4">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title"><a href="https://github.com/localgpt-app/localgpt" target="_blank" rel="noopener">Show HN: LocalGPT – A local-first AI assistant in Rust with persistent memory</a></h2>
-      <div class="card-source">Hacker News — il y a 8h</div>
+      <div class="card-source">Hacker News — il y a 9h</div>
       <p class="card-summary">I built LocalGPT over 4 nights as a Rust reimagining of the OpenClaw assistant pattern (markdown-based persistent memory, autonomous heartbeat tasks, skills system). It compiles to a single ~27MB binary — no Node.js, Docker, or Python required. Key features: - Persistent memory via markdown files (MEMORY, HEARTBEAT, SOUL markdown files) — compatible with OpenClaw's format - Full-text search (SQLite FTS5) + semantic search (local embeddings, no API key needed) - Autonomous heartbeat runner tha...</p>
     </article>
     <article class="grid-card" data-index="5">
@@ -432,7 +464,7 @@ a{color:inherit;text-decoration:none}
     <article class="grid-card" data-index="6">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Quoting Thomas Ptacek</a></h2>
-      <div class="card-source">Simon Willison — il y a 7h</div>
+      <div class="card-source">Simon Willison — il y a 8h</div>
       <p class="card-summary">People on the orange site are laughing at this, assuming it's just an ad and that there's nothing to it. Vulnerability researchers I talk to do not think this is a joke. As an erstwhile vuln researcher myself: do not bet against LLMs on this. Axios: Anthropic's Claude Opus 4.6 uncovers 500 zero-day flaws in open-source I think vulnerability research might be THE MOST LLM-amenable software engineering problem. Pattern-driven. Huge corpus of operational public patterns. Closed loops. Forward pr...</p>
     </article>
     <article class="grid-card" data-index="7">
@@ -450,31 +482,31 @@ a{color:inherit;text-decoration:none}
     <article class="grid-card" data-index="9">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
       <h2 class="card-title"><a href="https://www.rogerebert.com/reviews/great-movie-the-shawshank-redemption-1994" target="_blank" rel="noopener">Roger Ebert Reviews "The Shawshank Redemption" (1999)</a></h2>
-      <div class="card-source">Hacker News — il y a 4h</div>
+      <div class="card-source">Hacker News — il y a 5h</div>
       <p class="card-summary">Article URL: https://www.rogerebert.com/reviews/great-movie-the-shawshank-redemption-1994 Comments URL: https://news.ycombinator.com/item?id=46931559 Points: 31 # Comments: 32</p>
     </article>
     <article class="grid-card" data-index="10">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/" target="_blank" rel="noopener">The kids ‘picked last in gym class’ gear up for Super Bowl</a></h2>
-      <div class="card-source">TechCrunch — il y a 8h</div>
+      <div class="card-source">TechCrunch — il y a 9h</div>
       <p class="card-summary">YouTube CEO Neal Mohan is expected to be there. Apple's Tim Cook, too.</p>
     </article>
     <article class="grid-card" data-index="11">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title"><a href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Low-Vision Programmers Can Now Design 3D Models Independently</a></h2>
-      <div class="card-source">IEEE Spectrum — il y a 19h</div>
+      <div class="card-source">IEEE Spectrum — il y a 20h</div>
       <p class="card-summary">Most 3D design software requires visual dragging and rotating—posing a challenge for blind and low-vision users. As a result, a range of hardware design, robotics, coding, and engineering work is inaccessible to interested programmers. A visually-impaired programmer might write great code. But because of the lack of accessible modeling software , the coder can’t model, design, and verify physical and virtual components of their system. However, new 3D modeling tools are beginning to change th...</p>
     </article>
     <article class="grid-card" data-index="12">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/7/vouch/#atom-everything" target="_blank" rel="noopener">Vouch</a></h2>
-      <div class="card-source">Simon Willison — il y a 9h</div>
+      <div class="card-source">Simon Willison — il y a 10h</div>
       <p class="card-summary">Vouch Mitchell Hashimoto's new system to help address the deluge of worthless AI-generated PRs faced by open source projects now that the friction involved in contributing has dropped so low. He says : The idea is simple: Unvouched users can't contribute to your projects. Very bad users can be explicitly "denounced", effectively blocked. Users are vouched or denounced by contributors via GitHub issue or discussion comments or via the CLI. Integration into GitHub is as simple as adopting the p...</p>
     </article>
     <article class="grid-card" data-index="13">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
       <h2 class="card-title"><a href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener">GOG is already working on native Linux support</a></h2>
-      <div class="card-source">The Verge — il y a 13h</div>
+      <div class="card-source">The Verge — il y a 14h</div>
       <p class="card-summary">GOG recently posted a job listing for a senior software engineer focused on porting its Galaxy desktop client to Linux. Now, in reply to a Reddit AMA, the GOG team has revealed that work on native Linux support is already underway. It's still too early to give an ETA, according to the Reddit thread. But [&#8230;]</p>
     </article>
     <article class="grid-card" data-index="14">
@@ -486,9 +518,9 @@ a{color:inherit;text-decoration:none}
 </section>
 
 <footer class="edition-footer">
-  <span>Genere par Claude — 10:54 CET</span>
+  <span>Genere par Claude — 11:29 CET</span>
   <nav class="footer-nav">
-    <a href="editions/index.html">Archives</a>
+    <a href="editions/archives/index.html">Archives</a>
   </nav>
 </footer>
 
@@ -585,31 +617,44 @@ a{color:inherit;text-decoration:none}
     setTimeout(() => showCard(current), 50);
   };
 
-  // Swipe
+  // Swipe — with pointer capture for reliable touch
+  let activePointerId = null;
+  const swipeThreshold = () => Math.min(80, window.innerWidth * 0.2);
+
   function onPointerDown(e){
     if(isGrid) return;
     const card = e.target.closest('.card.active');
     if(!card) return;
+    // Ignore multi-touch (pinch-zoom etc)
+    if(activePointerId !== null) return;
+    activePointerId = e.pointerId;
     isDragging = true;
     startX = e.clientX;
     deltaX = 0;
     card.style.transition = 'none';
+    card.setPointerCapture(e.pointerId);
   }
   function onPointerMove(e){
-    if(!isDragging) return;
+    if(!isDragging || e.pointerId !== activePointerId) return;
     deltaX = e.clientX - startX;
     const card = stack.querySelector('.card.active');
-    if(card){
-      card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.02}deg)`;
-    }
+    if(!card) return;
+    const progress = Math.min(Math.abs(deltaX) / (window.innerWidth * 0.45), 1);
+    const opacity = 1 - progress * 0.4;
+    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.02}deg)`;
+    card.style.opacity = opacity;
+    // Prevent vertical scroll while swiping horizontally
+    if(Math.abs(deltaX) > 10) e.preventDefault();
   }
-  function onPointerUp(){
-    if(!isDragging) return;
+  function onPointerUp(e){
+    if(!isDragging || e.pointerId !== activePointerId) return;
     isDragging = false;
+    activePointerId = null;
     const card = stack.querySelector('.card.active');
     if(!card) return;
     card.style.transition = '';
-    if(Math.abs(deltaX) > 80){
+    card.style.opacity = '';
+    if(Math.abs(deltaX) > swipeThreshold()){
       navigate(deltaX < 0 ? 1 : -1);
     } else {
       card.style.transform = '';
@@ -669,10 +714,32 @@ a{color:inherit;text-decoration:none}
     });
   }
 
+  // Swipe hint — show on mobile, hide after first swipe
+  const swipeHint = document.getElementById('swipeHint');
+  let hintDismissed = false;
+  function showSwipeHint(){
+    if(hintDismissed || !swipeHint) return;
+    if(window.innerWidth <= 640){
+      swipeHint.classList.add('visible');
+    }
+  }
+  function dismissSwipeHint(){
+    if(hintDismissed) return;
+    hintDismissed = true;
+    if(swipeHint) swipeHint.classList.remove('visible');
+  }
+  // Dismiss on first navigation
+  const origNavigate = window.navigate;
+  window.navigate = function(dir){
+    dismissSwipeHint();
+    return origNavigate(dir);
+  };
+
   // Init
   initTheme();
   showCard(0);
   buildDots();
+  setTimeout(showSwipeHint, 800);
 })();
 </script>
 </body>
