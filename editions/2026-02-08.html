@@ -25,17 +25,19 @@
 html{font-size:16px;-webkit-text-size-adjust:100%}
 body{
   font-family:var(--font-b);color:var(--text);background:var(--bg);
-  min-height:100vh;transition:background .3s var(--ease),color .3s var(--ease);
-  overflow-x:hidden;
+  height:100dvh;transition:background .3s var(--ease),color .3s var(--ease);
+  overflow:hidden;
+  display:flex;flex-direction:column;
 }
 a{color:inherit;text-decoration:none}
 
 /* MASTHEAD */
 .masthead{
-  padding:clamp(1.5rem,4vw,3rem) clamp(1rem,5vw,4rem);
+  padding:clamp(1rem,2vw,2rem) clamp(1rem,5vw,4rem);
   border-bottom:2px solid var(--text);
   display:flex;justify-content:space-between;align-items:baseline;
-  flex-wrap:wrap;gap:1rem;
+  flex-wrap:wrap;gap:0.5rem;
+  flex-shrink:0;
 }
 .masthead h1{
   font-family:var(--font-h);font-size:clamp(2rem,5vw,3.5rem);
@@ -58,6 +60,7 @@ a{color:inherit;text-decoration:none}
   padding:0.8rem clamp(1rem,5vw,4rem);
   font-family:var(--font-m);font-size:0.85rem;
   display:none;align-items:center;gap:0.8rem;
+  flex-shrink:0;
 }
 .breaking.active{display:flex}
 .breaking-dot{
@@ -68,9 +71,10 @@ a{color:inherit;text-decoration:none}
 
 /* FILTER BAR */
 .filter-bar{
-  padding:1rem clamp(1rem,5vw,4rem);
+  padding:0.6rem clamp(1rem,5vw,4rem);
   display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;
   border-bottom:1px solid var(--border);
+  flex-shrink:0;
 }
 .filter-pill{
   font-family:var(--font-m);font-size:0.75rem;
@@ -91,21 +95,23 @@ a{color:inherit;text-decoration:none}
 /* CARD CONTAINER */
 .card-viewport{
   position:relative;
-  padding:clamp(1.5rem,4vw,3rem) clamp(1rem,5vw,4rem);
-  min-height:60vh;overflow:hidden;
+  padding:clamp(1rem,2vw,2rem) clamp(1rem,5vw,4rem);
+  flex:1;overflow:hidden;
+  display:flex;flex-direction:column;
 }
-.card-stack{position:relative;max-width:720px;margin:0 auto}
+.card-stack{position:relative;max-width:720px;margin:0 auto;flex:1;width:100%}
 .card{
-  position:absolute;top:0;left:0;right:0;
+  position:absolute;top:0;left:0;right:0;bottom:0;
   background:var(--card);border:1px solid var(--border);
   padding:clamp(1.5rem,3vw,2.5rem);
   opacity:0;pointer-events:none;
   transition:transform .5s var(--spring),opacity .4s ease-out;
-  touch-action:pan-y pinch-zoom;user-select:none;
+  touch-action:pan-x pan-y pinch-zoom;user-select:none;
   will-change:transform,opacity;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 .card.active{
-  opacity:1;pointer-events:auto;position:relative;
+  opacity:1;pointer-events:auto;
   transform:translateX(0) rotate(0);
 }
 .card.enter-left{transform:translateX(-110%) rotate(-3deg);opacity:0}
@@ -196,7 +202,8 @@ a{color:inherit;text-decoration:none}
 /* NAVIGATION */
 .card-nav{
   display:flex;justify-content:center;align-items:center;
-  gap:1.5rem;padding:1.5rem 0;max-width:720px;margin:0 auto;
+  gap:1.5rem;padding:0.8rem 0;max-width:720px;margin:0 auto;
+  flex-shrink:0;
 }
 .nav-btn{
   background:none;border:1px solid var(--border);
@@ -246,9 +253,10 @@ a{color:inherit;text-decoration:none}
 .edition-footer{
   border-top:2px solid var(--text);
   padding:clamp(1.5rem,4vw,2rem) clamp(1rem,5vw,4rem);
-  display:flex;justify-content:space-between;align-items:center;
+  display:none;justify-content:space-between;align-items:center;
   flex-wrap:wrap;gap:1rem;
   font-family:var(--font-m);font-size:0.75rem;color:var(--text-2);
+  flex-shrink:0;
 }
 .footer-nav{display:flex;gap:1.5rem}
 .footer-nav a{transition:color .2s}
@@ -264,32 +272,36 @@ a{color:inherit;text-decoration:none}
 
 /* MOBILE */
 @media(max-width:640px){
-  .masthead{flex-direction:column;gap:0.5rem}
-  .masthead-meta{gap:0.8rem;flex-wrap:wrap}
-  .card{padding:1.2rem}
-  .card-viewport{min-height:auto;padding:1rem}
-  .card-title{font-size:clamp(1.3rem,5vw,1.8rem)}
-  .card-summary{font-size:0.95rem;line-height:1.6}
+  .masthead{flex-direction:column;gap:0.3rem;padding:0.6rem 1rem}
+  .masthead h1{font-size:clamp(1.5rem,5vw,2rem)}
+  .masthead-meta{gap:0.6rem;flex-wrap:wrap;font-size:0.65rem}
+  .card{padding:1rem}
+  .card-viewport{padding:0.5rem 0.8rem}
+  .card-title{font-size:clamp(1.2rem,4.5vw,1.6rem)}
+  .card-summary{font-size:0.9rem;line-height:1.55}
   .filter-bar{
-    gap:0.5rem;padding:0.8rem 1rem;
+    gap:0.5rem;padding:0.5rem 1rem;
     overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
     scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;
   }
   .filter-bar::-webkit-scrollbar{display:none}
-  .filter-pill{flex-shrink:0;padding:0.5rem 0.9rem;font-size:0.7rem;scroll-snap-align:start}
-  .nav-btn{width:48px;height:48px;font-size:1.4rem}
-  .card-nav{gap:1rem;padding:1rem 0}
+  .filter-pill{flex-shrink:0;padding:0.4rem 0.8rem;font-size:0.7rem;scroll-snap-align:start}
+  .nav-btn{width:44px;height:44px;font-size:1.2rem}
+  .card-nav{gap:0.8rem;padding:0.5rem 0}
   .card-counter{display:none}
-  .dots{gap:5px}
+  .dots{gap:4px}
   .dot{width:5px;height:5px}
   .dot.active{width:8px;height:8px}
-  .card-link{font-size:0.9rem;padding:0.6rem 0;min-height:44px;display:inline-flex;align-items:center}
+  .card-link{font-size:0.85rem;padding:0.4rem 0;min-height:44px;display:inline-flex;align-items:center}
   .grid-view{grid-template-columns:1fr}
   .grid-card{padding:1.2rem}
-  .context-toggle{padding:0.3rem 0;font-size:0.8rem}
-  .breaking{font-size:0.75rem;padding:0.6rem 1rem}
-  .card.synthesis-card{padding:1.5rem 1rem;border-left-width:3px}
-  .synth-ref{font-size:0.85rem;padding:0.5rem 0}
+  .context-toggle{padding:0.2rem 0;font-size:0.75rem}
+  .breaking{font-size:0.75rem;padding:0.5rem 1rem}
+  .card.synthesis-card{padding:1rem 0.8rem;border-left-width:3px}
+  .synth-ref{font-size:0.8rem;padding:0.35rem 0}
+  .card-source{margin-bottom:0.8rem;font-size:0.7rem}
+  .card-tags{margin-bottom:0.8rem}
+  .card-context-inner{padding:0.8rem;font-size:0.85rem}
 }
 </style>
 </head>
@@ -299,7 +311,7 @@ a{color:inherit;text-decoration:none}
   <h1>REVUE DE PRESSE</h1>
   <div class="masthead-meta">
     <span>Sunday 08 february 2026</span>
-    <span>No. 4</span>
+    <span>No. 5</span>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer le theme">Light</button>
   </div>
 </header>
@@ -322,84 +334,69 @@ a{color:inherit;text-decoration:none}
 <section class="card-viewport" id="cardViewport">
   <div class="card-stack" id="cardStack">
     
-    <article class="card synthesis-card" data-index="0">
-      <span class="synth-tag">Synthese</span>
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">IA et securite au coeur d'une semaine decisive pour la tech</h2>
-      <p class="card-summary">L'intelligence artificielle franchit un nouveau cap cette semaine, entre prouesses collaboratives d'agents IA et montee des inquietudes sur la securite des modeles de langage. Seize agents Claude ont concu un compilateur C fonctionnel, tandis que des chercheurs alertent sur les backdoors indectectables dans les LLM. Le secteur de la conduite autonome accelere avec Waymo qui integre un modele de monde pour simuler des scenarios extremes. Pendant ce temps, l'accessibilite numerique progresse grace a de nouveaux outils de modelisation 3D pour les developpeurs malvoyants, et l'Inde redessine son cadre reglementaire pour attirer les startups deep tech.</p>
-      
-    <div class="synth-refs">
-      <span class="synth-refs-label">Articles cites</span>
-      <a class="synth-ref" href="javascript:void(0)" onclick="goToCard(1)">Seize agents Claude collaborent pour creer un compilateur C fonctionnel</a>
-<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(2)">Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA</a>
-<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(3)">Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome</a>
-<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(6)">Trois signes que votre LLM pourrait etre piege par une backdoor</a>
-
-    </div>
-    </article>
-    <article class="card" data-index="1">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Seize agents Claude collaborent pour creer un compilateur C fonctionnel</h2>
+    <article class="card" data-index="0">
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title">Seize agents IA Claude collaborent pour creer un compilateur C fonctionnel</h2>
       <div class="card-source">Ars Technica — il y a 1j</div>
-      <p class="card-summary">Une equipe a orchestre seize instances de Claude, l'IA d'Anthropic, pour concevoir un compilateur C capable de compiler le noyau Linux. L'experience, qui a coute 20 000 dollars, demontre le potentiel des systemes multi-agents pour des taches d'ingenierie complexes. Toutefois, une supervision humaine approfondie reste indispensable a chaque etape du processus.</p>
+      <p class="card-summary">Une equipe de seize agents Claude a concu un compilateur C capable de compiler le noyau Linux, pour un cout de 20 000 dollars. L'experience demontre le potentiel de la collaboration multi-agents, mais revele aussi qu'une supervision humaine approfondie reste indispensable. Ce resultat pose la question de l'evolution du developpement logiciel vers une orchestration d'agents plutot qu'une programmation manuelle.</p>
       
       <a class="card-link" href="https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
-    <article class="card" data-index="2">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA</h2>
-      <div class="card-source">MIT Technology Review — il y a 1j</div>
-      <p class="card-summary">Moltbook, un clone de Reddit entierement peuple par des agents IA, a enflamme le web pendant quelques jours avant de reveler les limites du concept. Lance comme un espace ou les bots discutent et votent entre eux, le projet illustre la fascination actuelle pour l'IA generative poussee a l'absurde. La MIT Technology Review y voit un symptome de l'ere du spectacle IA, ou la viralite prime sur l'utilite reelle.</p>
+    <article class="card" data-index="1">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title">650 milliards de dollars : la course a l'infrastructure IA des geants de la tech</h2>
+      <div class="card-source">Bloomberg — il y a 2j</div>
+      <p class="card-summary">Alphabet, Amazon, Meta et Microsoft prevoient d'investir collectivement 650 milliards de dollars dans le calcul IA en 2026, un niveau sans precedent. Cette offensive vise a securiser une position dominante sur le marche emergent des outils d'intelligence artificielle. L'ampleur de ces depenses traduit une conviction profonde que l'IA sera le socle economique de la prochaine decennie.</p>
       
-      <a class="card-link" href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://www.bloomberg.com/news/articles/2026-02-06/how-much-is-big-tech-spending-on-ai-computing-a-staggering-650-billion-in-2026" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="2">
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title">Anthropic lance Opus 4.6 : un million de tokens et des equipes d'agents autonomes</h2>
+      <div class="card-source">CNN Business — il y a 2j</div>
+      <p class="card-summary">Anthropic a devoile Opus 4.6, etendant la fenetre de contexte a un million de tokens et permettant de repartir les taches de programmation entre des equipes d'agents coordonnes. L'annonce a provoque une chute des valeurs boursieres du secteur logiciel, les investisseurs anticipant une disruption acceleree. Le modele redefinit la frontiere entre outil d'assistance et collaborateur autonome.</p>
+      
+      <a class="card-link" href="https://www.cnn.com/2026/02/05/tech/anthropic-opus-update-software-stocks" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="3">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome</h2>
-      <div class="card-source">Ars Technica — il y a 1j</div>
-      <p class="card-summary">Waymo integre Genie 3, un modele de monde developpe par Google DeepMind, pour generer des scenarios de conduite rares ou impossibles a reproduire dans la realite. Cette approche permet d'entrainer les vehicules autonomes face a des situations extremes sans risque. La technologie marque une evolution significative vers une conduite autonome plus robuste et plus sure.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title">L'AGI est-elle deja la ? Des chercheurs de l'UC San Diego relancent le debat</h2>
+      <div class="card-source">TechXplore — il y a 1j</div>
+      <p class="card-summary">Des chercheurs de l'universite de Californie a San Diego avancent que les grands modeles de langage actuels remplissent deja les deux premiers niveaux d'evaluation de l'intelligence generale. Cette these, qui repousse les frontieres du debat sur l'AGI, suscite des reactions contrastees dans la communaute scientifique. La question n'est plus seulement technique mais aussi philosophique : quels criteres definissent reellement l'intelligence ?</p>
       
-      <a class="card-link" href="https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://techxplore.com/news/2026-02-artificial-general-intelligence-case-today.html" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="4">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
-      <h2 class="card-title">De nouveaux outils permettent aux developpeurs malvoyants de concevoir des modeles 3D</h2>
-      <div class="card-source">IEEE Spectrum — il y a 21h</div>
-      <p class="card-summary">Les logiciels de modelisation 3D traditionnels reposent sur des interactions visuelles de type glisser-deposer, excluant de fait les programmeurs aveugles ou malvoyants. De nouveaux outils accessibles changent la donne en permettant la conception et la verification de composants physiques et virtuels par le code. Cette avancee ouvre des pans entiers de l'ingenierie materielle et de la robotique a des talents jusqu'ici exclus.</p>
-      
-      <a class="card-link" href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="5">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">L'Inde refond ses regles pour accelerer ses startups deep tech</h2>
-      <div class="card-source">TechCrunch — il y a 8h</div>
-      <p class="card-summary">Le gouvernement indien a modifie son cadre reglementaire pour faciliter le financement et le developpement a long terme des startups technologiques de pointe. Les nouvelles regles visent a combler le retard du pays dans les domaines de l'IA, de la biotechnologie et du quantique. Cette reforme positionne l'Inde comme un concurrent serieux dans la course mondiale a l'innovation profonde.</p>
-      
-      <a class="card-link" href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="6">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Trois signes que votre LLM pourrait etre piege par une backdoor</h2>
-      <div class="card-source">The Register — il y a 3j</div>
-      <p class="card-summary">Des chercheurs en securite alertent sur la menace croissante des backdoors de type « agent dormant » dissimulees dans les modeles de langage lors de l'entrainement. Le responsable de la red team IA de Microsoft qualifie la detection de ces portes derobees de defi quasi impossible a relever. Cette vulnerabilite souleve des questions fondamentales sur la confiance que les entreprises peuvent accorder aux modeles d'IA tiers.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title">Backdoors dans les LLM : trois signaux d'alerte pour detecter un modele empoisonne</h2>
+      <div class="card-source">The Register — il y a 2j</div>
+      <p class="card-summary">Des attaquants peuvent desormais inserer des portes derobees de type « sleeper agent » dans les modeles de langage lors de l'entrainement, activables par des phrases predefinies. The Register identifie trois indices permettant de reperer un modele compromis. Cette menace croissante souligne l'urgence de renforcer la securite de la chaine d'approvisionnement des modeles IA.</p>
       
       <a class="card-link" href="https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
-    <article class="card" data-index="7">
+    <article class="card" data-index="5">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Claude Opus 4.6 decouvre 500 failles zero-day : les experts en securite prennent l'IA au serieux</h2>
-      <div class="card-source">Simon Willison — il y a 9h</div>
-      <p class="card-summary">Thomas Ptacek, figure respectee de la recherche en vulnerabilites, affirme que la decouverte par Claude Opus 4.6 de 500 failles zero-day dans des projets open source ne doit pas etre prise a la legere. Selon lui, la recherche de vulnerabilites est peut-etre le domaine d'ingenierie logicielle le plus adapte aux capacites des LLM. Cette analyse tranche avec le scepticisme ambiant et suggere un tournant dans l'usage offensif et defensif de l'IA en cybersecurite.</p>
-      
-      <a class="card-link" href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="8">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Des paquets malveillants ciblent l'exchange dYdX et vident les portefeuilles</h2>
+      <h2 class="card-title">Waymo utilise Genie 3 pour simuler des scenarios de conduite impossibles</h2>
       <div class="card-source">Ars Technica — il y a 1j</div>
-      <p class="card-summary">Des paquets frauduleux imitant les bibliotheques officielles de la plateforme d'echange dYdX ont siphonne les fonds des utilisateurs imprudents. Il s'agit de la troisieme attaque de ce type visant cette plateforme de finance decentralisee. L'incident rappelle la fragilite de la chaine d'approvisionnement logicielle dans l'ecosysteme crypto.</p>
+      <p class="card-summary">Waymo integre le modele generatif Genie 3 de Google DeepMind pour creer un modele du monde dedie a la conduite autonome. Ce systeme permet de simuler des situations rares, voire physiquement impossibles, pour entrainer les vehicules sans risque. L'approche marque un tournant vers une formation des IA de conduite par la simulation generative plutot que par les seules donnees reelles.</p>
       
-      <a class="card-link" href="https://arstechnica.com/security/2026/02/malicious-packages-for-dydx-cryptocurrency-exchange-empties-user-wallets/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="6">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Apple prepare l'integration de chatbots IA dans CarPlay</h2>
+      <div class="card-source">TechCrunch — il y a 1j</div>
+      <p class="card-summary">Apple travaille a rendre CarPlay compatible avec les chatbots IA comme ChatGPT, une integration prevue dans les prochains mois. Cette ouverture marque un changement de strategie pour Apple, jusqu'ici prudent sur l'integration d'IA tierces dans son ecosysteme. L'automobile devient un nouveau terrain de bataille pour les assistants conversationnels.</p>
+      
+      <a class="card-link" href="https://techcrunch.com/2026/02/06/apple-is-working-to-make-carplay-compatible-with-ai-chatbots-like-chatgpt/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="7">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">New York envisage un moratoire de trois ans sur les nouveaux data centers</h2>
+      <div class="card-source">TechCrunch — il y a 17h</div>
+      <p class="card-summary">Des legislateurs new-yorkais ont propose un gel de trois ans sur la construction de nouveaux centres de donnees, faisant de New York le sixieme Etat americain a envisager une telle mesure. Cette proposition intervient alors que la demande en infrastructure IA fait exploser la consommation energetique. Le debat illustre la tension croissante entre ambitions technologiques et contraintes environnementales.</p>
+      
+      <a class="card-link" href="https://techcrunch.com/2026/02/07/new-york-lawmakers-propose-a-three-year-pause-on-new-data-centers/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
   </div>
   <nav class="card-nav" id="cardNav">
@@ -412,64 +409,58 @@ a{color:inherit;text-decoration:none}
 
 <section class="grid-view" id="gridView">
   
-    <article class="grid-card synthesis-grid" data-index="0">
-      <span class="synth-tag">Synthese</span>
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">IA et securite au coeur d'une semaine decisive pour la tech</h2>
-      <p class="card-summary">L'intelligence artificielle franchit un nouveau cap cette semaine, entre prouesses collaboratives d'agents IA et montee des inquietudes sur la securite des modeles de langage. Seize agents Claude ont concu un compilateur C fonctionnel, tandis que des chercheurs alertent sur les backdoors indectectables dans les LLM. Le secteur de la conduite autonome accelere avec Waymo qui integre un modele de monde pour simuler des scenarios extremes. Pendant ce temps, l'accessibilite numerique progresse grace a de nouveaux outils de modelisation 3D pour les developpeurs malvoyants, et l'Inde redessine son cadre reglementaire pour attirer les startups deep tech.</p>
+    <article class="grid-card" data-index="0">
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title"><a href="https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/" target="_blank" rel="noopener">Seize agents IA Claude collaborent pour creer un compilateur C fonctionnel</a></h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Une equipe de seize agents Claude a concu un compilateur C capable de compiler le noyau Linux, pour un cout de 20 000 dollars. L'experience demontre le potentiel de la collaboration multi-agents, mais revele aussi qu'une supervision humaine approfondie reste indispensable. Ce resultat pose la question de l'evolution du developpement logiciel vers une orchestration d'agents plutot qu'une programmation manuelle.</p>
     </article>
     <article class="grid-card" data-index="1">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/" target="_blank" rel="noopener">Seize agents Claude collaborent pour creer un compilateur C fonctionnel</a></h2>
-      <div class="card-source">Ars Technica — il y a 1j</div>
-      <p class="card-summary">Une equipe a orchestre seize instances de Claude, l'IA d'Anthropic, pour concevoir un compilateur C capable de compiler le noyau Linux. L'experience, qui a coute 20 000 dollars, demontre le potentiel des systemes multi-agents pour des taches d'ingenierie complexes. Toutefois, une supervision humaine approfondie reste indispensable a chaque etape du processus.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title"><a href="https://www.bloomberg.com/news/articles/2026-02-06/how-much-is-big-tech-spending-on-ai-computing-a-staggering-650-billion-in-2026" target="_blank" rel="noopener">650 milliards de dollars : la course a l'infrastructure IA des geants de la tech</a></h2>
+      <div class="card-source">Bloomberg — il y a 2j</div>
+      <p class="card-summary">Alphabet, Amazon, Meta et Microsoft prevoient d'investir collectivement 650 milliards de dollars dans le calcul IA en 2026, un niveau sans precedent. Cette offensive vise a securiser une position dominante sur le marche emergent des outils d'intelligence artificielle. L'ampleur de ces depenses traduit une conviction profonde que l'IA sera le socle economique de la prochaine decennie.</p>
     </article>
     <article class="grid-card" data-index="2">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA</a></h2>
-      <div class="card-source">MIT Technology Review — il y a 1j</div>
-      <p class="card-summary">Moltbook, un clone de Reddit entierement peuple par des agents IA, a enflamme le web pendant quelques jours avant de reveler les limites du concept. Lance comme un espace ou les bots discutent et votent entre eux, le projet illustre la fascination actuelle pour l'IA generative poussee a l'absurde. La MIT Technology Review y voit un symptome de l'ere du spectacle IA, ou la viralite prime sur l'utilite reelle.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title"><a href="https://www.cnn.com/2026/02/05/tech/anthropic-opus-update-software-stocks" target="_blank" rel="noopener">Anthropic lance Opus 4.6 : un million de tokens et des equipes d'agents autonomes</a></h2>
+      <div class="card-source">CNN Business — il y a 2j</div>
+      <p class="card-summary">Anthropic a devoile Opus 4.6, etendant la fenetre de contexte a un million de tokens et permettant de repartir les taches de programmation entre des equipes d'agents coordonnes. L'annonce a provoque une chute des valeurs boursieres du secteur logiciel, les investisseurs anticipant une disruption acceleree. Le modele redefinit la frontiere entre outil d'assistance et collaborateur autonome.</p>
     </article>
     <article class="grid-card" data-index="3">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/" target="_blank" rel="noopener">Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome</a></h2>
-      <div class="card-source">Ars Technica — il y a 1j</div>
-      <p class="card-summary">Waymo integre Genie 3, un modele de monde developpe par Google DeepMind, pour generer des scenarios de conduite rares ou impossibles a reproduire dans la realite. Cette approche permet d'entrainer les vehicules autonomes face a des situations extremes sans risque. La technologie marque une evolution significative vers une conduite autonome plus robuste et plus sure.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title"><a href="https://techxplore.com/news/2026-02-artificial-general-intelligence-case-today.html" target="_blank" rel="noopener">L'AGI est-elle deja la ? Des chercheurs de l'UC San Diego relancent le debat</a></h2>
+      <div class="card-source">TechXplore — il y a 1j</div>
+      <p class="card-summary">Des chercheurs de l'universite de Californie a San Diego avancent que les grands modeles de langage actuels remplissent deja les deux premiers niveaux d'evaluation de l'intelligence generale. Cette these, qui repousse les frontieres du debat sur l'AGI, suscite des reactions contrastees dans la communaute scientifique. La question n'est plus seulement technique mais aussi philosophique : quels criteres definissent reellement l'intelligence ?</p>
     </article>
     <article class="grid-card" data-index="4">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
-      <h2 class="card-title"><a href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">De nouveaux outils permettent aux developpeurs malvoyants de concevoir des modeles 3D</a></h2>
-      <div class="card-source">IEEE Spectrum — il y a 21h</div>
-      <p class="card-summary">Les logiciels de modelisation 3D traditionnels reposent sur des interactions visuelles de type glisser-deposer, excluant de fait les programmeurs aveugles ou malvoyants. De nouveaux outils accessibles changent la donne en permettant la conception et la verification de composants physiques et virtuels par le code. Cette avancee ouvre des pans entiers de l'ingenierie materielle et de la robotique a des talents jusqu'ici exclus.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span></div>
+      <h2 class="card-title"><a href="https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/" target="_blank" rel="noopener">Backdoors dans les LLM : trois signaux d'alerte pour detecter un modele empoisonne</a></h2>
+      <div class="card-source">The Register — il y a 2j</div>
+      <p class="card-summary">Des attaquants peuvent desormais inserer des portes derobees de type « sleeper agent » dans les modeles de langage lors de l'entrainement, activables par des phrases predefinies. The Register identifie trois indices permettant de reperer un modele compromis. Cette menace croissante souligne l'urgence de renforcer la securite de la chaine d'approvisionnement des modeles IA.</p>
     </article>
     <article class="grid-card" data-index="5">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">L'Inde refond ses regles pour accelerer ses startups deep tech</a></h2>
-      <div class="card-source">TechCrunch — il y a 8h</div>
-      <p class="card-summary">Le gouvernement indien a modifie son cadre reglementaire pour faciliter le financement et le developpement a long terme des startups technologiques de pointe. Les nouvelles regles visent a combler le retard du pays dans les domaines de l'IA, de la biotechnologie et du quantique. Cette reforme positionne l'Inde comme un concurrent serieux dans la course mondiale a l'innovation profonde.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/" target="_blank" rel="noopener">Waymo utilise Genie 3 pour simuler des scenarios de conduite impossibles</a></h2>
+      <div class="card-source">Ars Technica — il y a 1j</div>
+      <p class="card-summary">Waymo integre le modele generatif Genie 3 de Google DeepMind pour creer un modele du monde dedie a la conduite autonome. Ce systeme permet de simuler des situations rares, voire physiquement impossibles, pour entrainer les vehicules sans risque. L'approche marque un tournant vers une formation des IA de conduite par la simulation generative plutot que par les seules donnees reelles.</p>
     </article>
     <article class="grid-card" data-index="6">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/" target="_blank" rel="noopener">Trois signes que votre LLM pourrait etre piege par une backdoor</a></h2>
-      <div class="card-source">The Register — il y a 3j</div>
-      <p class="card-summary">Des chercheurs en securite alertent sur la menace croissante des backdoors de type « agent dormant » dissimulees dans les modeles de langage lors de l'entrainement. Le responsable de la red team IA de Microsoft qualifie la detection de ces portes derobees de defi quasi impossible a relever. Cette vulnerabilite souleve des questions fondamentales sur la confiance que les entreprises peuvent accorder aux modeles d'IA tiers.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/06/apple-is-working-to-make-carplay-compatible-with-ai-chatbots-like-chatgpt/" target="_blank" rel="noopener">Apple prepare l'integration de chatbots IA dans CarPlay</a></h2>
+      <div class="card-source">TechCrunch — il y a 1j</div>
+      <p class="card-summary">Apple travaille a rendre CarPlay compatible avec les chatbots IA comme ChatGPT, une integration prevue dans les prochains mois. Cette ouverture marque un changement de strategie pour Apple, jusqu'ici prudent sur l'integration d'IA tierces dans son ecosysteme. L'automobile devient un nouveau terrain de bataille pour les assistants conversationnels.</p>
     </article>
     <article class="grid-card" data-index="7">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Claude Opus 4.6 decouvre 500 failles zero-day : les experts en securite prennent l'IA au serieux</a></h2>
-      <div class="card-source">Simon Willison — il y a 9h</div>
-      <p class="card-summary">Thomas Ptacek, figure respectee de la recherche en vulnerabilites, affirme que la decouverte par Claude Opus 4.6 de 500 failles zero-day dans des projets open source ne doit pas etre prise a la legere. Selon lui, la recherche de vulnerabilites est peut-etre le domaine d'ingenierie logicielle le plus adapte aux capacites des LLM. Cette analyse tranche avec le scepticisme ambiant et suggere un tournant dans l'usage offensif et defensif de l'IA en cybersecurite.</p>
-    </article>
-    <article class="grid-card" data-index="8">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://arstechnica.com/security/2026/02/malicious-packages-for-dydx-cryptocurrency-exchange-empties-user-wallets/" target="_blank" rel="noopener">Des paquets malveillants ciblent l'exchange dYdX et vident les portefeuilles</a></h2>
-      <div class="card-source">Ars Technica — il y a 1j</div>
-      <p class="card-summary">Des paquets frauduleux imitant les bibliotheques officielles de la plateforme d'echange dYdX ont siphonne les fonds des utilisateurs imprudents. Il s'agit de la troisieme attaque de ce type visant cette plateforme de finance decentralisee. L'incident rappelle la fragilite de la chaine d'approvisionnement logicielle dans l'ecosysteme crypto.</p>
+      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/new-york-lawmakers-propose-a-three-year-pause-on-new-data-centers/" target="_blank" rel="noopener">New York envisage un moratoire de trois ans sur les nouveaux data centers</a></h2>
+      <div class="card-source">TechCrunch — il y a 17h</div>
+      <p class="card-summary">Des legislateurs new-yorkais ont propose un gel de trois ans sur la construction de nouveaux centres de donnees, faisant de New York le sixieme Etat americain a envisager une telle mesure. Cette proposition intervient alors que la demande en infrastructure IA fait exploser la consommation energetique. Le debat illustre la tension croissante entre ambitions technologiques et contraintes environnementales.</p>
     </article>
 </section>
 
 <footer class="edition-footer">
-  <span>Genere par Claude — 12:37 CET</span>
+  <span>Genere par Claude — 12:54 CET</span>
   <nav class="footer-nav">
     <a href="editions/archives/index.html">Archives</a>
   </nav>
@@ -479,7 +470,7 @@ a{color:inherit;text-decoration:none}
 (function(){
   "use strict";
 
-  const articles = [{"is_synthesis": true, "editorial_title": "IA et securite au coeur d'une semaine decisive pour la tech", "editorial_summary": "L'intelligence artificielle franchit un nouveau cap cette semaine, entre prouesses collaboratives d'agents IA et montee des inquietudes sur la securite des modeles de langage. Seize agents Claude ont concu un compilateur C fonctionnel, tandis que des chercheurs alertent sur les backdoors indectectables dans les LLM. Le secteur de la conduite autonome accelere avec Waymo qui integre un modele de monde pour simuler des scenarios extremes. Pendant ce temps, l'accessibilite numerique progresse grace a de nouveaux outils de modelisation 3D pour les developpeurs malvoyants, et l'Inde redessine son cadre reglementaire pour attirer les startups deep tech.", "article_refs": [1, 2, 3, 6], "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech"], "source": "Editorial", "url": "#", "published": "2026-02-08T12:00:00+01:00"}, {"title": "Sixteen Claude AI agents working together created a new C compiler", "editorial_title": "Seize agents Claude collaborent pour creer un compilateur C fonctionnel", "editorial_summary": "Une equipe a orchestre seize instances de Claude, l'IA d'Anthropic, pour concevoir un compilateur C capable de compiler le noyau Linux. L'experience, qui a coute 20 000 dollars, demontre le potentiel des systemes multi-agents pour des taches d'ingenierie complexes. Toutefois, une supervision humaine approfondie reste indispensable a chaque etape du processus.", "url": "https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/", "source": "Ars Technica", "topics": ["Tech", "IA"], "matched_topics": ["IA", "Tech"], "summary": "The $20,000 experiment compiled a Linux kernel but needed deep human management.", "published": "2026-02-06T23:40:58+00:00", "authority": 22}, {"title": "Moltbook was peak AI theater", "editorial_title": "Moltbook, le reseau social reserve aux bots, incarne le theatre de l'IA", "editorial_summary": "Moltbook, un clone de Reddit entierement peuple par des agents IA, a enflamme le web pendant quelques jours avant de reveler les limites du concept. Lance comme un espace ou les bots discutent et votent entre eux, le projet illustre la fascination actuelle pour l'IA generative poussee a l'absurde. La MIT Technology Review y voit un symptome de l'ere du spectacle IA, ou la viralite prime sur l'utilite reelle.", "url": "https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/", "source": "MIT Technology Review", "topics": ["IA", "Tech", "Sciences"], "matched_topics": ["IA", "Tech"], "summary": "A vibe-coded Reddit clone where AI agents share, discuss, and upvote.", "published": "2026-02-06T16:38:11+00:00", "authority": 22}, {"title": "Waymo leverages Genie 3 to create a world model for self-driving cars", "editorial_title": "Waymo adopte Genie 3 pour simuler un monde virtuel au service de la conduite autonome", "editorial_summary": "Waymo integre Genie 3, un modele de monde developpe par Google DeepMind, pour generer des scenarios de conduite rares ou impossibles a reproduire dans la realite. Cette approche permet d'entrainer les vehicules autonomes face a des situations extremes sans risque. La technologie marque une evolution significative vers une conduite autonome plus robuste et plus sure.", "url": "https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/", "source": "Ars Technica", "topics": ["Tech", "IA"], "matched_topics": ["IA", "Tech"], "summary": "With Genie 3, Waymo wants to explore rare and even impossible driving conditions.", "published": "2026-02-06T20:44:35+00:00", "authority": 22}, {"title": "Low-Vision Programmers Can Now Design 3D Models Independently", "editorial_title": "De nouveaux outils permettent aux developpeurs malvoyants de concevoir des modeles 3D", "editorial_summary": "Les logiciels de modelisation 3D traditionnels reposent sur des interactions visuelles de type glisser-deposer, excluant de fait les programmeurs aveugles ou malvoyants. De nouveaux outils accessibles changent la donne en permettant la conception et la verification de composants physiques et virtuels par le code. Cette avancee ouvre des pans entiers de l'ingenierie materielle et de la robotique a des talents jusqu'ici exclus.", "url": "https://spectrum.ieee.org/3d-modeling-blind-programmers", "source": "IEEE Spectrum", "topics": ["Tech", "Sciences"], "matched_topics": ["Tech", "Sciences"], "summary": "New 3D modeling tools are beginning to change accessibility for blind programmers.", "published": "2026-02-07T14:00:01+00:00", "authority": 20}, {"title": "India has changed its startup rules for deep tech", "editorial_title": "L'Inde refond ses regles pour accelerer ses startups deep tech", "editorial_summary": "Le gouvernement indien a modifie son cadre reglementaire pour faciliter le financement et le developpement a long terme des startups technologiques de pointe. Les nouvelles regles visent a combler le retard du pays dans les domaines de l'IA, de la biotechnologie et du quantique. Cette reforme positionne l'Inde comme un concurrent serieux dans la course mondiale a l'innovation profonde.", "url": "https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/", "source": "TechCrunch", "topics": ["Tech", "Startups"], "matched_topics": ["Startups", "Tech"], "summary": "India is adjusting startup rules to help more of its deep tech startups.", "published": "2026-02-08T03:30:00+00:00", "authority": 20}, {"title": "Three clues your LLM may be poisoned", "editorial_title": "Trois signes que votre LLM pourrait etre piege par une backdoor", "editorial_summary": "Des chercheurs en securite alertent sur la menace croissante des backdoors de type « agent dormant » dissimulees dans les modeles de langage lors de l'entrainement. Le responsable de la red team IA de Microsoft qualifie la detection de ces portes derobees de defi quasi impossible a relever. Cette vulnerabilite souleve des questions fondamentales sur la confiance que les entreprises peuvent accorder aux modeles d'IA tiers.", "url": "https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/", "source": "The Register", "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech"], "summary": "Sleeper agent-style backdoors in AI LLMs pose a security threat.", "published": "2026-02-05T10:00:00+00:00", "authority": 15}, {"title": "Quoting Thomas Ptacek", "editorial_title": "Claude Opus 4.6 decouvre 500 failles zero-day : les experts en securite prennent l'IA au serieux", "editorial_summary": "Thomas Ptacek, figure respectee de la recherche en vulnerabilites, affirme que la decouverte par Claude Opus 4.6 de 500 failles zero-day dans des projets open source ne doit pas etre prise a la legere. Selon lui, la recherche de vulnerabilites est peut-etre le domaine d'ingenierie logicielle le plus adapte aux capacites des LLM. Cette analyse tranche avec le scepticisme ambiant et suggere un tournant dans l'usage offensif et defensif de l'IA en cybersecurite.", "url": "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything", "source": "Simon Willison", "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech"], "summary": "Vulnerability researchers do not think Claude finding 500 zero-days is a joke.", "published": "2026-02-08T02:25:53+00:00", "authority": 15}, {"title": "Malicious packages for dYdX cryptocurrency exchange empties user wallets", "editorial_title": "Des paquets malveillants ciblent l'exchange dYdX et vident les portefeuilles", "editorial_summary": "Des paquets frauduleux imitant les bibliotheques officielles de la plateforme d'echange dYdX ont siphonne les fonds des utilisateurs imprudents. Il s'agit de la troisieme attaque de ce type visant cette plateforme de finance decentralisee. L'incident rappelle la fragilite de la chaine d'approvisionnement logicielle dans l'ecosysteme crypto.", "url": "https://arstechnica.com/security/2026/02/malicious-packages-for-dydx-cryptocurrency-exchange-empties-user-wallets/", "source": "Ars Technica", "topics": ["Tech", "IA"], "matched_topics": ["Tech"], "summary": "Third time the exchange has been targeted by thieves via malicious packages.", "published": "2026-02-06T22:16:51+00:00", "authority": 22}];
+  const articles = [{"title": "Sixteen Claude AI agents working together created a new C compiler", "editorial_title": "Seize agents IA Claude collaborent pour creer un compilateur C fonctionnel", "editorial_summary": "Une equipe de seize agents Claude a concu un compilateur C capable de compiler le noyau Linux, pour un cout de 20 000 dollars. L'experience demontre le potentiel de la collaboration multi-agents, mais revele aussi qu'une supervision humaine approfondie reste indispensable. Ce resultat pose la question de l'evolution du developpement logiciel vers une orchestration d'agents plutot qu'une programmation manuelle.", "url": "https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/", "source": "Ars Technica", "topics": ["IA"], "published": "2026-02-06T23:40:58+00:00", "authority": 22}, {"title": "How Much Is Big Tech Spending on AI Computing? A Staggering $650 Billion in 2026", "editorial_title": "650 milliards de dollars : la course a l'infrastructure IA des geants de la tech", "editorial_summary": "Alphabet, Amazon, Meta et Microsoft prevoient d'investir collectivement 650 milliards de dollars dans le calcul IA en 2026, un niveau sans precedent. Cette offensive vise a securiser une position dominante sur le marche emergent des outils d'intelligence artificielle. L'ampleur de ces depenses traduit une conviction profonde que l'IA sera le socle economique de la prochaine decennie.", "url": "https://www.bloomberg.com/news/articles/2026-02-06/how-much-is-big-tech-spending-on-ai-computing-a-staggering-650-billion-in-2026", "source": "Bloomberg", "topics": ["Tech", "IA"], "published": "2026-02-06T11:00:00+00:00", "authority": 22}, {"title": "Anthropic Opus 4.6: The AI that shook software stocks gets a big update", "editorial_title": "Anthropic lance Opus 4.6 : un million de tokens et des equipes d'agents autonomes", "editorial_summary": "Anthropic a devoile Opus 4.6, etendant la fenetre de contexte a un million de tokens et permettant de repartir les taches de programmation entre des equipes d'agents coordonnes. L'annonce a provoque une chute des valeurs boursieres du secteur logiciel, les investisseurs anticipant une disruption acceleree. Le modele redefinit la frontiere entre outil d'assistance et collaborateur autonome.", "url": "https://www.cnn.com/2026/02/05/tech/anthropic-opus-update-software-stocks", "source": "CNN Business", "topics": ["IA"], "published": "2026-02-05T14:00:00+00:00", "authority": 18}, {"title": "Is artificial general intelligence already here? A new case that today's LLMs meet key tests", "editorial_title": "L'AGI est-elle deja la ? Des chercheurs de l'UC San Diego relancent le debat", "editorial_summary": "Des chercheurs de l'universite de Californie a San Diego avancent que les grands modeles de langage actuels remplissent deja les deux premiers niveaux d'evaluation de l'intelligence generale. Cette these, qui repousse les frontieres du debat sur l'AGI, suscite des reactions contrastees dans la communaute scientifique. La question n'est plus seulement technique mais aussi philosophique : quels criteres definissent reellement l'intelligence ?", "url": "https://techxplore.com/news/2026-02-artificial-general-intelligence-case-today.html", "source": "TechXplore", "topics": ["IA"], "published": "2026-02-07T10:00:00+00:00", "authority": 15}, {"title": "Three clues your LLM may be poisoned", "editorial_title": "Backdoors dans les LLM : trois signaux d'alerte pour detecter un modele empoisonne", "editorial_summary": "Des attaquants peuvent desormais inserer des portes derobees de type « sleeper agent » dans les modeles de langage lors de l'entrainement, activables par des phrases predefinies. The Register identifie trois indices permettant de reperer un modele compromis. Cette menace croissante souligne l'urgence de renforcer la securite de la chaine d'approvisionnement des modeles IA.", "url": "https://www.theregister.com/2026/02/05/llm_poisoned_how_to_tell/", "source": "The Register", "topics": ["IA"], "published": "2026-02-05T12:00:00+00:00", "authority": 15}, {"title": "Waymo leverages Genie 3 to create a world model for self-driving cars", "editorial_title": "Waymo utilise Genie 3 pour simuler des scenarios de conduite impossibles", "editorial_summary": "Waymo integre le modele generatif Genie 3 de Google DeepMind pour creer un modele du monde dedie a la conduite autonome. Ce systeme permet de simuler des situations rares, voire physiquement impossibles, pour entrainer les vehicules sans risque. L'approche marque un tournant vers une formation des IA de conduite par la simulation generative plutot que par les seules donnees reelles.", "url": "https://arstechnica.com/google/2026/02/waymo-leverages-genie-3-to-create-a-world-model-for-self-driving-cars/", "source": "Ars Technica", "topics": ["IA", "Tech"], "published": "2026-02-06T20:44:35+00:00", "authority": 22}, {"title": "Apple is working to make CarPlay compatible with AI chatbots like ChatGPT", "editorial_title": "Apple prepare l'integration de chatbots IA dans CarPlay", "editorial_summary": "Apple travaille a rendre CarPlay compatible avec les chatbots IA comme ChatGPT, une integration prevue dans les prochains mois. Cette ouverture marque un changement de strategie pour Apple, jusqu'ici prudent sur l'integration d'IA tierces dans son ecosysteme. L'automobile devient un nouveau terrain de bataille pour les assistants conversationnels.", "url": "https://techcrunch.com/2026/02/06/apple-is-working-to-make-carplay-compatible-with-ai-chatbots-like-chatgpt/", "source": "TechCrunch", "topics": ["Tech"], "published": "2026-02-06T23:53:43+00:00", "authority": 20}, {"title": "New York lawmakers propose a three-year pause on new data centers", "editorial_title": "New York envisage un moratoire de trois ans sur les nouveaux data centers", "editorial_summary": "Des legislateurs new-yorkais ont propose un gel de trois ans sur la construction de nouveaux centres de donnees, faisant de New York le sixieme Etat americain a envisager une telle mesure. Cette proposition intervient alors que la demande en infrastructure IA fait exploser la consommation energetique. Le debat illustre la tension croissante entre ambitions technologiques et contraintes environnementales.", "url": "https://techcrunch.com/2026/02/07/new-york-lawmakers-propose-a-three-year-pause-on-new-data-centers/", "source": "TechCrunch", "topics": ["Tech"], "published": "2026-02-07T18:23:04+00:00", "authority": 20}];
 
   // State
   let current = 0;
@@ -632,6 +623,9 @@ a{color:inherit;text-decoration:none}
   let activePointerId = null;
   const swipeThreshold = () => Math.min(80, window.innerWidth * 0.2);
 
+  let startY = 0;
+  let swipeLocked = false; // once direction is determined, lock it
+
   function onPointerDown(e){
     if(isGrid) return;
     const card = e.target.closest('.card.active');
@@ -639,26 +633,48 @@ a{color:inherit;text-decoration:none}
     if(activePointerId !== null) return;
     activePointerId = e.pointerId;
     isDragging = true;
+    swipeLocked = false;
     startX = e.clientX;
+    startY = e.clientY;
     deltaX = 0;
-    card.style.transition = 'none';
-    card.setPointerCapture(e.pointerId);
   }
   function onPointerMove(e){
     if(!isDragging || e.pointerId !== activePointerId) return;
-    deltaX = e.clientX - startX;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    // Determine direction on first significant move
+    if(!swipeLocked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)){
+      if(Math.abs(dy) > Math.abs(dx)){
+        // Vertical scroll — abort swipe, let native scroll handle it
+        isDragging = false;
+        activePointerId = null;
+        return;
+      }
+      // Horizontal swipe — lock and capture
+      swipeLocked = true;
+      const card = stack.querySelector('.card.active');
+      if(card){
+        card.style.transition = 'none';
+        card.setPointerCapture(e.pointerId);
+      }
+    }
+    if(!swipeLocked) return;
+
+    deltaX = dx;
     const card = stack.querySelector('.card.active');
     if(!card) return;
     const progress = Math.min(Math.abs(deltaX) / (window.innerWidth * 0.45), 1);
     const opacity = 1 - progress * 0.4;
     card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.03}deg)`;
     card.style.opacity = opacity;
-    if(Math.abs(deltaX) > 10) e.preventDefault();
+    e.preventDefault();
   }
   function onPointerUp(e){
     if(!isDragging || e.pointerId !== activePointerId) return;
     isDragging = false;
     activePointerId = null;
+    if(!swipeLocked) return;
     const card = stack.querySelector('.card.active');
     if(!card) return;
     if(Math.abs(deltaX) > swipeThreshold()){
@@ -737,6 +753,16 @@ a{color:inherit;text-decoration:none}
     cardNav.style.display = isGrid ? 'none' : '';
     gridView.classList.toggle('active', isGrid);
     document.querySelector('.view-toggle').textContent = isGrid ? 'Cards' : 'Grille';
+    const footer = document.querySelector('.edition-footer');
+    if(isGrid){
+      document.body.style.height = 'auto';
+      document.body.style.overflow = '';
+      footer.style.display = 'flex';
+    } else {
+      document.body.style.height = '100dvh';
+      document.body.style.overflow = 'hidden';
+      footer.style.display = 'none';
+    }
   };
 
   function renderGrid(){
