@@ -2,6 +2,7 @@
 """Generate HTML edition from template and article data."""
 
 import json
+import re
 import sys
 import os
 from datetime import datetime
@@ -21,12 +22,20 @@ def load_template():
         return f.read()
 
 def get_edition_number(archives_dir):
-    """Count existing editions + 1."""
+    """Count unique days in archives + 1."""
     if not archives_dir.exists():
         return 1
-    existing = list(archives_dir.glob("*.html"))
-    existing = [f for f in existing if f.name != "index.html"]
-    return len(existing) + 1
+    existing = list(archives_dir.glob("????-??-??.*.html"))
+    # Extraire les dates uniques (partie avant le premier '.')
+    unique_days = set()
+    for f in existing:
+        date_part = f.name.split(".")[0]  # "YYYY-MM-DD"
+        unique_days.add(date_part)
+    # +1 seulement si aujourd'hui n'est pas deja dans les archives
+    today = datetime.now().strftime("%Y-%m-%d")
+    if today in unique_days:
+        return len(unique_days)
+    return len(unique_days) + 1
 
 def time_ago(published_str, now):
     """Human-readable relative time in French."""
@@ -60,10 +69,11 @@ def build_synthesis_card_html(article, index, articles, config, now):
 
     title = article.get("editorial_title", article.get("title", ""))
     summary = article.get("editorial_summary", article.get("summary", ""))
+    summary = re.sub(r'\s*— JPG \(aka Sandjab\)\s*$', '<br><em class="edito-signature">— JPG (aka Sandjab)</em>', summary)
 
     return f'''
     <article class="card synthesis-card" data-index="{index}">
-      <span class="synth-tag">Le mot de Sandjab</span>
+      <span class="synth-tag">L'edito de Sandjab</span>
       <div class="card-tags">{tags_html}</div>
       <h2 class="card-title">{title}</h2>
       <p class="card-summary">{summary}</p>
@@ -81,10 +91,11 @@ def build_synthesis_grid_card_html(article, index, articles, config, now):
 
     title = article.get("editorial_title", article.get("title", ""))
     summary = article.get("editorial_summary", article.get("summary", ""))
+    summary = re.sub(r'\s*— JPG \(aka Sandjab\)\s*$', '<br><em class="edito-signature">— JPG (aka Sandjab)</em>', summary)
 
     return f'''
     <article class="grid-card synthesis-grid" data-index="{index}">
-      <span class="synth-tag">Le mot de Sandjab</span>
+      <span class="synth-tag">L'edito de Sandjab</span>
       <div class="card-tags">{tags_html}</div>
       <h2 class="card-title">{title}</h2>
       <p class="card-summary">{summary}</p>
@@ -225,7 +236,7 @@ font-family:var(--font-m);font-size:0.9rem;transition:color .2s}}
 </head>
 <body>
 <header class="masthead">
-  <h1>Archives</h1>
+  <h1><a href="https://sandjab.github.io/rp/" style="color:inherit;text-decoration:none">Archives</a></h1>
   <a href="../index.html" class="masthead-link"><svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M18 18h-8M18 10h-8"/></svg> edito</a>
 </header>
 <main class="archives">
@@ -318,6 +329,26 @@ def main():
         f.write(html)
 
     print(f"[INFO] Archived: {archive_path}", file=sys.stderr)
+
+    # Update manifest.json with edition metadata
+    manifest_path = archives_dir / "manifest.json"
+    if manifest_path.exists():
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+    else:
+        manifest = []
+
+    synth = next((a for a in articles if a.get("is_synthesis")), None)
+    editorial_title = synth.get("editorial_title", synth.get("title", "")) if synth else ""
+
+    entry = {"date": date_str, "number": edition_number, "title": editorial_title}
+    manifest = [e for e in manifest if e.get("date") != date_str]
+    manifest.append(entry)
+    manifest.sort(key=lambda e: e.get("date", ""), reverse=True)
+
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+    print(f"[INFO] Manifest updated: {manifest_path}", file=sys.stderr)
 
     # Also write latest.html for deploy script
     latest_path = editions_dir / "latest.html"

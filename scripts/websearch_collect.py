@@ -85,7 +85,7 @@ def main():
         result = subprocess.run(
             [
                 "claude", "-p",
-                "--model", "sonnet",
+                "--model", "opus",
                 "--allowedTools", "WebSearch",
                 "--permission-mode", "default",
                 "--output-format", "text",

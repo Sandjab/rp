@@ -68,6 +68,8 @@ scripts/
 templates/
   edition.html         # Template HTML (CSS + JS inline)
 editions/              # HTML generes
+  archives/
+    manifest.json      # Metadonnees des editions (date, numero, titre)
 .pipeline/             # Artefacts intermediaires (gitignore)
 ```
 
@@ -109,11 +111,11 @@ Appelle `claude -p` avec le prompt `prompts/editorial.md` et les 20 candidats. L
 
 ### `generate_edition.py` — Phase 3 : HTML
 
-Remplit le template `templates/edition.html` avec les articles editorialises. Genere les cards pour le carrousel desktop et la grille mobile, les timestamps relatifs en francais ("il y a 2h"), le numero d'edition. Produit l'edition datee, une copie archivee horodatee, et `latest.html` pour le deploy.
+Remplit le template `templates/edition.html` avec les articles editorialises. Genere les cards pour le carrousel desktop et la grille mobile, les timestamps relatifs en francais ("il y a 2h"), le numero d'edition. Produit l'edition datee, une copie archivee horodatee, et `latest.html` pour le deploy. Met a jour `editions/archives/manifest.json` avec les metadonnees de l'edition (date, numero, titre editorial).
 
 ### `deploy.py` — Phase 4 : publication
 
-Clone la branche `gh-pages` en shallow, copie `latest.html` comme `index.html`, ajoute l'edition datee et les archives, commit et push vers GitHub Pages.
+Clone la branche `gh-pages` en shallow, copie `latest.html` comme `index.html`, ajoute l'edition datee et les archives. Genere `editions/archives/index.html` depuis `manifest.json` avec numero, titre editorial et date pour chaque edition. Commit et push vers GitHub Pages.
 
 ### `validate.py` — Validation inter-phases
 
@@ -122,6 +124,6 @@ Verifie la structure JSON entre les phases. Pour les candidats : tableau, ≥5 a
 ## Stack
 
 - **Python** — collecte RSS, dedup, ranking, generation HTML, deploy
-- **Claude Sonnet via `claude -p`** — recherche web, selection editoriale, redaction
+- **Claude Opus via `claude -p`** — recherche web, selection editoriale, redaction
 - **Templating HTML** — template unique avec CSS + JS inline
 - **GitHub Pages** — hebergement statique via branche `gh-pages`

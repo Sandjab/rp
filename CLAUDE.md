@@ -46,6 +46,6 @@ Repertoire local (gitignore) recree a chaque run. Contient les artefacts interme
 
 - **topic_relevance_score supprime du ranking** : le keyword matching generique (`"Apple"`, `"software"`) laissait passer des articles non pertinents (aspirateurs). Le LLM gere la selection intelligente en Phase 2.
 - **20 candidats → 8 selectionnes** : sur-collecte pour donner du choix au LLM.
-- **claude -p (forfait Max)** : inclus dans l'abonnement, pas de frais API. Modele Sonnet.
+- **claude -p (forfait Max)** : inclus dans l'abonnement, pas de frais API. Modele Opus.
 - **WebSearch tolerant** : si Phase 0 echoue, le pipeline continue avec RSS seuls.
 - **Transitions** : slide+fade sans rotation. Pas de page-curl.

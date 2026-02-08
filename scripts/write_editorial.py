@@ -94,7 +94,7 @@ def call_claude(prompt):
     result = subprocess.run(
         [
             "claude", "-p",
-            "--model", "sonnet",
+            "--model", "opus",
             "--permission-mode", "default",
             "--tools", "",
             "--output-format", "text",
