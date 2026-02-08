@@ -6,6 +6,7 @@ import re
 import sys
 import os
 from datetime import datetime
+from html import escape as h
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -65,16 +66,16 @@ def build_synthesis_card_html(article, index, articles, config, now):
     for tag in article.get("matched_topics", article.get("topics", []))[:3]:
         tc = topics_config.get(tag, {})
         color = tc.get("color", "#666")
-        tags_html += f'<span class="tag-pill" style="background:{color}20;color:{color};opacity:0.85">{tag}</span>'
+        tags_html += f'<span class="tag-pill" style="background:{h(color)}20;color:{h(color)};opacity:0.85">{h(tag)}</span>'
 
-    title = article.get("editorial_title", article.get("title", ""))
-    summary = article.get("editorial_summary", article.get("summary", ""))
+    title = h(article.get("editorial_title", article.get("title", "")))
+    summary = h(article.get("editorial_summary", article.get("summary", "")))
 
     signature = config.get("edition", {}).get("signature", "")
     if signature:
-        summary = re.sub(r'\s*—\s*' + re.escape(signature) + r'\s*$', '', summary)
-    signature_html = f'\n      <span class="edito-signature">— {signature}</span>' if signature else ""
-    author_short = signature.split()[0] if signature else "l'auteur"
+        summary = re.sub(r'\s*—\s*' + re.escape(h(signature)) + r'\s*$', '', summary)
+    signature_html = f'\n      <span class="edito-signature">— {h(signature)}</span>' if signature else ""
+    author_short = h(signature.split()[0]) if signature else "l'auteur"
 
     return f'''
     <article class="card synthesis-card" data-index="{index}">
@@ -92,16 +93,16 @@ def build_synthesis_grid_card_html(article, index, articles, config, now):
     for tag in article.get("matched_topics", article.get("topics", []))[:3]:
         tc = topics_config.get(tag, {})
         color = tc.get("color", "#666")
-        tags_html += f'<span class="tag-pill" style="background:{color}20;color:{color};opacity:0.85">{tag}</span>'
+        tags_html += f'<span class="tag-pill" style="background:{h(color)}20;color:{h(color)};opacity:0.85">{h(tag)}</span>'
 
-    title = article.get("editorial_title", article.get("title", ""))
-    summary = article.get("editorial_summary", article.get("summary", ""))
+    title = h(article.get("editorial_title", article.get("title", "")))
+    summary = h(article.get("editorial_summary", article.get("summary", "")))
 
     signature = config.get("edition", {}).get("signature", "")
     if signature:
-        summary = re.sub(r'\s*—\s*' + re.escape(signature) + r'\s*$', '', summary)
-    signature_html = f'\n      <span class="edito-signature">— {signature}</span>' if signature else ""
-    author_short = signature.split()[0] if signature else "l'auteur"
+        summary = re.sub(r'\s*—\s*' + re.escape(h(signature)) + r'\s*$', '', summary)
+    signature_html = f'\n      <span class="edito-signature">— {h(signature)}</span>' if signature else ""
+    author_short = h(signature.split()[0]) if signature else "l'auteur"
 
     return f'''
     <article class="grid-card synthesis-grid" data-index="{index}">
@@ -119,18 +120,18 @@ def build_card_html(article, index, config, now):
     for tag in article.get("matched_topics", article.get("topics", []))[:3]:
         tc = topics_config.get(tag, {})
         color = tc.get("color", "#666")
-        tags_html += f'<span class="tag-pill" style="background:{color}20;color:{color};opacity:0.85">{tag}</span>'
+        tags_html += f'<span class="tag-pill" style="background:{h(color)}20;color:{h(color)};opacity:0.85">{h(tag)}</span>'
 
-    title = article.get("editorial_title", article.get("title", ""))
-    source = article.get("source", "")
+    title = h(article.get("editorial_title", article.get("title", "")))
+    source = h(article.get("source", ""))
     ago = time_ago(article.get("published"), now)
     source_line = f"{source}"
     if ago:
         source_line += f" — {ago}"
 
-    summary = article.get("editorial_summary", article.get("summary", ""))
-    context = article.get("research_context", "")
-    url = article.get("url", "#")
+    summary = h(article.get("editorial_summary", article.get("summary", "")))
+    context = h(article.get("research_context", ""))
+    url = h(article.get("url", "#"))
 
     context_html = ""
     if context:
@@ -149,7 +150,7 @@ def build_card_html(article, index, config, now):
       <div class="card-source">{source_line}</div>
       <p class="card-summary">{summary}</p>
       {context_html}
-      <a class="card-link" href="{url}" target="_blank" rel="noopener">{"Voir le post" if "x.com/" in url or "twitter.com/" in url else "Lire l'article"} <span>&rarr;</span></a>
+      <a class="card-link" href="{url}" target="_blank" rel="noopener">{"Voir le post" if "x.com/" in url or "twitter.com/" in url else "Lire l&#x27;article"} <span>&rarr;</span></a>
     </article>'''
 
 def build_grid_card_html(article, index, config, now):
@@ -159,14 +160,14 @@ def build_grid_card_html(article, index, config, now):
     for tag in article.get("matched_topics", article.get("topics", []))[:3]:
         tc = topics_config.get(tag, {})
         color = tc.get("color", "#666")
-        tags_html += f'<span class="tag-pill" style="background:{color}20;color:{color};opacity:0.85">{tag}</span>'
+        tags_html += f'<span class="tag-pill" style="background:{h(color)}20;color:{h(color)};opacity:0.85">{h(tag)}</span>'
 
-    title = article.get("editorial_title", article.get("title", ""))
-    source = article.get("source", "")
+    title = h(article.get("editorial_title", article.get("title", "")))
+    source = h(article.get("source", ""))
     ago = time_ago(article.get("published"), now)
-    summary = article.get("editorial_summary", article.get("summary", ""))
-    url = article.get("url", "#")
-    context = article.get("research_context", "")
+    summary = h(article.get("editorial_summary", article.get("summary", "")))
+    url = h(article.get("url", "#"))
+    context = h(article.get("research_context", ""))
 
     context_html = ""
     if context:
@@ -186,7 +187,7 @@ def build_grid_card_html(article, index, config, now):
       <p class="card-summary">{summary}</p>
       <div class="grid-card-extra">
         {context_html}
-        <a class="card-link" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">{"Voir le post" if "x.com/" in url or "twitter.com/" in url else "Lire l'article"} <span>&rarr;</span></a>
+        <a class="card-link" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">{"Voir le post" if "x.com/" in url or "twitter.com/" in url else "Lire l&#x27;article"} <span>&rarr;</span></a>
       </div>
     </article>'''
 
@@ -322,7 +323,8 @@ def main():
     html = html.replace("{{MASTHEAD_NAV}}", masthead_nav)
     html = html.replace("{{CARDS}}", cards_html)
     html = html.replace("{{GRID_CARDS}}", grid_cards_html)
-    html = html.replace("{{ARTICLES_JSON}}", json.dumps(articles, ensure_ascii=False))
+    articles_json = json.dumps(articles, ensure_ascii=False).replace("</", "<\\/")
+    html = html.replace("{{ARTICLES_JSON}}", articles_json)
     html = html.replace("{{GENERATION_TIME}}", now.strftime("%H:%M %Z"))
     html = html.replace("{{FOOTER_NAV}}", footer_nav)
 
