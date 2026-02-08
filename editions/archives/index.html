@@ -23,71 +23,25 @@ display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;g
 .masthead-link:hover{color:var(--text)}
 .masthead-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .archives{max-width:720px;margin:2rem auto;padding:0 clamp(1rem,5vw,4rem)}
-.archive-item{display:block;padding:1rem 0;border-bottom:1px solid var(--border);
-font-family:var(--font-m);font-size:0.9rem;transition:color .2s}
+.archive-item{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--border);
+transition:color .2s}
 .archive-item:hover{color:var(--accent)}
+.archive-num{font-family:var(--font-m);font-size:0.8rem;color:var(--text-2);white-space:nowrap;min-width:3rem}
+.archive-title{flex:1;font-family:var(--font-b);font-size:0.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.archive-date{font-family:var(--font-m);font-size:0.85rem;color:var(--text-2);white-space:nowrap}
 </style>
 </head>
 <body>
 <header class="masthead">
   <h1>Archives</h1>
-  <a href="../index.html" class="masthead-link"><svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M18 18h-8M18 10h-8"/></svg> edito</a>
+  <a href="../../index.html" class="masthead-link"><svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M18 18h-8M18 10h-8"/></svg> edito</a>
 </header>
 <main class="archives">
 
-    <a href="2026-02-08.165020.html" class="archive-item">
-      <span class="archive-date">2026-02-08 16:50:20</span>
-    </a>
-    <a href="2026-02-08.160708.html" class="archive-item">
-      <span class="archive-date">2026-02-08 16:07:08</span>
-    </a>
-    <a href="2026-02-08.160505.html" class="archive-item">
-      <span class="archive-date">2026-02-08 16:05:05</span>
-    </a>
-    <a href="2026-02-08.160000.html" class="archive-item">
-      <span class="archive-date">2026-02-08 16:00:00</span>
-    </a>
-    <a href="2026-02-08.155150.html" class="archive-item">
-      <span class="archive-date">2026-02-08 15:51:50</span>
-    </a>
-    <a href="2026-02-08.155128.html" class="archive-item">
-      <span class="archive-date">2026-02-08 15:51:28</span>
-    </a>
-    <a href="2026-02-08.153024.html" class="archive-item">
-      <span class="archive-date">2026-02-08 15:30:24</span>
-    </a>
-    <a href="2026-02-08.151850.html" class="archive-item">
-      <span class="archive-date">2026-02-08 15:18:50</span>
-    </a>
-    <a href="2026-02-08.150138.html" class="archive-item">
-      <span class="archive-date">2026-02-08 15:01:38</span>
-    </a>
-    <a href="2026-02-08.143919.html" class="archive-item">
-      <span class="archive-date">2026-02-08 14:39:19</span>
-    </a>
-    <a href="2026-02-08.143149.html" class="archive-item">
-      <span class="archive-date">2026-02-08 14:31:49</span>
-    </a>
-    <a href="2026-02-08.135912.html" class="archive-item">
-      <span class="archive-date">2026-02-08 13:59:12</span>
-    </a>
-    <a href="2026-02-08.130126.html" class="archive-item">
-      <span class="archive-date">2026-02-08 13:01:26</span>
-    </a>
-    <a href="2026-02-08.125425.html" class="archive-item">
-      <span class="archive-date">2026-02-08 12:54:25</span>
-    </a>
-    <a href="2026-02-08.123730.html" class="archive-item">
-      <span class="archive-date">2026-02-08 12:37:30</span>
-    </a>
-    <a href="2026-02-08.123357.html" class="archive-item">
-      <span class="archive-date">2026-02-08 12:33:57</span>
-    </a>
-    <a href="2026-02-08.120102.html" class="archive-item">
-      <span class="archive-date">2026-02-08 12:01:02</span>
-    </a>
-    <a href="2026-02-08.112957.html" class="archive-item">
-      <span class="archive-date">2026-02-08 11:29:57</span>
+    <a href="2026-02-08.html" class="archive-item">
+      <span class="archive-num">N°1</span>
+      <span class="archive-title">L'IA agentique vaut 2 milliards, les PRs pourries 0</span>
+      <span class="archive-date">2026-02-08</span>
     </a>
 </main>
 </body>
