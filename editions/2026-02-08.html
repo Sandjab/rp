@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REVUE DE PRESSE — 2026-02-08</title>
+<title>IA qu'à demander — 2026-02-08</title>
 <meta name="description" content="Revue de presse quotidienne — Tech, IA, Sciences, Startups">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,6 +42,10 @@ a{color:inherit;text-decoration:none}
 .masthead h1{
   font-family:var(--font-h);font-size:clamp(2rem,5vw,3.5rem);
   font-weight:400;letter-spacing:-0.02em;line-height:1;
+}
+.masthead-subtitle{
+  font-family:var(--font-b);font-size:clamp(0.8rem,1.5vw,1rem);
+  color:var(--text-2);margin-top:0.2rem;font-weight:400;
 }
 .masthead-meta{
   font-family:var(--font-m);font-size:clamp(0.7rem,1.2vw,0.85rem);
@@ -105,19 +109,19 @@ a{color:inherit;text-decoration:none}
   background:var(--card);border:1px solid var(--border);
   padding:clamp(1.5rem,3vw,2.5rem);
   opacity:0;pointer-events:none;
-  transition:transform .5s var(--spring),opacity .4s ease-out;
+  transition:transform .4s var(--ease),opacity .35s ease-out;
   touch-action:pan-x pan-y pinch-zoom;user-select:none;
   will-change:transform,opacity;
   overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 .card.active{
   opacity:1;pointer-events:auto;
-  transform:translateX(0) rotate(0);
+  transform:translateX(0);
 }
-.card.enter-left{transform:translateX(-110%) rotate(-3deg);opacity:0}
-.card.enter-right{transform:translateX(110%) rotate(3deg);opacity:0}
-.card.exit-left{transform:translateX(-110%) rotate(-3deg);opacity:0}
-.card.exit-right{transform:translateX(110%) rotate(3deg);opacity:0}
+.card.enter-left{transform:translateX(-100%);opacity:0}
+.card.enter-right{transform:translateX(100%);opacity:0}
+.card.exit-left{transform:translateX(-100%);opacity:0}
+.card.exit-right{transform:translateX(100%);opacity:0}
 /* Synthesis card */
 .card.synthesis-card{
   border-left:4px solid var(--accent);
@@ -275,7 +279,7 @@ a{color:inherit;text-decoration:none}
   }
   .filter-bar::-webkit-scrollbar{display:none}
   .filter-pill{flex-shrink:0;padding:0.4rem 0.8rem;font-size:0.7rem;scroll-snap-align:start}
-  .nav-btn{width:44px;height:44px;font-size:1.2rem}
+  .nav-btn{display:none}
   .card-nav{gap:0.8rem;padding:0.5rem 0}
   .card-counter{display:none}
   .dots{gap:4px}
@@ -297,10 +301,13 @@ a{color:inherit;text-decoration:none}
 <body>
 
 <header class="masthead">
-  <h1>REVUE DE PRESSE</h1>
+  <div class="masthead-titles">
+    <h1>IA qu'à demander</h1>
+    <p class="masthead-subtitle">l'actu IA du jour</p>
+  </div>
   <div class="masthead-meta">
-    <span>Sunday 08 february 2026</span>
-    <span>No. 7</span>
+    <span>Dimanche 8 février 2026</span>
+    <span>No. 9</span>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer le theme">Light</button>
   </div>
 </header>
@@ -326,81 +333,81 @@ a{color:inherit;text-decoration:none}
     <article class="card synthesis-card" data-index="0">
       <span class="synth-tag">Synthese</span>
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title">L'IA passe à l'offensive sur la cybersécurité</h2>
-      <p class="card-summary">Claude Opus 4.6 d'Anthropic vient de découvrir 500 vulnérabilités zero-day dans des projets open-source, confirmant que les LLMs excellent dans la recherche de failles. Pendant ce temps, l'écosystème tech continue sa mutation : l'Inde ajuste sa réglementation pour soutenir ses startups deep tech, tandis que l'accessibilité progresse avec des outils de modélisation 3D pour programmeurs malvoyants. Dans l'univers du gaming, GOG annonce un support Linux natif, et un réseau social expérimental pour bots IA illustre les dérives théâtrales de l'intelligence artificielle.</p>
+      <h2 class="card-title">L'IA redessine la tech : entre prouesses techniques et mirages marketing</h2>
+      <p class="card-summary">L'intelligence artificielle continue de transformer le paysage technologique, mais avec des résultats contrastés. Tandis qu'Anthropic démontre la capacité de Claude à identifier massivement des vulnérabilités zero-day, soulevant des questions de sécurité inédites, des projets comme Moltbook illustrent le théâtre marketing dont l'IA fait l'objet. Parallèlement, l'Inde ajuste sa réglementation pour soutenir les startups deep tech, et les outils d'accessibilité repoussent les frontières de l'inclusion dans la conception 3D. Entre avancées concrètes et expérimentations gadgets, le secteur cherche encore son équilibre.</p>
       
     <div class="synth-refs">
       <span class="synth-refs-label">Articles cites</span>
-      <a class="synth-ref" href="javascript:void(0)" onclick="goToCard(1)">Claude Opus 4.6 découvre 500 vulnérabilités zero-day</a>
-<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(2)">L'Inde ajuste sa réglementation pour doper la deep tech</a>
-<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(3)">Des outils de modélisation 3D enfin accessibles aux malvoyants</a>
-<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(4)">GOG développe déjà un client natif pour Linux</a>
+      <a class="synth-ref" href="javascript:void(0)" onclick="goToCard(1)">Claude Opus détecte 500 vulnérabilités zero-day : l'IA devient une arme de cybersécurité</a>
+<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(2)">Moltbook, le réseau social pour bots, illustre le théâtre médiatique de l'IA</a>
+<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(3)">L'Inde adapte sa réglementation pour stimuler les startups deep tech</a>
+<a class="synth-ref" href="javascript:void(0)" onclick="goToCard(4)">De nouveaux outils rendent la modélisation 3D accessible aux développeurs malvoyants</a>
 
     </div>
     </article>
     <article class="card" data-index="1">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
-      <h2 class="card-title">Claude Opus 4.6 découvre 500 vulnérabilités zero-day</h2>
-      <div class="card-source">Simon Willison — il y a 10h</div>
-      <p class="card-summary">Anthropic annonce que son modèle Claude Opus 4.6 a identifié 500 failles de sécurité inédites dans des projets open-source. Selon Thomas Ptacek, chercheur en sécurité respecté, la recherche de vulnérabilités pourrait être LE domaine logiciel le plus adapté aux LLMs : corpus public massif, patterns reconnaissables, boucles fermées. Les experts en cybersécurité prennent cette avancée très au sérieux, contrairement au scepticisme ambiant sur les réseaux.</p>
+      <h2 class="card-title">Claude Opus détecte 500 vulnérabilités zero-day : l'IA devient une arme de cybersécurité</h2>
+      <div class="card-source">Simon Willison — il y a 11h</div>
+      <p class="card-summary">Anthropic affirme que Claude Opus 4.6 a identifié 500 failles zero-day dans des projets open-source, une annonce prise au sérieux par les chercheurs en sécurité. Selon Thomas Ptacek, la recherche de vulnérabilités pourrait être le domaine logiciel le plus adapté aux LLMs : patterns clairement définis, corpus public massif, boucles fermées. Cette capacité soulève des questions majeures sur l'avenir de la sécurité informatique et l'équilibre entre attaque et défense.</p>
       
       <a class="card-link" href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="2">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title">L'Inde ajuste sa réglementation pour doper la deep tech</h2>
-      <div class="card-source">TechCrunch — il y a 9h</div>
-      <p class="card-summary">Le gouvernement indien modifie ses règles encadrant les startups pour mieux soutenir les entreprises de technologies de pointe. Ces ajustements visent à faciliter le financement et la pérennité des startups deep tech, un secteur stratégique pour l'écosystème indien face à la concurrence chinoise et américaine.</p>
-      
-      <a class="card-link" href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="3">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Des outils de modélisation 3D enfin accessibles aux malvoyants</h2>
-      <div class="card-source">IEEE Spectrum — il y a 22h</div>
-      <p class="card-summary">De nouveaux logiciels permettent aux programmeurs malvoyants de concevoir des modèles 3D en toute autonomie, là où les interfaces visuelles traditionnelles (drag-and-drop, rotation) les excluaient. Cette avancée ouvre l'accès au design hardware, à la robotique et à l'ingénierie pour des codeurs compétents mais privés d'outils adaptés. Une étape majeure pour l'inclusivité dans les métiers techniques.</p>
-      
-      <a class="card-link" href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="4">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">GOG développe déjà un client natif pour Linux</h2>
-      <div class="card-source">The Verge — il y a 16h</div>
-      <p class="card-summary">GOG confirme que le portage de son client Galaxy vers Linux est en cours, après la publication d'une offre d'emploi pour un ingénieur dédié. Aucune date de sortie n'est annoncée, mais cette initiative marque un tournant pour la plateforme de jeux DRM-free face à la domination de Steam sur l'écosystème Linux.</p>
-      
-      <a class="card-link" href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
-    </article>
-    <article class="card" data-index="5">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Moltbook, le réseau social pour bots qui illustre le théâtre de l'IA</h2>
+      <h2 class="card-title">Moltbook, le réseau social pour bots, illustre le théâtre médiatique de l'IA</h2>
       <div class="card-source">MIT Technology Review — il y a 1j</div>
-      <p class="card-summary">Lancé fin janvier, Moltbook se présentait comme un Reddit pour agents IA où les humains ne font qu'observer. Pendant quelques jours, ce réseau social expérimental a captivé l'attention avant de révéler son caractère artificiel et superficiel. MIT Technology Review y voit l'exemple parfait du "AI theater" : des démos spectaculaires sans réelle utilité, conçues pour l'effet de manche.</p>
+      <p class="card-summary">Lancé fin janvier, Moltbook se présentait comme un Reddit pour agents IA, où les bots discutent et votent pendant que les humains observent. Le projet a connu un engouement viral de quelques jours avant de retomber dans l'indifférence. MIT Technology Review y voit l'exemple parfait du "AI theater" : des expérimentations spectaculaires mais superficielles qui illustrent plus la fascination médiatique pour l'IA que son utilité concrète.</p>
       
       <a class="card-link" href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
+    <article class="card" data-index="3">
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
+      <h2 class="card-title">L'Inde adapte sa réglementation pour stimuler les startups deep tech</h2>
+      <div class="card-source">TechCrunch — il y a 10h</div>
+      <p class="card-summary">Le gouvernement indien modifie ses règles encadrant les startups pour mieux soutenir celles spécialisées dans les technologies de pointe. Ces ajustements visent à faciliter le financement et la viabilité long terme des entreprises travaillant sur l'IA, la robotique, les biotechnologies et autres secteurs à haute intensité R&D. Cette initiative s'inscrit dans la stratégie indienne de développement technologique souverain.</p>
+      
+      <a class="card-link" href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="4">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">De nouveaux outils rendent la modélisation 3D accessible aux développeurs malvoyants</h2>
+      <div class="card-source">IEEE Spectrum — il y a 23h</div>
+      <p class="card-summary">Les logiciels de conception 3D traditionnels reposent sur des manipulations visuelles (glisser-déposer, rotation), excluant de facto les programmeurs aveugles ou malvoyants. De nouveaux outils changent la donne en permettant à ces développeurs de modéliser, concevoir et vérifier des composants physiques et virtuels de manière autonome. Cette avancée ouvre l'accès au design matériel, à la robotique et à l'ingénierie pour une population jusqu'ici marginalisée.</p>
+      
+      <a class="card-link" href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
+    <article class="card" data-index="5">
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">Les clés numériques automobiles progressent vers l'interopérabilité universelle</h2>
+      <div class="card-source">The Verge — il y a 39 min</div>
+      <p class="card-summary">Le Car Connectivity Consortium a réuni en janvier à Palo Alto une douzaine de constructeurs automobiles et fabricants de smartphones pour son 16e Plugfest annuel. L'objectif : tester les dernières avancées en matière de clés numériques permettant de verrouiller, déverrouiller et démarrer un véhicule via smartphone. Ces tests d'interopérabilité marquent une étape vers la standardisation d'une technologie encore fragmentée.</p>
+      
+      <a class="card-link" href="https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+    </article>
     <article class="card" data-index="6">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Retour raté sous Linux : un témoignage désabusé</h2>
+      <h2 class="card-title">GOG accélère sur Linux avec un portage natif de Galaxy en développement</h2>
       <div class="card-source">The Verge — il y a 17h</div>
-      <p class="card-summary">Un journaliste de The Verge raconte son retour sous Linux sur un Dell XPS 15 de 2019, avec l'espoir de redonner vie à la machine. L'expérience s'est soldée par une déception, illustrant les défis persistants de l'écosystème Linux face aux attentes des utilisateurs habitués à Windows ou macOS. Un rappel que la promesse d'un desktop Linux "prêt pour le grand public" reste un objectif lointain.</p>
+      <p class="card-summary">La plateforme de distribution de jeux GOG a confirmé dans un Reddit AMA que le portage natif de son client Galaxy vers Linux est déjà en cours. L'équipe a récemment publié une offre d'emploi pour un ingénieur senior dédié à ce projet. Trop tôt pour une date de sortie, mais cette initiative répond à une demande ancienne de la communauté gaming Linux.</p>
       
-      <a class="card-link" href="https://www.theverge.com/report/875077/linux-was-a-mistake" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="7">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
-      <h2 class="card-title">Les assistants IA pour prises de notes en réunion passés au crible</h2>
-      <div class="card-source">Wired — il y a 59 min</div>
-      <p class="card-summary">Wired teste les derniers gadgets de poche dédiés à l'enregistrement et l'analyse de réunions par IA. Ces outils promettent d'extraire automatiquement valeur et actions des discussions professionnelles. Un marché en pleine expansion qui illustre la démocratisation des assistants IA dans le quotidien des travailleurs du savoir.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title">La fusion Netflix-Warner Bros met les plateformes concurrentes sous pression</h2>
+      <div class="card-source">The Verge — il y a 39 min</div>
+      <p class="card-summary">Le rapprochement entre Netflix et Warner Bros Discovery redistribue les cartes du streaming et place les acteurs secondaires en mode survie. Cette consolidation du marché fait suite à la guerre du streaming de 2019-2021 et marque une nouvelle phase de maturité du secteur. Les plateformes plus petites devront choisir entre fusion, niche ou disparition face à des géants renforcés.</p>
       
-      <a class="card-link" href="https://www.wired.com/gallery/best-ai-notetakers/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://www.theverge.com/column/874781/netflix-warner-bros-merger-other-streamers" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
     <article class="card" data-index="8">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title">Les CEOs de la tech débarquent au Super Bowl</h2>
-      <div class="card-source">TechCrunch — il y a 11h</div>
-      <p class="card-summary">Tim Cook (Apple) et Neal Mohan (YouTube) devraient assister au Super Bowl, prolongeant la tradition des dirigeants tech présents au grand événement sportif américain. Un rendez-vous qui symbolise l'influence culturelle croissante de la Silicon Valley au-delà de son périmètre technologique.</p>
+      <h2 class="card-title">Retour sur Linux en 2026 : un constat d'échec pour un usage quotidien</h2>
+      <div class="card-source">The Verge — il y a 18h</div>
+      <p class="card-summary">Un journaliste du Verge relate son expérience décevante après avoir réinstallé Linux sur un Dell XPS 15 de 2019. Malgré les promesses d'amélioration de l'écosystème, les problèmes persistent : compatibilité matérielle aléatoire, configurations obscures, expérience utilisateur dégradée. Ce témoignage illustre le fossé qui persiste entre l'enthousiasme de la communauté Linux et la réalité d'un usage grand public.</p>
       
-      <a class="card-link" href="https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
+      <a class="card-link" href="https://www.theverge.com/report/875077/linux-was-a-mistake" target="_blank" rel="noopener">Lire l'article <span>&rarr;</span></a>
     </article>
   </div>
   <nav class="card-nav" id="cardNav">
@@ -416,61 +423,61 @@ a{color:inherit;text-decoration:none}
     <article class="grid-card synthesis-grid" data-index="0">
       <span class="synth-tag">Synthese</span>
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title">L'IA passe à l'offensive sur la cybersécurité</h2>
-      <p class="card-summary">Claude Opus 4.6 d'Anthropic vient de découvrir 500 vulnérabilités zero-day dans des projets open-source, confirmant que les LLMs excellent dans la recherche de failles. Pendant ce temps, l'écosystème tech continue sa mutation : l'Inde ajuste sa réglementation pour soutenir ses startups deep tech, tandis que l'accessibilité progresse avec des outils de modélisation 3D pour programmeurs malvoyants. Dans l'univers du gaming, GOG annonce un support Linux natif, et un réseau social expérimental pour bots IA illustre les dérives théâtrales de l'intelligence artificielle.</p>
+      <h2 class="card-title">L'IA redessine la tech : entre prouesses techniques et mirages marketing</h2>
+      <p class="card-summary">L'intelligence artificielle continue de transformer le paysage technologique, mais avec des résultats contrastés. Tandis qu'Anthropic démontre la capacité de Claude à identifier massivement des vulnérabilités zero-day, soulevant des questions de sécurité inédites, des projets comme Moltbook illustrent le théâtre marketing dont l'IA fait l'objet. Parallèlement, l'Inde ajuste sa réglementation pour soutenir les startups deep tech, et les outils d'accessibilité repoussent les frontières de l'inclusion dans la conception 3D. Entre avancées concrètes et expérimentations gadgets, le secteur cherche encore son équilibre.</p>
     </article>
     <article class="grid-card" data-index="1">
       <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
-      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Claude Opus 4.6 découvre 500 vulnérabilités zero-day</a></h2>
-      <div class="card-source">Simon Willison — il y a 10h</div>
-      <p class="card-summary">Anthropic annonce que son modèle Claude Opus 4.6 a identifié 500 failles de sécurité inédites dans des projets open-source. Selon Thomas Ptacek, chercheur en sécurité respecté, la recherche de vulnérabilités pourrait être LE domaine logiciel le plus adapté aux LLMs : corpus public massif, patterns reconnaissables, boucles fermées. Les experts en cybersécurité prennent cette avancée très au sérieux, contrairement au scepticisme ambiant sur les réseaux.</p>
+      <h2 class="card-title"><a href="https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything" target="_blank" rel="noopener">Claude Opus détecte 500 vulnérabilités zero-day : l'IA devient une arme de cybersécurité</a></h2>
+      <div class="card-source">Simon Willison — il y a 11h</div>
+      <p class="card-summary">Anthropic affirme que Claude Opus 4.6 a identifié 500 failles zero-day dans des projets open-source, une annonce prise au sérieux par les chercheurs en sécurité. Selon Thomas Ptacek, la recherche de vulnérabilités pourrait être le domaine logiciel le plus adapté aux LLMs : patterns clairement définis, corpus public massif, boucles fermées. Cette capacité soulève des questions majeures sur l'avenir de la sécurité informatique et l'équilibre entre attaque et défense.</p>
     </article>
     <article class="grid-card" data-index="2">
-      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
-      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">L'Inde ajuste sa réglementation pour doper la deep tech</a></h2>
-      <div class="card-source">TechCrunch — il y a 9h</div>
-      <p class="card-summary">Le gouvernement indien modifie ses règles encadrant les startups pour mieux soutenir les entreprises de technologies de pointe. Ces ajustements visent à faciliter le financement et la pérennité des startups deep tech, un secteur stratégique pour l'écosystème indien face à la concurrence chinoise et américaine.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Moltbook, le réseau social pour bots, illustre le théâtre médiatique de l'IA</a></h2>
+      <div class="card-source">MIT Technology Review — il y a 1j</div>
+      <p class="card-summary">Lancé fin janvier, Moltbook se présentait comme un Reddit pour agents IA, où les bots discutent et votent pendant que les humains observent. Le projet a connu un engouement viral de quelques jours avant de retomber dans l'indifférence. MIT Technology Review y voit l'exemple parfait du "AI theater" : des expérimentations spectaculaires mais superficielles qui illustrent plus la fascination médiatique pour l'IA que son utilité concrète.</p>
     </article>
     <article class="grid-card" data-index="3">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">Des outils de modélisation 3D enfin accessibles aux malvoyants</a></h2>
-      <div class="card-source">IEEE Spectrum — il y a 22h</div>
-      <p class="card-summary">De nouveaux logiciels permettent aux programmeurs malvoyants de concevoir des modèles 3D en toute autonomie, là où les interfaces visuelles traditionnelles (drag-and-drop, rotation) les excluaient. Cette avancée ouvre l'accès au design hardware, à la robotique et à l'ingénierie pour des codeurs compétents mais privés d'outils adaptés. Une étape majeure pour l'inclusivité dans les métiers techniques.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#D9770620;color:#D97706;opacity:0.85">Startups</span></div>
+      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/" target="_blank" rel="noopener">L'Inde adapte sa réglementation pour stimuler les startups deep tech</a></h2>
+      <div class="card-source">TechCrunch — il y a 10h</div>
+      <p class="card-summary">Le gouvernement indien modifie ses règles encadrant les startups pour mieux soutenir celles spécialisées dans les technologies de pointe. Ces ajustements visent à faciliter le financement et la viabilité long terme des entreprises travaillant sur l'IA, la robotique, les biotechnologies et autres secteurs à haute intensité R&D. Cette initiative s'inscrit dans la stratégie indienne de développement technologique souverain.</p>
     </article>
     <article class="grid-card" data-index="4">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener">GOG développe déjà un client natif pour Linux</a></h2>
-      <div class="card-source">The Verge — il y a 16h</div>
-      <p class="card-summary">GOG confirme que le portage de son client Galaxy vers Linux est en cours, après la publication d'une offre d'emploi pour un ingénieur dédié. Aucune date de sortie n'est annoncée, mais cette initiative marque un tournant pour la plateforme de jeux DRM-free face à la domination de Steam sur l'écosystème Linux.</p>
+      <h2 class="card-title"><a href="https://spectrum.ieee.org/3d-modeling-blind-programmers" target="_blank" rel="noopener">De nouveaux outils rendent la modélisation 3D accessible aux développeurs malvoyants</a></h2>
+      <div class="card-source">IEEE Spectrum — il y a 23h</div>
+      <p class="card-summary">Les logiciels de conception 3D traditionnels reposent sur des manipulations visuelles (glisser-déposer, rotation), excluant de facto les programmeurs aveugles ou malvoyants. De nouveaux outils changent la donne en permettant à ces développeurs de modéliser, concevoir et vérifier des composants physiques et virtuels de manière autonome. Cette avancée ouvre l'accès au design matériel, à la robotique et à l'ingénierie pour une population jusqu'ici marginalisée.</p>
     </article>
     <article class="grid-card" data-index="5">
-      <div class="card-tags"><span class="tag-pill" style="background:#7C3AED20;color:#7C3AED;opacity:0.85">IA</span><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/" target="_blank" rel="noopener">Moltbook, le réseau social pour bots qui illustre le théâtre de l'IA</a></h2>
-      <div class="card-source">MIT Technology Review — il y a 1j</div>
-      <p class="card-summary">Lancé fin janvier, Moltbook se présentait comme un Reddit pour agents IA où les humains ne font qu'observer. Pendant quelques jours, ce réseau social expérimental a captivé l'attention avant de révéler son caractère artificiel et superficiel. MIT Technology Review y voit l'exemple parfait du "AI theater" : des démos spectaculaires sans réelle utilité, conçues pour l'effet de manche.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian" target="_blank" rel="noopener">Les clés numériques automobiles progressent vers l'interopérabilité universelle</a></h2>
+      <div class="card-source">The Verge — il y a 39 min</div>
+      <p class="card-summary">Le Car Connectivity Consortium a réuni en janvier à Palo Alto une douzaine de constructeurs automobiles et fabricants de smartphones pour son 16e Plugfest annuel. L'objectif : tester les dernières avancées en matière de clés numériques permettant de verrouiller, déverrouiller et démarrer un véhicule via smartphone. Ces tests d'interopérabilité marquent une étape vers la standardisation d'une technologie encore fragmentée.</p>
     </article>
     <article class="grid-card" data-index="6">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://www.theverge.com/report/875077/linux-was-a-mistake" target="_blank" rel="noopener">Retour raté sous Linux : un témoignage désabusé</a></h2>
+      <h2 class="card-title"><a href="https://www.theverge.com/tech/875425/gog-native-linux-support" target="_blank" rel="noopener">GOG accélère sur Linux avec un portage natif de Galaxy en développement</a></h2>
       <div class="card-source">The Verge — il y a 17h</div>
-      <p class="card-summary">Un journaliste de The Verge raconte son retour sous Linux sur un Dell XPS 15 de 2019, avec l'espoir de redonner vie à la machine. L'expérience s'est soldée par une déception, illustrant les défis persistants de l'écosystème Linux face aux attentes des utilisateurs habitués à Windows ou macOS. Un rappel que la promesse d'un desktop Linux "prêt pour le grand public" reste un objectif lointain.</p>
+      <p class="card-summary">La plateforme de distribution de jeux GOG a confirmé dans un Reddit AMA que le portage natif de son client Galaxy vers Linux est déjà en cours. L'équipe a récemment publié une offre d'emploi pour un ingénieur senior dédié à ce projet. Trop tôt pour une date de sortie, mais cette initiative répond à une demande ancienne de la communauté gaming Linux.</p>
     </article>
     <article class="grid-card" data-index="7">
-      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span><span class="tag-pill" style="background:#05966920;color:#059669;opacity:0.85">Sciences</span></div>
-      <h2 class="card-title"><a href="https://www.wired.com/gallery/best-ai-notetakers/" target="_blank" rel="noopener">Les assistants IA pour prises de notes en réunion passés au crible</a></h2>
-      <div class="card-source">Wired — il y a 59 min</div>
-      <p class="card-summary">Wired teste les derniers gadgets de poche dédiés à l'enregistrement et l'analyse de réunions par IA. Ces outils promettent d'extraire automatiquement valeur et actions des discussions professionnelles. Un marché en pleine expansion qui illustre la démocratisation des assistants IA dans le quotidien des travailleurs du savoir.</p>
+      <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
+      <h2 class="card-title"><a href="https://www.theverge.com/column/874781/netflix-warner-bros-merger-other-streamers" target="_blank" rel="noopener">La fusion Netflix-Warner Bros met les plateformes concurrentes sous pression</a></h2>
+      <div class="card-source">The Verge — il y a 39 min</div>
+      <p class="card-summary">Le rapprochement entre Netflix et Warner Bros Discovery redistribue les cartes du streaming et place les acteurs secondaires en mode survie. Cette consolidation du marché fait suite à la guerre du streaming de 2019-2021 et marque une nouvelle phase de maturité du secteur. Les plateformes plus petites devront choisir entre fusion, niche ou disparition face à des géants renforcés.</p>
     </article>
     <article class="grid-card" data-index="8">
       <div class="card-tags"><span class="tag-pill" style="background:#2563EB20;color:#2563EB;opacity:0.85">Tech</span></div>
-      <h2 class="card-title"><a href="https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/" target="_blank" rel="noopener">Les CEOs de la tech débarquent au Super Bowl</a></h2>
-      <div class="card-source">TechCrunch — il y a 11h</div>
-      <p class="card-summary">Tim Cook (Apple) et Neal Mohan (YouTube) devraient assister au Super Bowl, prolongeant la tradition des dirigeants tech présents au grand événement sportif américain. Un rendez-vous qui symbolise l'influence culturelle croissante de la Silicon Valley au-delà de son périmètre technologique.</p>
+      <h2 class="card-title"><a href="https://www.theverge.com/report/875077/linux-was-a-mistake" target="_blank" rel="noopener">Retour sur Linux en 2026 : un constat d'échec pour un usage quotidien</a></h2>
+      <div class="card-source">The Verge — il y a 18h</div>
+      <p class="card-summary">Un journaliste du Verge relate son expérience décevante après avoir réinstallé Linux sur un Dell XPS 15 de 2019. Malgré les promesses d'amélioration de l'écosystème, les problèmes persistent : compatibilité matérielle aléatoire, configurations obscures, expérience utilisateur dégradée. Ce témoignage illustre le fossé qui persiste entre l'enthousiasme de la communauté Linux et la réalité d'un usage grand public.</p>
     </article>
 </section>
 
 <footer class="edition-footer">
-  <span>Genere par Claude — 13:59 CET</span>
+  <span>Genere par Claude — 14:39 CET</span>
   <nav class="footer-nav">
     <a href="editions/archives/index.html">Archives</a>
   </nav>
@@ -480,7 +487,7 @@ a{color:inherit;text-decoration:none}
 (function(){
   "use strict";
 
-  const articles = [{"is_synthesis": true, "editorial_title": "L'IA passe à l'offensive sur la cybersécurité", "editorial_summary": "Claude Opus 4.6 d'Anthropic vient de découvrir 500 vulnérabilités zero-day dans des projets open-source, confirmant que les LLMs excellent dans la recherche de failles. Pendant ce temps, l'écosystème tech continue sa mutation : l'Inde ajuste sa réglementation pour soutenir ses startups deep tech, tandis que l'accessibilité progresse avec des outils de modélisation 3D pour programmeurs malvoyants. Dans l'univers du gaming, GOG annonce un support Linux natif, et un réseau social expérimental pour bots IA illustre les dérives théâtrales de l'intelligence artificielle.", "article_refs": [1, 2, 3, 4], "topics": ["IA", "Tech", "Startups", "Sciences"], "source": "Editorial", "url": "#", "published": "2026-02-08T10:00:00+01:00"}, {"title": "Quoting Thomas Ptacek", "editorial_title": "Claude Opus 4.6 découvre 500 vulnérabilités zero-day", "editorial_summary": "Anthropic annonce que son modèle Claude Opus 4.6 a identifié 500 failles de sécurité inédites dans des projets open-source. Selon Thomas Ptacek, chercheur en sécurité respecté, la recherche de vulnérabilités pourrait être LE domaine logiciel le plus adapté aux LLMs : corpus public massif, patterns reconnaissables, boucles fermées. Les experts en cybersécurité prennent cette avancée très au sérieux, contrairement au scepticisme ambiant sur les réseaux.", "url": "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything", "source": "Simon Willison", "published": "2026-02-08T02:25:53+00:00", "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech", "Sciences"], "authority": 15, "score": 40}, {"title": "India has changed its startup rules for deep tech", "editorial_title": "L'Inde ajuste sa réglementation pour doper la deep tech", "editorial_summary": "Le gouvernement indien modifie ses règles encadrant les startups pour mieux soutenir les entreprises de technologies de pointe. Ces ajustements visent à faciliter le financement et la pérennité des startups deep tech, un secteur stratégique pour l'écosystème indien face à la concurrence chinoise et américaine.", "url": "https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/", "source": "TechCrunch", "published": "2026-02-08T03:30:00+00:00", "topics": ["Tech", "Startups"], "matched_topics": ["Startups"], "authority": 20, "score": 40}, {"title": "Low-Vision Programmers Can Now Design 3D Models Independently", "editorial_title": "Des outils de modélisation 3D enfin accessibles aux malvoyants", "editorial_summary": "De nouveaux logiciels permettent aux programmeurs malvoyants de concevoir des modèles 3D en toute autonomie, là où les interfaces visuelles traditionnelles (drag-and-drop, rotation) les excluaient. Cette avancée ouvre l'accès au design hardware, à la robotique et à l'ingénierie pour des codeurs compétents mais privés d'outils adaptés. Une étape majeure pour l'inclusivité dans les métiers techniques.", "url": "https://spectrum.ieee.org/3d-modeling-blind-programmers", "source": "IEEE Spectrum", "published": "2026-02-07T14:00:01+00:00", "topics": ["Tech", "Sciences"], "matched_topics": ["Tech"], "authority": 20, "score": 40}, {"title": "GOG is already working on native Linux support", "editorial_title": "GOG développe déjà un client natif pour Linux", "editorial_summary": "GOG confirme que le portage de son client Galaxy vers Linux est en cours, après la publication d'une offre d'emploi pour un ingénieur dédié. Aucune date de sortie n'est annoncée, mais cette initiative marque un tournant pour la plateforme de jeux DRM-free face à la domination de Steam sur l'écosystème Linux.", "url": "https://www.theverge.com/tech/875425/gog-native-linux-support", "source": "The Verge", "published": "2026-02-07T20:23:46+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 38}, {"title": "Moltbook was peak AI theater", "editorial_title": "Moltbook, le réseau social pour bots qui illustre le théâtre de l'IA", "editorial_summary": "Lancé fin janvier, Moltbook se présentait comme un Reddit pour agents IA où les humains ne font qu'observer. Pendant quelques jours, ce réseau social expérimental a captivé l'attention avant de révéler son caractère artificiel et superficiel. MIT Technology Review y voit l'exemple parfait du \"AI theater\" : des démos spectaculaires sans réelle utilité, conçues pour l'effet de manche.", "url": "https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/", "source": "MIT Technology Review", "published": "2026-02-06T16:38:11+00:00", "topics": ["IA", "Tech", "Sciences"], "matched_topics": ["IA", "Tech"], "authority": 22, "score": 35}, {"title": "I went back to Linux and it was a mistake", "editorial_title": "Retour raté sous Linux : un témoignage désabusé", "editorial_summary": "Un journaliste de The Verge raconte son retour sous Linux sur un Dell XPS 15 de 2019, avec l'espoir de redonner vie à la machine. L'expérience s'est soldée par une déception, illustrant les défis persistants de l'écosystème Linux face aux attentes des utilisateurs habitués à Windows ou macOS. Un rappel que la promesse d'un desktop Linux \"prêt pour le grand public\" reste un objectif lointain.", "url": "https://www.theverge.com/report/875077/linux-was-a-mistake", "source": "The Verge", "published": "2026-02-07T19:30:00+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 38}, {"title": "4 Best AI Notetakers (2026), Tested and Reviewed", "editorial_title": "Les assistants IA pour prises de notes en réunion passés au crible", "editorial_summary": "Wired teste les derniers gadgets de poche dédiés à l'enregistrement et l'analyse de réunions par IA. Ces outils promettent d'extraire automatiquement valeur et actions des discussions professionnelles. Un marché en pleine expansion qui illustre la démocratisation des assistants IA dans le quotidien des travailleurs du savoir.", "url": "https://www.wired.com/gallery/best-ai-notetakers/", "source": "Wired", "published": "2026-02-08T12:00:00+00:00", "topics": ["Tech", "Sciences"], "matched_topics": ["Tech", "Sciences"], "authority": 18, "score": 48}, {"title": "The kids 'picked last in gym class' gear up for Super Bowl", "editorial_title": "Les CEOs de la tech débarquent au Super Bowl", "editorial_summary": "Tim Cook (Apple) et Neal Mohan (YouTube) devraient assister au Super Bowl, prolongeant la tradition des dirigeants tech présents au grand événement sportif américain. Un rendez-vous qui symbolise l'influence culturelle croissante de la Silicon Valley au-delà de son périmètre technologique.", "url": "https://techcrunch.com/2026/02/07/the-kids-picked-last-in-gym-class-gear-up-for-super-bowl/", "source": "TechCrunch", "published": "2026-02-08T01:26:49+00:00", "topics": ["Tech", "Startups"], "matched_topics": ["Tech"], "authority": 20, "score": 40}];
+  const articles = [{"is_synthesis": true, "editorial_title": "L'IA redessine la tech : entre prouesses techniques et mirages marketing", "editorial_summary": "L'intelligence artificielle continue de transformer le paysage technologique, mais avec des résultats contrastés. Tandis qu'Anthropic démontre la capacité de Claude à identifier massivement des vulnérabilités zero-day, soulevant des questions de sécurité inédites, des projets comme Moltbook illustrent le théâtre marketing dont l'IA fait l'objet. Parallèlement, l'Inde ajuste sa réglementation pour soutenir les startups deep tech, et les outils d'accessibilité repoussent les frontières de l'inclusion dans la conception 3D. Entre avancées concrètes et expérimentations gadgets, le secteur cherche encore son équilibre.", "article_refs": [1, 2, 3, 4], "topics": ["IA", "Tech", "Startups"], "source": "Editorial", "url": "#", "published": "2026-02-08T10:00:00+01:00"}, {"title": "Quoting Thomas Ptacek", "editorial_title": "Claude Opus détecte 500 vulnérabilités zero-day : l'IA devient une arme de cybersécurité", "editorial_summary": "Anthropic affirme que Claude Opus 4.6 a identifié 500 failles zero-day dans des projets open-source, une annonce prise au sérieux par les chercheurs en sécurité. Selon Thomas Ptacek, la recherche de vulnérabilités pourrait être le domaine logiciel le plus adapté aux LLMs : patterns clairement définis, corpus public massif, boucles fermées. Cette capacité soulève des questions majeures sur l'avenir de la sécurité informatique et l'équilibre entre attaque et défense.", "url": "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything", "source": "Simon Willison", "published": "2026-02-08T02:25:53+00:00", "topics": ["IA", "Tech"], "matched_topics": ["IA", "Tech", "Sciences"], "authority": 15, "score": 40}, {"title": "Moltbook was peak AI theater", "editorial_title": "Moltbook, le réseau social pour bots, illustre le théâtre médiatique de l'IA", "editorial_summary": "Lancé fin janvier, Moltbook se présentait comme un Reddit pour agents IA, où les bots discutent et votent pendant que les humains observent. Le projet a connu un engouement viral de quelques jours avant de retomber dans l'indifférence. MIT Technology Review y voit l'exemple parfait du \"AI theater\" : des expérimentations spectaculaires mais superficielles qui illustrent plus la fascination médiatique pour l'IA que son utilité concrète.", "url": "https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/", "source": "MIT Technology Review", "published": "2026-02-06T16:38:11+00:00", "topics": ["IA", "Tech", "Sciences"], "matched_topics": ["IA", "Tech"], "authority": 22, "score": 35}, {"title": "India has changed its startup rules for deep tech", "editorial_title": "L'Inde adapte sa réglementation pour stimuler les startups deep tech", "editorial_summary": "Le gouvernement indien modifie ses règles encadrant les startups pour mieux soutenir celles spécialisées dans les technologies de pointe. Ces ajustements visent à faciliter le financement et la viabilité long terme des entreprises travaillant sur l'IA, la robotique, les biotechnologies et autres secteurs à haute intensité R&D. Cette initiative s'inscrit dans la stratégie indienne de développement technologique souverain.", "url": "https://techcrunch.com/2026/02/07/india-has-changed-its-startup-rules-for-deep-tech/", "source": "TechCrunch", "published": "2026-02-08T03:30:00+00:00", "topics": ["Tech", "Startups"], "matched_topics": ["Startups"], "authority": 20, "score": 40}, {"title": "Low-Vision Programmers Can Now Design 3D Models Independently", "editorial_title": "De nouveaux outils rendent la modélisation 3D accessible aux développeurs malvoyants", "editorial_summary": "Les logiciels de conception 3D traditionnels reposent sur des manipulations visuelles (glisser-déposer, rotation), excluant de facto les programmeurs aveugles ou malvoyants. De nouveaux outils changent la donne en permettant à ces développeurs de modéliser, concevoir et vérifier des composants physiques et virtuels de manière autonome. Cette avancée ouvre l'accès au design matériel, à la robotique et à l'ingénierie pour une population jusqu'ici marginalisée.", "url": "https://spectrum.ieee.org/3d-modeling-blind-programmers", "source": "IEEE Spectrum", "published": "2026-02-07T14:00:01+00:00", "topics": ["Tech", "Sciences"], "matched_topics": ["Tech"], "authority": 20, "score": 40}, {"title": "Digital car keys are getting more sophisticated", "editorial_title": "Les clés numériques automobiles progressent vers l'interopérabilité universelle", "editorial_summary": "Le Car Connectivity Consortium a réuni en janvier à Palo Alto une douzaine de constructeurs automobiles et fabricants de smartphones pour son 16e Plugfest annuel. L'objectif : tester les dernières avancées en matière de clés numériques permettant de verrouiller, déverrouiller et démarrer un véhicule via smartphone. Ces tests d'interopérabilité marquent une étape vers la standardisation d'une technologie encore fragmentée.", "url": "https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian", "source": "The Verge", "published": "2026-02-08T13:00:00+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 53}, {"title": "GOG is already working on native Linux support", "editorial_title": "GOG accélère sur Linux avec un portage natif de Galaxy en développement", "editorial_summary": "La plateforme de distribution de jeux GOG a confirmé dans un Reddit AMA que le portage natif de son client Galaxy vers Linux est déjà en cours. L'équipe a récemment publié une offre d'emploi pour un ingénieur senior dédié à ce projet. Trop tôt pour une date de sortie, mais cette initiative répond à une demande ancienne de la communauté gaming Linux.", "url": "https://www.theverge.com/tech/875425/gog-native-linux-support", "source": "The Verge", "published": "2026-02-07T20:23:46+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 38}, {"title": "Netflix's Warner Bros. merger puts rival streamers in survival mode", "editorial_title": "La fusion Netflix-Warner Bros met les plateformes concurrentes sous pression", "editorial_summary": "Le rapprochement entre Netflix et Warner Bros Discovery redistribue les cartes du streaming et place les acteurs secondaires en mode survie. Cette consolidation du marché fait suite à la guerre du streaming de 2019-2021 et marque une nouvelle phase de maturité du secteur. Les plateformes plus petites devront choisir entre fusion, niche ou disparition face à des géants renforcés.", "url": "https://www.theverge.com/column/874781/netflix-warner-bros-merger-other-streamers", "source": "The Verge", "published": "2026-02-08T13:00:00+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 53}, {"title": "I went back to Linux and it was a mistake", "editorial_title": "Retour sur Linux en 2026 : un constat d'échec pour un usage quotidien", "editorial_summary": "Un journaliste du Verge relate son expérience décevante après avoir réinstallé Linux sur un Dell XPS 15 de 2019. Malgré les promesses d'amélioration de l'écosystème, les problèmes persistent : compatibilité matérielle aléatoire, configurations obscures, expérience utilisateur dégradée. Ce témoignage illustre le fossé qui persiste entre l'enthousiasme de la communauté Linux et la réalité d'un usage grand public.", "url": "https://www.theverge.com/report/875077/linux-was-a-mistake", "source": "The Verge", "published": "2026-02-07T19:30:00+00:00", "topics": ["Tech"], "matched_topics": ["Tech"], "authority": 18, "score": 38}];
 
   // State
   let current = 0;
@@ -676,7 +683,7 @@ a{color:inherit;text-decoration:none}
     if(!card) return;
     const progress = Math.min(Math.abs(deltaX) / (window.innerWidth * 0.45), 1);
     const opacity = 1 - progress * 0.4;
-    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.03}deg)`;
+    card.style.transform = `translateX(${deltaX}px)`;
     card.style.opacity = opacity;
     e.preventDefault();
   }
@@ -688,11 +695,11 @@ a{color:inherit;text-decoration:none}
     const card = stack.querySelector('.card.active');
     if(!card) return;
     if(Math.abs(deltaX) > swipeThreshold()){
-      card.style.transition = `transform .5s var(--spring), opacity .4s ease-out`;
+      card.style.transition = `transform .4s var(--ease), opacity .35s ease-out`;
       card.style.opacity = '';
       navigate(deltaX < 0 ? 1 : -1);
     } else {
-      card.style.transition = `transform .5s var(--spring-back), opacity .3s ease-out`;
+      card.style.transition = `transform .4s var(--ease), opacity .3s ease-out`;
       card.style.transform = '';
       card.style.opacity = '';
     }
