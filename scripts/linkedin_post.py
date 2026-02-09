@@ -247,6 +247,22 @@ def copy_to_clipboard(text):
 def main():
     image_only = "--image-only" in sys.argv
 
+    # --editorial <path>: use a specific editorial JSON instead of .pipeline/02_editorial.json
+    editorial_override = None
+    if "--editorial" in sys.argv:
+        idx = sys.argv.index("--editorial")
+        if idx + 1 < len(sys.argv):
+            editorial_override = Path(sys.argv[idx + 1])
+            if not editorial_override.exists():
+                print(f"[ERROR] Editorial file not found: {editorial_override}", file=sys.stderr)
+                sys.exit(1)
+            print(f"[LINKEDIN] Using editorial override: {editorial_override}", file=sys.stderr)
+        else:
+            print("[ERROR] --editorial requires a path argument", file=sys.stderr)
+            sys.exit(1)
+
+    editorial_path = editorial_override or EDITORIAL_PATH
+
     config = load_config()
 
     # Check if LinkedIn is enabled
@@ -282,8 +298,8 @@ def main():
 
         # Editorial subtitle for overlay
         edito_subtitle = ""
-        if EDITORIAL_PATH.exists():
-            with open(EDITORIAL_PATH) as f:
+        if editorial_path.exists():
+            with open(editorial_path) as f:
                 editorial = json.load(f)
             for article in editorial:
                 if article.get("editorial_title"):
@@ -295,11 +311,11 @@ def main():
         return
 
     # Check editorial JSON exists
-    if not EDITORIAL_PATH.exists():
-        print(f"[ERROR] Editorial file not found: {EDITORIAL_PATH}", file=sys.stderr)
+    if not editorial_path.exists():
+        print(f"[ERROR] Editorial file not found: {editorial_path}", file=sys.stderr)
         sys.exit(1)
 
-    with open(EDITORIAL_PATH) as f:
+    with open(editorial_path) as f:
         editorial = json.load(f)
 
     print(f"[LINKEDIN] {len(editorial)} articles loaded from editorial", file=sys.stderr)

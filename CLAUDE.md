@@ -9,7 +9,8 @@ Pipeline automatise en 5 phases via `bash scripts/run_edition.sh` :
 | 0 | `websearch_collect.py` | WebSearch via `claude -p` → `.pipeline/00_websearch.json` (tolerant) |
 | 1 | `collect.py` | RSS + merge WebSearch + dedup + rank → `.pipeline/01_candidates.json` (20 candidats) |
 | 2 | `write_editorial.py` | `claude -p` selectionne 8 articles + edito FR + synthese → `.pipeline/02_editorial.json` |
-| 3 | `generate_edition.py` | HTML generation → `editions/YYYY-MM-DD.html` |
+| 3 | `generate_edition.py` | HTML generation → `editions/YYYY-MM-DD.html` + snapshots archives |
+| 3b | `linkedin_post.py` | Post LinkedIn + image via `claude -p` + Gemini (optionnel, `--no-linkedin`) |
 | 4 | `deploy.py` | Push gh-pages → https://sandjab.github.io/rp/ |
 
 Les etapes deterministes (RSS, dedup, HTML, deploy) sont des scripts Python. Les etapes intelligentes (recherche web, selection, redaction) utilisent `claude -p` avec des prompts dans `scripts/prompts/`.
@@ -26,6 +27,7 @@ Les etapes deterministes (RSS, dedup, HTML, deploy) sont des scripts Python. Les
 | `scripts/write_editorial.py` | Phase 2 : selection + edito via claude -p |
 | `scripts/generate_edition.py` | Phase 3 : generation HTML |
 | `scripts/deploy.py` | Phase 4 : push gh-pages |
+| `scripts/linkedin_post.py` | Phase 3b : post LinkedIn via claude -p (`--editorial <path>` pour choisir une edition) |
 | `scripts/validate.py` | Validation JSON inter-phases (candidates / editorial) |
 | `scripts/prompts/editorial.md` | Prompt pour la redaction editoriale |
 | `scripts/prompts/websearch.md` | Prompt pour la collecte WebSearch |
@@ -41,6 +43,42 @@ Repertoire local (gitignore) recree a chaque run. Contient les artefacts interme
 - `01_candidates.json` — 20 candidats post-dedup/rank
 - `02_editorial.json` — sortie finale (1 synthese + 8 articles)
 - `02_raw_attempt_N.txt` — reponses brutes claude -p pour debug
+
+## Archives et snapshots
+
+Chaque run de `generate_edition.py` produit dans `editions/archives/` :
+- `{timestamp}.html` — archive HTML timestampee
+- `editorial.{timestamp}.json` — snapshot du JSON editorial (source du HTML et du LinkedIn)
+- `manifest.{timestamp}.json` — snapshot du manifest (titre, URLs, titres des articles)
+
+Le `manifest.json` et `latest.html` generiques sont ecrases a chaque run.
+
+### Workflow multi-edition (iterer avant deploy)
+
+```bash
+# 1. Generer plusieurs editions sans deployer ni LinkedIn
+run_edition.sh --no-deploy --no-linkedin
+run_edition.sh --no-deploy --no-linkedin
+run_edition.sh --no-deploy --no-linkedin
+
+# 2. Comparer les HTML dans editions/archives/
+#    Garder celui qui plait, supprimer les autres
+
+# 3. Generer le LinkedIn pour l'edition choisie
+python3 scripts/linkedin_post.py --editorial editions/archives/editorial.{timestamp}.json
+
+# 4. Deployer
+python3 scripts/deploy.py
+```
+
+`deploy.py` selectionne automatiquement l'archive HTML la plus recente par date et reconstruit le manifest a partir du snapshot correspondant. Supprimer les archives non retenues suffit pour orienter le deploy.
+
+### Run simple (production)
+
+```bash
+run_edition.sh              # genere + LinkedIn + deploy
+run_edition.sh --no-deploy  # genere + LinkedIn, deploy manuel ensuite
+```
 
 ## Design decisions
 

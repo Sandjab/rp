@@ -3,6 +3,7 @@
 
 import json
 import re
+import shutil
 import sys
 import os
 from datetime import datetime
@@ -402,6 +403,13 @@ def main():
         f.write(html)
 
     print(f"[INFO] Archived: {archive_path}", file=sys.stderr)
+
+    # Archive editorial JSON alongside the HTML
+    editorial_src = Path(__file__).parent.parent / ".pipeline" / "02_editorial.json"
+    if editorial_src.exists():
+        editorial_snapshot = archives_dir / f"editorial.{timestamp_str}.json"
+        shutil.copy2(str(editorial_src), str(editorial_snapshot))
+        print(f"[INFO] Editorial snapshot: {editorial_snapshot}", file=sys.stderr)
 
     # Update manifest.json with edition metadata
     manifest_path = archives_dir / "manifest.json"
