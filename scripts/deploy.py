@@ -181,11 +181,40 @@ def main():
             for date_str, f in by_date.items():
                 shutil.copy2(str(f), str(deploy_archives / f"{date_str}.html"))
 
-        # Copy manifest and generate archive index
-        manifest_src = archives_dir / "manifest.json" if archives_dir.exists() else None
+        # Build manifest from timestamped snapshots matching selected archives
         manifest_dst = deploy_archives / "manifest.json"
-        if manifest_src and manifest_src.exists():
-            shutil.copy2(str(manifest_src), str(manifest_dst))
+        if archives_dir and archives_dir.exists():
+            merged_manifest = []
+            seen_dates = set()
+            # For each selected archive, find its matching manifest snapshot
+            for date_str, f in by_date.items():
+                ts = f.stem  # e.g. "2026-02-10.001737"
+                snapshot = archives_dir / f"manifest.{ts}.json"
+                if snapshot.exists():
+                    with open(snapshot) as sf:
+                        snap_data = json.load(sf)
+                    # Extract only the entry for this date
+                    for entry in snap_data:
+                        if entry.get("date") == date_str and date_str not in seen_dates:
+                            merged_manifest.append(entry)
+                            seen_dates.add(date_str)
+                            break
+            # Fill remaining dates from the generic manifest
+            manifest_src = archives_dir / "manifest.json"
+            if manifest_src.exists():
+                with open(manifest_src) as mf:
+                    generic = json.load(mf)
+                for entry in generic:
+                    if entry.get("date") not in seen_dates:
+                        merged_manifest.append(entry)
+                        seen_dates.add(entry["date"])
+            merged_manifest.sort(key=lambda e: e.get("date", ""), reverse=True)
+            with open(manifest_dst, "w") as mf:
+                json.dump(merged_manifest, mf, ensure_ascii=False, indent=2)
+        else:
+            manifest_src = archives_dir / "manifest.json" if archives_dir.exists() else None
+            if manifest_src and manifest_src.exists():
+                shutil.copy2(str(manifest_src), str(manifest_dst))
         build_deploy_archive_index(deploy_archives, manifest_dst, config["edition"]["title"])
 
         # Rewrite nav links for archive context (relative paths differ from root)

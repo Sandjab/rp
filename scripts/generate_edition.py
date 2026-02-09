@@ -433,6 +433,12 @@ def main():
         json.dump(manifest, f, ensure_ascii=False, indent=2)
     print(f"[INFO] Manifest updated: {manifest_path}", file=sys.stderr)
 
+    # Save timestamped manifest snapshot alongside the archive HTML
+    manifest_snapshot = archives_dir / f"manifest.{timestamp_str}.json"
+    with open(manifest_snapshot, "w") as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+    print(f"[INFO] Manifest snapshot: {manifest_snapshot}", file=sys.stderr)
+
     # Also write latest.html for deploy script
     latest_path = editions_dir / "latest.html"
     with open(latest_path, "w") as f:
