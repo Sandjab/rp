@@ -14,10 +14,12 @@ PIPELINE_DIR="$PROJECT_DIR/.pipeline"
 # Parse args
 DEPLOY=true
 LINKEDIN=true
+EDITO_STYLE=""
 for arg in "$@"; do
   case "$arg" in
     --no-deploy) DEPLOY=false ;;
     --no-linkedin) LINKEDIN=false ;;
+    --edito-style=*) EDITO_STYLE="${arg#*=}" ;;
     *) echo "[ERROR] Unknown argument: $arg" >&2; exit 1 ;;
   esac
 done
@@ -50,7 +52,11 @@ echo "[OK] Phase 1 complete"
 # ── Phase 2: Editorial (LLM) ──
 echo ""
 echo "── Phase 2: Editorial (claude -p) ──"
-python3 "$SCRIPT_DIR/write_editorial.py"
+if [ -n "$EDITO_STYLE" ]; then
+  EDITO_STYLE="$EDITO_STYLE" python3 "$SCRIPT_DIR/write_editorial.py"
+else
+  python3 "$SCRIPT_DIR/write_editorial.py"
+fi
 python3 "$SCRIPT_DIR/validate.py" "$PIPELINE_DIR/02_editorial.json" --phase editorial
 echo "[OK] Phase 2 complete"
 

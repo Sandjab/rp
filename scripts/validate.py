@@ -65,6 +65,13 @@ def validate_editorial(data):
         if not article.get("url"):
             errors.append(f"Article {i}: missing 'url'")
 
+    # Validate "not serious" article if present
+    if len(data) >= 3:
+        last = data[-1]
+        if last.get("is_not_serious"):
+            if "C'est pas serieux" not in last.get("matched_topics", []):
+                errors.append("'C'est pas serieux' article should have matched_topics containing 'C'est pas serieux'")
+
     return errors
 
 

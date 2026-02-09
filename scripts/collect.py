@@ -5,7 +5,7 @@ Usage:
     python3 scripts/collect.py
 
 Reads WebSearch results from .pipeline/00_websearch.json if present.
-Produces .pipeline/01_candidates.json with top N candidates (default 20).
+Produces .pipeline/01_candidates.json with top N candidates (default 25).
 """
 
 import json
@@ -212,7 +212,7 @@ def main():
 
     # 4. Rank — propagate RP_MAX_CANDIDATES (default 20 for pipeline)
     print("[COLLECT] Phase 3: Ranking...", file=sys.stderr)
-    max_candidates = os.environ.get("RP_MAX_CANDIDATES", "20")
+    max_candidates = os.environ.get("RP_MAX_CANDIDATES", "25")
     deduped_json = json.dumps(deduped, ensure_ascii=False)
     ranked = run_script(
         "rank_articles.py",

@@ -42,3 +42,19 @@ feeds:
   - name: "Reuters"
     url: "https://news.google.com/rss/search?q=when:48h+allinurl:reuters.com+(technology+OR+AI+OR+tech+OR+startup+OR+software+OR+chip+OR+deals)&hl=en&gl=US&ceid=US:en"
     topics: ["Business", "Marches"]
+
+  - name: "The Register"
+    url: "https://www.theregister.com/software/ai/headlines.atom"
+    topics: ["Produits", "Societe"]
+
+  - name: "Futurism"
+    url: "https://futurism.com/categories/ai-artificial-intelligence/feed"
+    topics: ["Produits", "Societe"]
+
+  - name: "Gizmodo"
+    url: "https://gizmodo.com/feed"
+    topics: ["Produits", "Societe"]
+
+  - name: "Interesting Engineering"
+    url: "https://interestingengineering.com/innovation/artificial-intelligence/feed"
+    topics: ["Recherche", "Produits"]

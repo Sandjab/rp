@@ -37,6 +37,10 @@ def build_queries_block(config):
         queries = topic.get("queries", [])
         for q in queries:
             lines.append(f"- [{tag}] {q}")
+    # Fun/not-serious queries
+    ns = config.get("not_serious", {})
+    for q in ns.get("queries", []):
+        lines.append(f"- [Fun] {q}")
     return "\n".join(lines)
 
 

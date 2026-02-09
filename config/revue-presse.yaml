@@ -4,6 +4,7 @@ edition:
   max_articles: 10
   timezone: "Europe/Paris"
   history_days: 3
+  edito_style: "deep"   # focused | angle | deep
 
 github:
   repo: "Sandjab/rp"
@@ -177,8 +178,21 @@ source_authority:
   Simon Willison: 15
   IEEE Spectrum: 20
   Science Magazine: 24
+  The Register: 14
+  Futurism: 12
+  Gizmodo: 12
+  Interesting Engineering: 12
   X: 12
   default: 10
+
+not_serious:
+  tag: "C'est pas serieux"
+  color: "#F59E0B"
+  subtitle: "votre temps de lecture ne sera pas rembourse"
+  queries:
+    - "AI funny fail bizarre unexpected"
+    - "artificial intelligence weird surprising unusual story"
+    - "robot AI hilarious absurd news"
 
 styling:
   fonts:

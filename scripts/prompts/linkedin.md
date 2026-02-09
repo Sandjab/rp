@@ -61,6 +61,8 @@ Le commentaire est publie immediatement apres le post. Il contient :
 1. Le lien vers l'edition : {{EDITION_URL}}
 2. Un sommaire des articles du jour (titres editoriaux uniquement, pas les URLs individuelles)
 
+- Le dernier article (marque `is_not_serious: true`) est la rubrique "C'est pas serieux". L'inclure dans le sommaire avec la mention [Fun] devant le titre.
+
 Format :
 ```
 Edition complete : {{EDITION_URL}}
@@ -69,6 +71,7 @@ Au sommaire :
 - [titre editorial article 1]
 - [titre editorial article 2]
 - ...
+- [Fun] [titre editorial article "C'est pas serieux"]
 ```
 
 ## Regles du prompt image

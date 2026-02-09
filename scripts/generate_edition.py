@@ -69,7 +69,7 @@ def build_synthesis_card_html(article, index, articles, config, now):
         tags_html += f'<span class="tag-pill" style="background:{h(color)}20;color:{h(color)};opacity:0.85">{h(tag)}</span>'
 
     title = h(article.get("editorial_title", article.get("title", "")))
-    summary = h(article.get("editorial_summary", article.get("summary", "")))
+    summary = h(article.get("editorial_summary", article.get("summary", ""))).replace("\n", "<br>")
 
     signature = config.get("edition", {}).get("signature", "")
     if signature:
@@ -96,7 +96,7 @@ def build_synthesis_grid_card_html(article, index, articles, config, now):
         tags_html += f'<span class="tag-pill" style="background:{h(color)}20;color:{h(color)};opacity:0.85">{h(tag)}</span>'
 
     title = h(article.get("editorial_title", article.get("title", "")))
-    summary = h(article.get("editorial_summary", article.get("summary", "")))
+    summary = h(article.get("editorial_summary", article.get("summary", ""))).replace("\n", "<br>")
 
     signature = config.get("edition", {}).get("signature", "")
     if signature:
@@ -110,6 +110,64 @@ def build_synthesis_grid_card_html(article, index, articles, config, now):
       <div class="card-tags">{tags_html}</div>
       <h2 class="card-title">{title}</h2>
       <p class="card-summary">{summary}</p>{signature_html}
+    </article>'''
+
+
+def build_not_serious_card_html(article, index, config, now):
+    """Build the 'not serious' card HTML block."""
+    ns_config = config.get("not_serious", {})
+    ns_tag = h(ns_config.get("tag", "C'est pas serieux"))
+    ns_color = h(ns_config.get("color", "#F59E0B"))
+    ns_subtitle = h(ns_config.get("subtitle", "votre temps de lecture ne sera pas rembourse"))
+
+    tags_html = f'<span class="tag-pill" style="background:{ns_color}20;color:{ns_color};opacity:0.85">{ns_tag}</span>'
+
+    title = h(article.get("editorial_title", article.get("title", "")))
+    source = h(article.get("source", ""))
+    ago = time_ago(article.get("published"), now)
+    source_line = f"{source}"
+    if ago:
+        source_line += f" — {ago}"
+
+    summary = h(article.get("editorial_summary", article.get("summary", ""))).replace("\n", "<br>")
+    url = h(article.get("url", "#"))
+
+    return f'''
+    <article class="card not-serious-card" data-index="{index}">
+      <div class="card-tags">{tags_html}</div>
+      <h2 class="card-title">{title}</h2>
+      <div class="not-serious-subtitle">{ns_subtitle}</div>
+      <div class="card-source">{source_line}</div>
+      <p class="card-summary">{summary}</p>
+      <a class="card-link" href="{url}" target="_blank" rel="noopener">Lire (a vos risques et perils) <span>&rarr;</span></a>
+    </article>'''
+
+
+def build_not_serious_grid_card_html(article, index, config, now):
+    """Build the 'not serious' grid card HTML block."""
+    ns_config = config.get("not_serious", {})
+    ns_tag = h(ns_config.get("tag", "C'est pas serieux"))
+    ns_color = h(ns_config.get("color", "#F59E0B"))
+    ns_subtitle = h(ns_config.get("subtitle", "votre temps de lecture ne sera pas rembourse"))
+
+    tags_html = f'<span class="tag-pill" style="background:{ns_color}20;color:{ns_color};opacity:0.85">{ns_tag}</span>'
+
+    title = h(article.get("editorial_title", article.get("title", "")))
+    source = h(article.get("source", ""))
+    ago = time_ago(article.get("published"), now)
+    summary = h(article.get("editorial_summary", article.get("summary", ""))).replace("\n", "<br>")
+    url = h(article.get("url", "#"))
+
+    return f'''
+    <article class="grid-card not-serious-grid" data-index="{index}" onclick="toggleGridCard(this)">
+      <div class="card-tags">{tags_html}</div>
+      <h2 class="card-title"><a href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">{title}</a></h2>
+      <div class="not-serious-subtitle">{ns_subtitle}</div>
+      <div class="card-source">{source} — {ago}</div>
+      <p class="card-summary">{summary}</p>
+      <div class="grid-card-extra">
+        <a class="card-link" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Lire (a vos risques et perils) <span>&rarr;</span></a>
+      </div>
     </article>'''
 
 
@@ -129,7 +187,7 @@ def build_card_html(article, index, config, now):
     if ago:
         source_line += f" — {ago}"
 
-    summary = h(article.get("editorial_summary", article.get("summary", "")))
+    summary = h(article.get("editorial_summary", article.get("summary", ""))).replace("\n", "<br>")
     context = h(article.get("research_context", ""))
     url = h(article.get("url", "#"))
 
@@ -165,7 +223,7 @@ def build_grid_card_html(article, index, config, now):
     title = h(article.get("editorial_title", article.get("title", "")))
     source = h(article.get("source", ""))
     ago = time_ago(article.get("published"), now)
-    summary = h(article.get("editorial_summary", article.get("summary", "")))
+    summary = h(article.get("editorial_summary", article.get("summary", ""))).replace("\n", "<br>")
     url = h(article.get("url", "#"))
     context = h(article.get("research_context", ""))
 
@@ -304,6 +362,9 @@ def main():
         if article.get("is_synthesis"):
             cards_html += build_synthesis_card_html(article, i, articles, config, now)
             grid_cards_html += build_synthesis_grid_card_html(article, i, articles, config, now)
+        elif article.get("is_not_serious"):
+            cards_html += build_not_serious_card_html(article, i, config, now)
+            grid_cards_html += build_not_serious_grid_card_html(article, i, config, now)
         else:
             cards_html += build_card_html(article, i, config, now)
             grid_cards_html += build_grid_card_html(article, i, config, now)

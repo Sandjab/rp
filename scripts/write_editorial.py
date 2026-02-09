@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Phase 2: Editorial selection and rewriting via claude -p.
 
-Reads .pipeline/01_candidates.json (20 candidates),
-calls claude -p to select top 8 + write editorials + synthesis,
+Reads .pipeline/01_candidates.json (25 candidates),
+calls claude -p to select top 10 + write editorials + synthesis,
 validates output, retries on failure (max 2 attempts).
 Writes .pipeline/02_editorial.json.
 """
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -15,6 +16,29 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
+
+EDITO_STYLES = {
+    "focused": """   **Structure du billet :**
+   - Choisis 2-3 themes parmi les articles selectionnes et construis un fil conducteur entre eux
+   - Accroche : une phrase forte qui donne le la (question, constat percutant, anecdote)
+   - Developpement : connecter ces 2-3 themes avec un fil conducteur personnel. Chaque theme doit servir l'argument general. Ne mentionne PAS les articles qui ne participent pas au fil conducteur.
+   - Chute : phrase memorable, punchline, ouverture ou question au lecteur
+   - REGLE : le billet ne doit PAS etre un tour d'horizon exhaustif de l'actualite. C'est une chronique selective.""",
+
+    "angle": """   **Structure du billet :**
+   - Identifie UN angle, une these, une idee-force qui emerge de l'actualite du jour
+   - Accroche : une phrase forte qui pose la these (question, constat percutant, paradoxe)
+   - Developpement : deroule l'argument en t'appuyant sur les articles du jour comme preuves ou illustrations. Tu peux mentionner plusieurs articles, mais chaque mention doit servir la these centrale. Pas de digressions hors-sujet.
+   - Chute : phrase memorable qui boucle la these, punchline, ouverture
+   - REGLE : tout le billet sert UN argument. Si une actu du jour ne rentre pas dans l'angle choisi, ne la mentionne pas.""",
+
+    "deep": """   **Structure du billet :**
+   - Identifie LE fait le plus marquant ou le plus interessant du jour parmi les articles selectionnes
+   - Accroche : entre directement dans le sujet avec une phrase qui capte l'attention
+   - Developpement : analyse en profondeur ce sujet unique — contexte, enjeux, implications, opinion personnelle. Creuse plutot qu'etaler. Les autres articles du jour sont ignores sauf s'ils eclairent directement ce sujet.
+   - Chute : phrase memorable, prise de position claire, question ouverte au lecteur
+   - REGLE : le billet est une chronique monothematique. Profondeur > largeur.""",
+}
 
 PROJECT_DIR = Path(__file__).parent.parent
 PIPELINE_DIR = PROJECT_DIR / ".pipeline"
@@ -86,6 +110,13 @@ def validate_editorial(data):
         if not article.get("url"):
             errors.append(f"Article {i}: missing url")
 
+    # Validate "not serious" article if present
+    if len(data) >= 3:
+        last = data[-1]
+        if last.get("is_not_serious"):
+            if "C'est pas serieux" not in last.get("matched_topics", []):
+                errors.append("'C'est pas serieux' article should have matched_topics containing 'C'est pas serieux'")
+
     return errors
 
 
@@ -128,12 +159,19 @@ def main():
     prompt_template = PROMPT_PATH.read_text()
     topics_list = ", ".join(t["tag"] for t in config.get("topics", []))
 
+    # Determine edito style: CLI env var overrides config
+    edito_style = config.get("edition", {}).get("edito_style", "focused")
+    edito_style = os.environ.get("EDITO_STYLE", edito_style)
+    style_instructions = EDITO_STYLES.get(edito_style, EDITO_STYLES["focused"])
+    print(f"[EDITORIAL] Style: {edito_style}", file=sys.stderr)
+
     base_prompt = (
         prompt_template
         .replace("{{CANDIDATES_JSON}}", json.dumps(candidates, ensure_ascii=False, indent=2))
         .replace("{{MAX_ARTICLES}}", str(len(candidates)))
         .replace("{{DATE}}", today)
         .replace("{{TOPICS}}", topics_list)
+        .replace("{{EDITO_STYLE_INSTRUCTIONS}}", style_instructions)
     )
 
     last_errors = []
