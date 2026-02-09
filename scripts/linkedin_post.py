@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from PIL import Image, ImageDraw, ImageFont
 
 PROJECT_DIR = Path(__file__).parent.parent
 PIPELINE_DIR = PROJECT_DIR / ".pipeline"
@@ -121,7 +122,7 @@ def call_claude(prompt):
 
 
 def generate_image(prompt, output_path):
-    """Generate image via Google Generative AI (NanoBanana Pro). Tolerant."""
+    """Generate image via Gemini Pro (generate_content API). Tolerant."""
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         print("[WARN] GOOGLE_API_KEY not set, skipping image generation", file=sys.stderr)
@@ -131,25 +132,107 @@ def generate_image(prompt, output_path):
         from google.genai import types
 
         client = genai.Client(api_key=api_key)
-        response = client.models.generate_images(
-            model="imagen-4.0-generate-001",
-            prompt=prompt,
-            config=types.GenerateImagesConfig(
-                number_of_images=1,
-                output_mime_type="image/png",
+        response = client.models.generate_content(
+            model="gemini-3-pro-image-preview",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_modalities=["IMAGE", "TEXT"],
             ),
         )
-        if response.generated_images:
-            image = response.generated_images[0].image
-            image.save(str(output_path))
-            print(f"[LINKEDIN] Image generated: {output_path}", file=sys.stderr)
-            return True
-        else:
-            print("[WARN] No image returned by API", file=sys.stderr)
-            return False
+        for part in response.candidates[0].content.parts:
+            if part.inline_data and part.inline_data.mime_type.startswith("image/"):
+                with open(output_path, "wb") as f:
+                    f.write(part.inline_data.data)
+                print(f"[LINKEDIN] Image generated (gemini-3-pro): {output_path}", file=sys.stderr)
+                return True
+        print("[WARN] No image returned by API", file=sys.stderr)
+        return False
     except Exception as e:
         print(f"[WARN] Image generation failed: {e}", file=sys.stderr)
         return False
+
+
+def overlay_text_on_image(image_path, edition_title, edition_number, subtitle):
+    """Overlay title + subtitle on image using Pillow. Guarantees perfect text."""
+    TARGET_W, TARGET_H = 1200, 627
+    BANNER_COLOR = (26, 26, 26)  # #1A1A1A
+    BANNER_OPACITY = int(255 * 0.78)
+    ACCENT_COLOR = (230, 57, 70)  # #E63946
+    ACCENT_HEIGHT = 4
+    MARGIN_TOP = 70  # safe-zone LinkedIn
+    PADDING_H = 60  # horizontal padding inside banner
+    PADDING_V = 20  # vertical padding inside banner
+
+    # Font paths (macOS system fonts)
+    LUCIDA_PATH = "/System/Library/Fonts/LucidaGrande.ttc"
+    HELVETICA_PATH = "/System/Library/Fonts/HelveticaNeue.ttc"
+
+    img = Image.open(image_path).convert("RGBA")
+
+    # Resize to target dimensions
+    if img.size != (TARGET_W, TARGET_H):
+        img = img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
+
+    # Load fonts with fallback
+    try:
+        font_title = ImageFont.truetype(LUCIDA_PATH, 52, index=0)
+    except (OSError, IndexError):
+        font_title = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial Bold.ttf", 52)
+
+    try:
+        font_subtitle = ImageFont.truetype(HELVETICA_PATH, 26, index=0)
+    except OSError:
+        font_subtitle = ImageFont.load_default()
+
+    # Compose title line: "IA qu'à demander N°2"
+    title_text = f"{edition_title} N\u00b0{edition_number}"
+
+    # Truncate subtitle if too long
+    max_subtitle_w = TARGET_W - 2 * PADDING_H
+    if font_subtitle.getlength(subtitle) > max_subtitle_w:
+        while font_subtitle.getlength(subtitle + "\u2026") > max_subtitle_w and len(subtitle) > 10:
+            subtitle = subtitle[:-1].rstrip()
+        subtitle = subtitle + "\u2026"
+
+    # Measure text
+    title_bbox = font_title.getbbox(title_text)
+    title_h = title_bbox[3] - title_bbox[1]
+    subtitle_bbox = font_subtitle.getbbox(subtitle)
+    subtitle_h = subtitle_bbox[3] - subtitle_bbox[1]
+
+    # Banner dimensions
+    banner_top = MARGIN_TOP
+    banner_height = PADDING_V + title_h + 12 + subtitle_h + PADDING_V
+    banner_bottom = banner_top + banner_height
+
+    # Draw semi-transparent banner
+    overlay = Image.new("RGBA", (TARGET_W, TARGET_H), (0, 0, 0, 0))
+    draw_overlay = ImageDraw.Draw(overlay)
+    draw_overlay.rectangle(
+        [(0, banner_top), (TARGET_W, banner_bottom)],
+        fill=(*BANNER_COLOR, BANNER_OPACITY),
+    )
+    # Accent bar below banner
+    draw_overlay.rectangle(
+        [(0, banner_bottom), (TARGET_W, banner_bottom + ACCENT_HEIGHT)],
+        fill=(*ACCENT_COLOR, 255),
+    )
+    img = Image.alpha_composite(img, overlay)
+
+    # Draw text (centered horizontally)
+    draw = ImageDraw.Draw(img)
+    text_y = banner_top + PADDING_V
+    title_w = font_title.getlength(title_text)
+    title_x = (TARGET_W - title_w) / 2
+    draw.text((title_x, text_y), title_text, font=font_title, fill=(255, 255, 255, 255))
+    text_y += title_h + 12
+    subtitle_w = font_subtitle.getlength(subtitle)
+    subtitle_x = (TARGET_W - subtitle_w) / 2
+    draw.text((subtitle_x, text_y), subtitle, font=font_subtitle, fill=(255, 255, 255, 210))
+
+    # Save as RGB PNG
+    img.convert("RGB").save(image_path, "PNG")
+    print(f"[LINKEDIN] Text overlay applied: {image_path}", file=sys.stderr)
 
 
 def copy_to_clipboard(text):
@@ -162,12 +245,53 @@ def copy_to_clipboard(text):
 
 
 def main():
+    image_only = "--image-only" in sys.argv
+
     config = load_config()
 
     # Check if LinkedIn is enabled
     linkedin_config = config.get("linkedin", {})
     if not linkedin_config.get("enabled", True):
         print("[LINKEDIN] Disabled in config, skipping", file=sys.stderr)
+        return
+
+    # --image-only: regenerate image from existing prompt, skip claude -p
+    if image_only:
+        prompt_file = LINKEDIN_DIR / "image_prompt.txt"
+        if not prompt_file.exists():
+            print(f"[ERROR] {prompt_file} not found. Run without --image-only first.", file=sys.stderr)
+            sys.exit(1)
+
+        image_prompt = prompt_file.read_text().strip()
+        print(f"[LINKEDIN] --image-only: reusing existing prompt ({len(image_prompt)} chars)", file=sys.stderr)
+
+        archives_dir = PROJECT_DIR / "editions" / "archives"
+        edition_number = get_edition_number(archives_dir)
+        edition_title = config.get("edition", {}).get("title", "IA qu'a demander")
+
+        image_path = LINKEDIN_DIR / "image.png"
+        if not generate_image(image_prompt, image_path):
+            print("[ERROR] Image generation failed", file=sys.stderr)
+            sys.exit(1)
+
+        # Save raw API image before overlay (debug)
+        raw_path = LINKEDIN_DIR / "image_raw.png"
+        import shutil
+        shutil.copy2(image_path, raw_path)
+        print(f"[LINKEDIN] Raw API image saved: {raw_path}", file=sys.stderr)
+
+        # Editorial subtitle for overlay
+        edito_subtitle = ""
+        if EDITORIAL_PATH.exists():
+            with open(EDITORIAL_PATH) as f:
+                editorial = json.load(f)
+            for article in editorial:
+                if article.get("editorial_title"):
+                    edito_subtitle = article["editorial_title"]
+                    break
+
+        overlay_text_on_image(image_path, edition_title, edition_number, edito_subtitle)
+        print(f"[LINKEDIN] Image regenerated: {image_path}", file=sys.stderr)
         return
 
     # Check editorial JSON exists
@@ -269,8 +393,24 @@ def main():
         print(f"[LINKEDIN] Post: {len(post_text)} chars", file=sys.stderr)
         print(f"[LINKEDIN] Comment: {len(comment_text)} chars", file=sys.stderr)
 
-        # Generate image (tolerant)
-        generate_image(image_prompt, LINKEDIN_DIR / "image.png")
+        # Generate image (tolerant) + text overlay
+        image_path = LINKEDIN_DIR / "image.png"
+        image_generated = generate_image(image_prompt, image_path)
+
+        if image_generated:
+            # Save raw API image before Pillow overlay (debug)
+            raw_path = LINKEDIN_DIR / "image_raw.png"
+            import shutil
+            shutil.copy2(image_path, raw_path)
+            print(f"[LINKEDIN] Raw API image saved: {raw_path}", file=sys.stderr)
+
+            # Extract editorial subtitle from synthesis article
+            edito_subtitle = ""
+            for article in editorial:
+                if article.get("editorial_title"):
+                    edito_subtitle = article["editorial_title"]
+                    break
+            overlay_text_on_image(image_path, edition_title, edition_number, edito_subtitle)
 
         # Copy to clipboard
         if linkedin_config.get("clipboard", True):

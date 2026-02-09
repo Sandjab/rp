@@ -140,7 +140,7 @@ Remplit le template `templates/edition.html` avec les articles editorialises. Ge
 
 ### `linkedin_post.py` — Phase 3b : post LinkedIn
 
-Genere un post LinkedIn optimise a partir de l'edition du jour. Appelle `claude -p` avec le prompt `prompts/linkedin.md` pour produire un texte adapte au format LinkedIn (hook ≤210 chars, corps 800-1200 chars, CTA subtil). Genere une image editoriale via NanoBanana Pro (SDK `google-genai`). Ecrit `.pipeline/linkedin/post.txt`, `comment.txt`, `image.png`. Copie le post dans le presse-papier. Tolerant : si l'image ou le post echouent, le pipeline continue.
+Genere un post LinkedIn optimise a partir de l'edition du jour. Appelle `claude -p` avec le prompt `prompts/linkedin.md` pour produire un texte adapte au format LinkedIn (hook ≤210 chars, corps 800-1200 chars, CTA subtil). Genere une image editoriale via NanoBanana Pro (SDK `google-genai`), puis superpose le titre et sous-titre via Pillow pour un rendu typographique parfait. Ecrit `.pipeline/linkedin/post.txt`, `comment.txt`, `image.png`. Copie le post dans le presse-papier. Tolerant : si l'image ou le post echouent, le pipeline continue.
 
 ### `deploy.py` — Phase 4 : publication
 

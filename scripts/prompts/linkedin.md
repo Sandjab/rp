@@ -85,14 +85,14 @@ Le prompt doit generer une image editoriale LinkedIn (1200x627px) avec ces contr
 - Illustrer concretement les 2-3 concepts cles de l'edition du jour (deduits des articles)
 - Exemples : un robot qui lit un journal, une puce IA geante, des chercheurs devant un tableau, etc.
 - L'image doit raconter quelque chose — pas etre decorative
-**Texte integre** :
-- "{{EDITION_TITLE}}" en typographie editoriale grande, bien lisible
-- En dessous : le titre de l'edito du jour, en plus petit
-- Le texte doit etre integre proprement dans la composition (style affiche ou couverture de comic)
+**AUCUN TEXTE** :
+- Le prompt NE DOIT contenir AUCUN texte, AUCUNE lettre, AUCUN mot dans l'image
+- L'image doit etre une illustration pure — le texte sera ajoute par le pipeline
+- Laisser un espace visuel aere en HAUT de l'image (~25% de la hauteur) pour un bandeau titre
 
 **Contraintes** :
 - Aucun visage realiste de personne reelle, aucun logo de marque
-- Pas d'autre texte que le titre de la revue et le titre de l'edito
+- AUCUN texte, AUCUNE lettre, AUCUN caractere dans l'image
 
 **Format du prompt** : en anglais, descriptif, style Midjourney/DALL-E
 
