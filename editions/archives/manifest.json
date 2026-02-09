@@ -1,5 +1,30 @@
 [
   {
+    "date": "2026-02-09",
+    "number": 2,
+    "title": "Quand l'IA devient trop gourmande pour le gaming",
+    "urls": [
+      "https://www.benzinga.com/markets/tech/26/02/50422774/nvidia-stock-wobbles-as-ai-memory-crunch-kills-2026-gaming-gpu-launch",
+      "https://www.cnbc.com/2026/01/27/anthropic-fundraising-microsoft-nvidia.html",
+      "https://research.google/blog/accelerating-scientific-breakthroughs-with-an-ai-co-scientist/",
+      "https://arstechnica.com/ai/2026/02/sixteen-claude-ai-agents-working-together-created-a-new-c-compiler/",
+      "https://www.theverge.com/ai-artificial-intelligence/875501/new-york-is-considering-two-bills-to-rein-in-the-ai-industry",
+      "https://x.com/NaeemAslam23/status/2006301287323725905",
+      "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything",
+      "https://www.prnewswire.com/news-releases/aicom-launches-autonomous-ai-agents-to-accelerate-the-arrival-of-agi-302680933.html"
+    ],
+    "titles": [
+      "Nvidia suspend le lancement de GPU gaming 2026 face à la pénurie de mémoire IA",
+      "Anthropic proche de finaliser un tour de financement de plus de 20 milliards de dollars",
+      "Google lance l'AI Co-Scientist pour accélérer les découvertes scientifiques",
+      "Sixteen Claude AI agents working together created a new C compiler",
+      "New York is considering two bills to rein in the AI industry",
+      "ByteDance prévoit 14 milliards de dollars en puces Nvidia H200 pour 2026",
+      "Quoting Thomas Ptacek",
+      "ai.com lance des agents IA autonomes avec publicité Super Bowl"
+    ]
+  },
+  {
     "date": "2026-02-08",
     "number": 1,
     "title": "L'IA agentique vaut 2 milliards, les PRs pourries, zéro."
