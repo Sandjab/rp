@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 3b: LinkedIn post generation via claude -p + NanoBanana Pro.
+"""Phase 3b: LinkedIn post generation via claude -p + Gemini Pro + Pillow.
 
 Reads .pipeline/02_editorial.json,
 calls claude -p to generate a LinkedIn post + comment + image prompt,

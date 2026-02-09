@@ -9,7 +9,7 @@ Pipeline automatise en 5 phases via `bash scripts/run_edition.sh` :
 | 0 | `websearch_collect.py` | WebSearch via `claude -p` → `.pipeline/00_websearch.json` (tolerant) |
 | 1 | `collect.py` | RSS + merge WebSearch + dedup + rank → `.pipeline/01_candidates.json` (20 candidats) |
 | 2 | `write_editorial.py` | `claude -p` selectionne 8 articles + edito FR + synthese → `.pipeline/02_editorial.json` |
-| 3 | `generate_edition.py` | HTML generation → `editions/YYYY-MM-DD.html` + snapshots archives |
+| 3 | `generate_edition.py` | HTML generation → `editions/latest.html` + snapshots archives |
 | 3b | `linkedin_post.py` | Post LinkedIn + image via `claude -p` + Gemini (optionnel, `--no-linkedin`) |
 | 4 | `deploy.py` | Push gh-pages → https://sandjab.github.io/rp/ |
 

@@ -390,13 +390,6 @@ def main():
     html = html.replace("{{GENERATION_TIME}}", now.strftime("%H:%M %Z"))
     html = html.replace("{{FOOTER_NAV}}", footer_nav)
 
-    # Write edition file in editions/
-    output_path = editions_dir / f"{date_str}.html"
-    with open(output_path, "w") as f:
-        f.write(html)
-
-    print(f"[INFO] Edition generated: {output_path}", file=sys.stderr)
-
     # Archive with timestamp
     archive_path = archives_dir / f"{timestamp_str}.html"
     with open(archive_path, "w") as f:
@@ -456,7 +449,7 @@ def main():
     build_archive_page(archives_dir, config)
 
     # Output path to stdout
-    print(str(output_path))
+    print(str(latest_path))
 
 if __name__ == "__main__":
     main()

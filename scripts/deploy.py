@@ -137,7 +137,6 @@ def main():
     now = datetime.now(tz)
     date_str = now.strftime("%Y-%m-%d")
     timestamp_str = now.strftime("%Y-%m-%d.%H%M%S")
-    edition_file = editions_dir / f"{date_str}.html"
     archives_dir = editions_dir / "archives"
 
     # Clone into temp dir
@@ -158,9 +157,10 @@ def main():
         deploy_archives = deploy_editions / "archives"
         deploy_archives.mkdir(exist_ok=True)
 
-        # Copy dated edition
-        if edition_file.exists():
-            shutil.copy2(str(edition_file), str(deploy_editions / edition_file.name))
+        # Remove legacy dated editions from editions/ root (now only in archives/)
+        for f in deploy_editions.glob("*.html"):
+            f.unlink()
+            print(f"[INFO] Removed legacy edition: editions/{f.name}", file=sys.stderr)
 
         # Remove legacy timestamped archives (YYYY-MM-DD.HHMMSS.html)
         ts_pattern = re.compile(r"\d{4}-\d{2}-\d{2}\.\d{6}\.html$")

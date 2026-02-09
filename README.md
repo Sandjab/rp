@@ -20,8 +20,8 @@ flowchart TD
         A1 --> ED{{Phase 2 — Selection + edito\nclaude -p}}
         ED --> A2[(02_editorial.json\n1 synthese + 10 articles)]
         A2 --> GEN[Phase 3 — Generation HTML]
-        GEN --> HTML[(editions/YYYY-MM-DD.html)]
-        A2 --> LI{{Phase 3b — LinkedIn post\nclaude -p + NanoBanana}}
+        GEN --> HTML[(editions/latest.html)]
+        A2 --> LI{{Phase 3b — LinkedIn post\nclaude -p + Gemini Pro}}
         LI --> LIF[(linkedin/\npost + image)]
         HTML --> DEP[Phase 4 — Deploy gh-pages]
         DEP --> SITE([sandjab.github.io/rp/])
@@ -83,7 +83,7 @@ scripts/
   collect.py           # Phase 1 : RSS + merge + dedup + rank
   write_editorial.py   # Phase 2 : selection + edito via claude -p
   generate_edition.py  # Phase 3 : generation HTML
-  linkedin_post.py     # Phase 3b : post LinkedIn via claude -p + NanoBanana
+  linkedin_post.py     # Phase 3b : post LinkedIn via claude -p + Gemini Pro
   deploy.py            # Phase 4 : push gh-pages
   validate.py          # Validation JSON inter-phases
   prompts/             # Prompts pour claude -p
@@ -136,15 +136,15 @@ Appelle `claude -p` avec le prompt `prompts/editorial.md` et les 20 candidats. L
 
 ### `generate_edition.py` — Phase 3 : HTML
 
-Remplit le template `templates/edition.html` avec les articles editorialises. Genere les cards pour le carrousel desktop et la grille mobile, les timestamps relatifs en francais ("il y a 2h"), le numero d'edition. Produit l'edition datee, une copie archivee horodatee, et `latest.html` pour le deploy. Met a jour `editions/archives/manifest.json` avec les metadonnees de l'edition (date, numero, titre editorial).
+Remplit le template `templates/edition.html` avec les articles editorialises. Genere les cards pour le carrousel desktop et la grille mobile, les timestamps relatifs en francais ("il y a 2h"), le numero d'edition. Produit `latest.html` pour le deploy et une copie archivee horodatee dans `editions/archives/`. Met a jour `editions/archives/manifest.json` avec les metadonnees de l'edition (date, numero, titre editorial).
 
 ### `linkedin_post.py` — Phase 3b : post LinkedIn
 
-Genere un post LinkedIn optimise a partir de l'edition du jour. Appelle `claude -p` avec le prompt `prompts/linkedin.md` pour produire un texte adapte au format LinkedIn (hook ≤210 chars, corps 800-1200 chars, CTA subtil). Genere une image editoriale via NanoBanana Pro (SDK `google-genai`), puis superpose le titre et sous-titre via Pillow pour un rendu typographique parfait. Ecrit `.pipeline/linkedin/post.txt`, `comment.txt`, `image.png`. Copie le post dans le presse-papier. Tolerant : si l'image ou le post echouent, le pipeline continue.
+Genere un post LinkedIn optimise a partir de l'edition du jour. Appelle `claude -p` avec le prompt `prompts/linkedin.md` pour produire un texte adapte au format LinkedIn (hook ≤210 chars, corps 800-1200 chars, CTA subtil). Genere une image editoriale via Gemini Pro (SDK `google-genai`), puis superpose le titre et sous-titre via Pillow pour un rendu typographique parfait. Ecrit `.pipeline/linkedin/post.txt`, `comment.txt`, `image.png`. Copie le post dans le presse-papier. Tolerant : si l'image ou le post echouent, le pipeline continue.
 
 ### `deploy.py` — Phase 4 : publication
 
-Clone la branche `gh-pages` en shallow, copie `latest.html` comme `index.html`, ajoute l'edition datee et les archives. Genere `editions/archives/index.html` depuis `manifest.json` avec numero, titre editorial et date pour chaque edition. Commit et push vers GitHub Pages.
+Clone la branche `gh-pages` en shallow, copie `latest.html` comme `index.html`, nettoie les editions residuelles dans `editions/` et copie les archives dans `editions/archives/`. Genere `editions/archives/index.html` depuis `manifest.json` avec numero, titre editorial et date pour chaque edition. Commit et push vers GitHub Pages.
 
 ### `validate.py` — Validation inter-phases
 
@@ -156,5 +156,5 @@ Verifie la structure JSON entre les phases. Pour les candidats : tableau, ≥5 a
 - **Claude Opus via `claude -p`** — recherche web, selection editoriale, redaction
 - **Templating HTML** — template unique avec CSS + JS inline
 - **GitHub Pages** — hebergement statique via branche `gh-pages`
-- **NanoBanana Pro via `google-genai`** — generation d'images editoriales
+- **Gemini Pro via `google-genai`** — generation d'images editoriales
 - **uv** — gestion de l'environnement virtuel Python
