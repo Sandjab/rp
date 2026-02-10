@@ -33,19 +33,20 @@ def load_config():
 
 
 def get_edition_number(archives_dir):
-    """Count unique days in archives + 1."""
-    if not archives_dir.exists():
-        return 1
-    existing = list(archives_dir.glob("????-??-??.*.html"))
-    unique_days = set()
-    for f in existing:
-        date_part = f.name.split(".")[0]
-        unique_days.add(date_part)
-    from datetime import datetime
-    today = datetime.now().strftime("%Y-%m-%d")
-    if today in unique_days:
-        return len(unique_days)
-    return len(unique_days) + 1
+    """Derive edition number from manifest.json history (resilient to HTML deletion)."""
+    manifest = archives_dir / "manifest.json"
+    if manifest.exists():
+        import json
+        with open(manifest) as f:
+            entries = json.load(f)
+        if entries:
+            from datetime import datetime
+            unique_days = set(e.get("date", "") for e in entries)
+            today = datetime.now().strftime("%Y-%m-%d")
+            if today in unique_days:
+                return len(unique_days)
+            return len(unique_days) + 1
+    return 1
 
 
 def extract_json(text):
