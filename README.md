@@ -71,6 +71,28 @@ Sans deploy ni LinkedIn :
 bash scripts/run_edition.sh --no-deploy --no-linkedin
 ```
 
+### Iterer avant de publier
+
+Generer plusieurs editions, comparer, puis deployer la meilleure :
+
+```bash
+# 1. Generer plusieurs editions sans deployer ni LinkedIn
+bash scripts/run_edition.sh --no-deploy --no-linkedin
+bash scripts/run_edition.sh --no-deploy --no-linkedin
+bash scripts/run_edition.sh --no-deploy --no-linkedin
+
+# 2. Comparer les HTML dans editions/archives/
+#    Garder celui qui plait, supprimer les autres
+
+# 3. Generer le LinkedIn pour l'edition choisie
+python3 scripts/linkedin_post.py --editorial editions/archives/editorial.{timestamp}.json
+
+# 4. Deployer
+python3 scripts/deploy.py
+```
+
+`deploy.py` selectionne automatiquement l'archive HTML la plus recente par date et reconstruit le manifest a partir du snapshot correspondant. Supprimer les archives non retenues suffit pour orienter le deploy.
+
 ## Structure
 
 ```
