@@ -9,20 +9,20 @@ Revue de presse quotidienne automatisee — tech, IA & sciences. Pipeline qui co
 ```mermaid
 flowchart TD
     subgraph Collecte
-        WS{{Phase 0 — WebSearch\nclaude -p}}
-        WS --> A0[(00_websearch.json)]
-        A0 --> COL[Phase 1 — RSS + merge + dedup + rank]
-        RSS[(RSS feeds)] --> COL
-        COL --> A1[(01_candidates.json\n20 candidats)]
+        WS{{"Phase 0 — WebSearch<br/>claude -p"}}
+        WS --> A0[("00_websearch.json")]
+        A0 --> COL["Phase 1 — RSS + merge + dedup + rank"]
+        RSS[("RSS feeds")] --> COL
+        COL --> A1[("01_candidates.json<br/>20 candidats")]
     end
 
     subgraph Production
-        A1 --> ED{{Phase 2 — Selection + edito\nclaude -p}}
-        ED --> A2[(02_editorial.json\n1 synthese + 10 articles)]
-        A2 --> GEN[Phase 3 — Generation HTML]
-        GEN --> HTML[(editions/latest.html)]
-        A2 --> LI{{Phase 3b — LinkedIn post\nclaude -p + Gemini Pro}}
-        LI --> LIF[(linkedin/\npost + image)]
+        A1 --> ED{{"Phase 2 — Selection + edito<br/>claude -p"}}
+        ED --> A2[("02_editorial.json<br/>1 synthese + 10 articles")]
+        A2 --> GEN["Phase 3 — Generation HTML"]
+        GEN --> HTML[("editions/latest.html")]
+        A2 --> LI{{"Phase 3b — LinkedIn post<br/>claude -p + Gemini Pro"}}
+        LI --> LIF[("linkedin/<br/>post + image")]
         HTML --> DEP[Phase 4 — Deploy gh-pages]
         DEP --> SITE([sandjab.github.io/rp/])
     end
