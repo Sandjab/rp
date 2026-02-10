@@ -1,5 +1,38 @@
 [
   {
+    "date": "2026-02-11",
+    "number": 4,
+    "title": "Alphabet parie sur un siècle d'IA — et ce n'est pas une métaphore",
+    "urls": [
+      "https://arstechnica.com/gadgets/2026/02/alphabet-selling-very-rare-100-year-bunds-to-help-fund-ai-investment/",
+      "https://techcrunch.com/2026/02/10/nearly-half-of-xais-founding-team-has-now-left-the-company/",
+      "https://spectrum.ieee.org/dram-shortage",
+      "https://news.google.com/rss/articles/CBMimwFBVV95cUxPVUlndkhsWk92b3h6V29zUzRGR2t2MldnbURyNTJkTGFVMWFqVk5IWVU4T0ZENHplSjFENjZQMWFFbjdqVjNiNm9LYlNxVVR2elYyWUU3WXNKWTE1ZVVjNzNINGF6WV9iOG12V1kwUTIyV0tnLVVzMTVnVnk1WVEwenA4bW5NQWZWeWVQVFlGMjRJM3AyUTEtTEFjZw?oc=5",
+      "https://news.google.com/rss/articles/CBMi0AFBVV95cUxONG95ZmRwYktqQ2lvV1hjNFM5MkF2OEZSQzV3LXhBR2gycjdWeFRQZHh6dklfeC1rVWg0T1M4MmwwWE9DT0IxS2c1bkJxeDBiZW1uajlhSjQ2TXp3cXRwSnZONnNPNFNQUzFhcXZRTHlhVzVkb29jZG9hUVNuUUVwRzl0LVJVYi1ldTVCcXk3aHlXdU02ZUVsamQ3bDFlTkh2LS1uR1dhbUY4eGZoWXJweS1wc3U1d1MxdU5hTXdibXEwQ1dxbWo5ZTd1ZmM3Nktu?oc=5",
+      "https://www.technologyreview.com/2026/02/10/1132577/a-quitgpt-campaign-is-urging-people-to-cancel-chatgpt-subscriptions/",
+      "https://futurism.com/artificial-intelligence/what-happens-workplaces-embrace-ai",
+      "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPbHlfV21uZnJCS3JiVHpRLUF5dWNvUWxZbERXVXg2anYtT1R0b01EUGVrUUU5a0FlbXkxa1lTeFpkSjFLWGZrcWo1ZEZMTFJkSjJsZzFEUC1KOXFERVpJSHotNDkxcVQ0V1JPS0hTQWRzVVVUemFQZ2xjX2RmeEdxZ1hSRlFac2l6UUtKckhsQzIxNFdGZW4yczJZR1ZSWjJBdnJLbjhiUzhtMzFST0txamNOY182SXNCWWF3Nm16N1U?oc=5",
+      "https://simonwillison.net/2026/Feb/10/showboat-and-rodney/#atom-everything",
+      "https://news.google.com/rss/articles/CBMingFBVV95cUxPZlI3QUFfSG5yMFY5bElCVURKX2V6dTQ0OHAwMFpYdEpZaXRzbVYyc2pDS2JQaHVQNE10TEJXVEpMUzIxQ0hndHY4WHRyNng5NkZ1ZDBxekJNRXM5SXJPOEY4Y0Y5TFQtajFwcWZocEpzeE01THZXRHY5a3lRRHhVd2VlUmljY3NWSHlZdUpwZEVPUkxRbElkUmRvODkxUQ?oc=5",
+      "https://techcrunch.com/2026/02/10/facebook-adds-new-ai-features-animated-profile-photos-and-backgrounds-for-text-posts/",
+      "https://www.theverge.com/tech/876432/sharge-shargeek-300w-power-bank-rgb-lighting-kickstarter"
+    ],
+    "titles": [
+      "Alphabet selling very rare 100-year bonds to help fund AI investment",
+      "Nearly half of xAI’s founding team has now left the company",
+      "How and When the Memory Chip Shortage Will End",
+      "Israel's FINQ launches US ETFs managed solely by AI - Reuters",
+      "Nvidia must live with guardrails around its AI chip sales to China, Lutnick says - Reuters",
+      "A “QuitGPT” campaign is urging people to cancel their ChatGPT subscriptions",
+      "Researchers Studied What Happens When Workplaces Seriously Embrace AI, and the Results May Make You Nervous",
+      "Microsoft exploring using advanced power lines to make data centers more energy-efficient - Reuters",
+      "Introducing Showboat and Rodney, so agents can demo what they’ve built",
+      "US brokerages fall as AI-driven rout extends to financials - Reuters",
+      "Facebook adds new AI features, animated profile photos, and backgrounds for text posts",
+      "Sharge’s new power bank can charge two laptops while putting on a light show"
+    ]
+  },
+  {
     "date": "2026-02-10",
     "number": 3,
     "title": "La pub débarque dans ChatGPT : OpenAI assume enfin sa vraie nature",
