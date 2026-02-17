@@ -113,6 +113,7 @@ Chaque article selectionne DOIT conserver tous ses champs originaux (title, url,
 - Les articles DOIVENT etre tries par importance decroissante (position 1 = le plus important).
 - Ne modifie JAMAIS les URLs originales.
 - Seuls les articles traitant d'IA sont acceptes. En cas de doute, exclure.
+- Varier les structures de resumes : ne pas appliquer le meme patron (fait / contexte / question) a tous les articles.
 - Si un candidat provient de X (source = "X"), developpe le contexte dans l'editorial_summary : qui est l'auteur, pourquoi cette annonce compte, implications. Un tweet seul ne suffit pas comme article.
 - L'article "C'est pas serieux" est TOUJOURS en derniere position. Il ne compte PAS dans les 10 articles serieux.
 - Le billet editorial (position 0) NE DOIT PAS mentionner l'article "C'est pas serieux".

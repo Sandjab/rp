@@ -15,18 +15,34 @@ PIPELINE_DIR="$PROJECT_DIR/.pipeline"
 DEPLOY=true
 LINKEDIN=true
 EDITO_STYLE=""
+EDITION_DATE=""
+PROMPT_VERSION=""
 for arg in "$@"; do
   case "$arg" in
     --no-deploy) DEPLOY=false ;;
     --no-linkedin) LINKEDIN=false ;;
     --edito-style=*) EDITO_STYLE="${arg#*=}" ;;
+    --prompt-version=*) PROMPT_VERSION="${arg#*=}" ;;
+    --tomorrow) EDITION_DATE=$(date -v+1d '+%Y-%m-%d') ;;
+    --date=*) EDITION_DATE="${arg#*=}" ;;
     *) echo "[ERROR] Unknown argument: $arg" >&2; exit 1 ;;
   esac
 done
 
+# Export edition date override if set
+if [ -n "$EDITION_DATE" ]; then
+  export RP_EDITION_DATE="$EDITION_DATE"
+fi
+
 echo "=========================================="
 echo " RevuePresse — Pipeline Edition"
 echo " $(date '+%Y-%m-%d %H:%M:%S')"
+if [ -n "$EDITION_DATE" ]; then
+  echo " Edition date: $EDITION_DATE"
+fi
+if [ -n "$PROMPT_VERSION" ]; then
+  echo " Prompt version: $PROMPT_VERSION"
+fi
 echo "=========================================="
 
 # Clean pipeline directory
@@ -52,8 +68,8 @@ echo "[OK] Phase 1 complete"
 # ── Phase 2: Editorial (LLM) ──
 echo ""
 echo "── Phase 2: Editorial (claude -p) ──"
-if [ -n "$EDITO_STYLE" ]; then
-  EDITO_STYLE="$EDITO_STYLE" python3 "$SCRIPT_DIR/write_editorial.py"
+if [ -n "$EDITO_STYLE" ] || [ -n "$PROMPT_VERSION" ]; then
+  EDITO_STYLE="${EDITO_STYLE}" PROMPT_VERSION="${PROMPT_VERSION}" python3 "$SCRIPT_DIR/write_editorial.py"
 else
   python3 "$SCRIPT_DIR/write_editorial.py"
 fi

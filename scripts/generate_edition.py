@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate HTML edition from template and article data."""
 
+import argparse
 import json
 import re
 import shutil
@@ -23,6 +24,13 @@ def load_template():
     with open(tpl_path) as f:
         return f.read()
 
+def get_edition_date(tz):
+    """Return edition date from RP_EDITION_DATE env var, or now()."""
+    override = os.environ.get("RP_EDITION_DATE")
+    if override:
+        return datetime.strptime(override, "%Y-%m-%d").replace(tzinfo=tz)
+    return datetime.now(tz)
+
 def get_edition_number(archives_dir):
     """Derive edition number from manifest.json history (resilient to HTML deletion)."""
     manifest = archives_dir / "manifest.json"
@@ -31,8 +39,8 @@ def get_edition_number(archives_dir):
             entries = json.load(f)
         if entries:
             unique_days = set(e.get("date", "") for e in entries)
-            today = datetime.now().strftime("%Y-%m-%d")
-            if today in unique_days:
+            edition_date = os.environ.get("RP_EDITION_DATE") or datetime.now().strftime("%Y-%m-%d")
+            if edition_date in unique_days:
                 return len(unique_days)
             return len(unique_days) + 1
     return 1
@@ -323,8 +331,17 @@ def main():
     template = load_template()
 
     # Read articles from stdin or file argument
-    if len(sys.argv) > 1:
-        with open(sys.argv[1]) as f:
+    parser = argparse.ArgumentParser(
+        description="Genere une edition HTML a partir des donnees editoriales JSON."
+    )
+    parser.add_argument(
+        "input", nargs="?", default=None,
+        help="Fichier JSON editorial (default: stdin)"
+    )
+    args = parser.parse_args()
+
+    if args.input:
+        with open(args.input) as f:
             articles = json.load(f)
     else:
         articles = json.load(sys.stdin)
@@ -336,17 +353,18 @@ def main():
         print(f"[WARN] Run the skill Phase 4 (editorial rewriting) to add French titles and summaries.", file=sys.stderr)
 
     tz = ZoneInfo(config["edition"]["timezone"])
-    now = datetime.now(tz)
-    date_str = now.strftime("%Y-%m-%d")
-    timestamp_str = now.strftime("%Y-%m-%d.%H%M%S")
+    now = datetime.now(tz)                    # temps réel (timestamps, time_ago)
+    edition_dt = get_edition_date(tz)         # date d'édition (affichage, manifest)
+    date_str = edition_dt.strftime("%Y-%m-%d")
+    timestamp_str = f"{date_str}.{now.strftime('%H%M%S')}"
     JOURS = {"Monday":"Lundi","Tuesday":"Mardi","Wednesday":"Mercredi",
              "Thursday":"Jeudi","Friday":"Vendredi","Saturday":"Samedi","Sunday":"Dimanche"}
     MOIS = {"January":"janvier","February":"février","March":"mars","April":"avril",
             "May":"mai","June":"juin","July":"juillet","August":"août",
             "September":"septembre","October":"octobre","November":"novembre","December":"décembre"}
-    day_en = now.strftime("%A")
-    month_en = now.strftime("%B")
-    date_display = f"{JOURS[day_en]} {now.day} {MOIS[month_en]} {now.year}"
+    day_en = edition_dt.strftime("%A")
+    month_en = edition_dt.strftime("%B")
+    date_display = f"{JOURS[day_en]} {edition_dt.day} {MOIS[month_en]} {edition_dt.year}"
 
     editions_dir = Path(__file__).parent.parent / "editions"
     editions_dir.mkdir(exist_ok=True)

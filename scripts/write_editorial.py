@@ -40,6 +40,40 @@ EDITO_STYLES = {
    - REGLE : le billet est une chronique monothematique. Profondeur > largeur.""",
 }
 
+ANTI_TICS_V2 = """   **Interdictions stylistiques (V2) :**
+   - Phrases formulaiques INTERDITES : "Relisez ca lentement", "C'est peut-etre ca, le vrai X", "ce n'est pas une metaphore", "Et pendant ce temps", "Reste a voir", "Un classique de...", "Ce qui change, c'est...", "Derriere ce chiffre"
+   - Mots/adjectifs a ne PAS repeter (max 1 occurrence par edition) : "signal", "enjeu", "colossal", "monumentale", "brutal", "galopante", "pivoter", "modele economique", "paradigme", "tectonique", "vertigineux"
+   - Max 1 superlatif par paragraphe. Pas de superlatif dans les titres.
+   - Varier les structures de resumes : ne pas appliquer le meme patron (fait / contexte / question) a tous les articles. Alterner : fait+implication, anecdote+analyse, chiffre+comparaison, citation+decryptage.
+   - Max 1 enumeration prestige (noms de societes) par edition. Si tu cites 3+ entreprises dans une phrase, c'est une enumeration prestige.
+   - Guillemets uniquement pour les citations directes et les vrais neologismes. Pas de guillemets autour des termes techniques courants (AI, LLM, fine-tuning, etc.).
+   - Ton d'alerte reserve a ce qui le merite vraiment (risque existentiel, faille majeure, rupture confirmee). Le reste en mode sobre et factuel.
+   - Pas d'inversion sujet-verbe systematique. Ecrire des phrases dans l'ordre naturel (sujet-verbe-complement) au moins 2 fois sur 3.
+   - Pas de question ouverte en fermeture de chaque article. Max 2 questions dans toute l'edition."""
+
+EDITO_STYLES_V2 = {
+    "focused": """   **Structure du billet :**
+   - Choisis 2-3 themes parmi les articles selectionnes et construis un fil conducteur entre eux
+   - Accroche : un fait, un chiffre, un constat precis. Pas de mise en scene, pas d'esbroufe.
+   - Developpement : connecter ces 2-3 themes avec un fil conducteur personnel. Chaque theme doit servir l'argument general. Ne mentionne PAS les articles qui ne participent pas au fil conducteur.
+   - Chute : position claire, point final. Pas de question au lecteur, pas de "reste a voir".
+   - REGLE : le billet ne doit PAS etre un tour d'horizon exhaustif de l'actualite. C'est une chronique selective.""",
+
+    "angle": """   **Structure du billet :**
+   - Identifie UN angle, une these, une idee-force qui emerge de l'actualite du jour
+   - Accroche : un fait, un chiffre, un constat precis qui pose la these. Pas de question rhetorique.
+   - Developpement : deroule l'argument en t'appuyant sur les articles du jour comme preuves ou illustrations. Tu peux mentionner plusieurs articles, mais chaque mention doit servir la these centrale. Pas de digressions hors-sujet.
+   - Chute : position claire qui boucle la these. Phrase affirmative, pas interrogative.
+   - REGLE : tout le billet sert UN argument. Si une actu du jour ne rentre pas dans l'angle choisi, ne la mentionne pas.""",
+
+    "deep": """   **Structure du billet :**
+   - Identifie LE fait le plus marquant ou le plus interessant du jour parmi les articles selectionnes
+   - Accroche : entre directement dans le sujet avec un fait ou un chiffre precis. Pas de "mise en bouche".
+   - Developpement : analyse en profondeur ce sujet unique — contexte, implications, opinion personnelle. Creuse plutot qu'etaler. Les autres articles du jour sont ignores sauf s'ils eclairent directement ce sujet.
+   - Chute : prise de position claire, phrase affirmative. Pas de question ouverte, pas de "l'avenir nous dira".
+   - REGLE : le billet est une chronique monothematique. Profondeur > largeur.""",
+}
+
 PROJECT_DIR = Path(__file__).parent.parent
 PIPELINE_DIR = PROJECT_DIR / ".pipeline"
 PROMPT_PATH = PROJECT_DIR / "scripts" / "prompts" / "editorial.md"
@@ -52,6 +86,49 @@ def load_config():
     config_path = PROJECT_DIR / "config" / "revue-presse.yaml"
     with open(config_path) as f:
         return yaml.safe_load(f)
+
+
+def _repair_json_quotes(text):
+    """Attempt to repair JSON broken by unescaped quotes inside string values.
+
+    Strategy:
+    1. Replace Unicode smart quotes (U+201C, U+201D, U+2018, U+2019) with escaped ASCII quotes.
+    2. If still invalid, use JSONDecodeError position to find and escape the offending quote.
+       Repeat up to 20 times.
+    """
+    # Step 1: replace smart quotes with escaped ASCII equivalents
+    repaired = text.replace("\u201c", '\\"').replace("\u201d", '\\"')
+    repaired = repaired.replace("\u2018", "\\'").replace("\u2019", "\\'")
+    try:
+        return json.loads(repaired)
+    except json.JSONDecodeError:
+        pass
+
+    # Step 2: iteratively fix unescaped ASCII quotes inside string values
+    for _ in range(20):
+        try:
+            return json.loads(repaired)
+        except json.JSONDecodeError as e:
+            pos = e.pos
+            if pos is None or pos <= 0 or pos >= len(repaired):
+                break
+            # Search backwards from error position for the nearest unescaped quote
+            # (the parser may report the error several chars after the bad quote).
+            fixed = False
+            for check_pos in range(pos, max(pos - 5, -1), -1):
+                if 0 <= check_pos < len(repaired) and repaired[check_pos] == '"' and \
+                   (check_pos == 0 or repaired[check_pos - 1] != '\\'):
+                    repaired = repaired[:check_pos] + '\\"' + repaired[check_pos + 1:]
+                    fixed = True
+                    break
+            if not fixed:
+                break
+
+    # Final attempt
+    try:
+        return json.loads(repaired)
+    except json.JSONDecodeError:
+        return None
 
 
 def extract_json(text):
@@ -78,6 +155,12 @@ def extract_json(text):
                 return data
         except json.JSONDecodeError:
             pass
+
+    # Fallback: try to repair broken JSON quotes
+    candidate = match.group(0) if match else text
+    repaired = _repair_json_quotes(candidate)
+    if isinstance(repaired, list):
+        return repaired
 
     return None
 
@@ -134,7 +217,7 @@ def call_claude(prompt):
         input=prompt,
         capture_output=True,
         text=True,
-        timeout=180,
+        timeout=300,
     )
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
@@ -144,7 +227,7 @@ def call_claude(prompt):
 def main():
     PIPELINE_DIR.mkdir(exist_ok=True)
     config = load_config()
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = os.environ.get("RP_EDITION_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     if not CANDIDATES_PATH.exists():
         print(f"[ERROR] Candidates file not found: {CANDIDATES_PATH}", file=sys.stderr)
@@ -159,19 +242,26 @@ def main():
     prompt_template = PROMPT_PATH.read_text()
     topics_list = ", ".join(t["tag"] for t in config.get("topics", []))
 
+    # Determine prompt version: env var overrides config
+    prompt_version = config.get("edition", {}).get("prompt_version", "v1")
+    prompt_version = os.environ.get("PROMPT_VERSION", prompt_version)
+
     # Determine edito style: CLI env var overrides config
     edito_style = config.get("edition", {}).get("edito_style", "focused")
     edito_style = os.environ.get("EDITO_STYLE", edito_style)
-    style_instructions = EDITO_STYLES.get(edito_style, EDITO_STYLES["focused"])
-    print(f"[EDITORIAL] Style: {edito_style}", file=sys.stderr)
+
+    styles_dict = EDITO_STYLES_V2 if prompt_version == "v2" else EDITO_STYLES
+    anti_tics = ANTI_TICS_V2 if prompt_version == "v2" else ""
+    style_instructions = styles_dict.get(edito_style, styles_dict["focused"])
+    print(f"[EDITORIAL] Style: {edito_style}, Prompt: {prompt_version}", file=sys.stderr)
 
     base_prompt = (
         prompt_template
-        .replace("{{CANDIDATES_JSON}}", json.dumps(candidates, ensure_ascii=False, indent=2))
+        .replace("{{CANDIDATES_JSON}}", json.dumps(candidates, ensure_ascii=True, indent=2))
         .replace("{{MAX_ARTICLES}}", str(len(candidates)))
         .replace("{{DATE}}", today)
         .replace("{{TOPICS}}", topics_list)
-        .replace("{{EDITO_STYLE_INSTRUCTIONS}}", style_instructions)
+        .replace("{{EDITO_STYLE_INSTRUCTIONS}}", anti_tics + "\n" + style_instructions if anti_tics else style_instructions)
     )
 
     last_errors = []

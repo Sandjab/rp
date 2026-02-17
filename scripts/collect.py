@@ -108,7 +108,7 @@ def filter_already_published(articles):
         print(f"[WARN] Could not read manifest: {e}", file=sys.stderr)
         return articles
 
-    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today_str = os.environ.get("RP_EDITION_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
     cutoff = (datetime.now(timezone.utc) - timedelta(days=history_days)).strftime("%Y-%m-%d")
 
     # Collect published URLs and titles from recent editions (excluding today)

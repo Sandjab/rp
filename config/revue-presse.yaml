@@ -5,6 +5,7 @@ edition:
   timezone: "Europe/Paris"
   history_days: 3
   edito_style: "deep"   # focused | angle | deep
+  prompt_version: "v2"   # v1 | v2
 
 github:
   repo: "Sandjab/rp"

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Phase 3b: LinkedIn post generation via claude -p + Gemini Pro + Pillow.
+"""Phase 3b: LinkedIn post generation — deterministic post & comment + Claude image prompt.
 
-Reads .pipeline/02_editorial.json,
-calls claude -p to generate a LinkedIn post + comment + image prompt,
+Reads .pipeline/02_editorial.json (or --editorial override),
+builds the post and comment deterministically from the editorial synthesis,
+calls claude -p only for the image prompt,
 generates an editorial image via google-genai (tolerant),
 copies the post to macOS clipboard.
 Writes .pipeline/linkedin/post.txt, comment.txt, image.png, image_prompt.txt.
@@ -10,7 +11,6 @@ Writes .pipeline/linkedin/post.txt, comment.txt, image.png, image_prompt.txt.
 
 import json
 import os
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -42,63 +42,38 @@ def get_edition_number(archives_dir):
         if entries:
             from datetime import datetime
             unique_days = set(e.get("date", "") for e in entries)
-            today = datetime.now().strftime("%Y-%m-%d")
+            today = os.environ.get("RP_EDITION_DATE") or datetime.now().strftime("%Y-%m-%d")
             if today in unique_days:
                 return len(unique_days)
             return len(unique_days) + 1
     return 1
 
 
-def extract_json(text):
-    """Extract JSON dict from claude response (handles markdown fences)."""
-    # Try ```json ... ``` block
-    match = re.search(r"```(?:json)?\s*\n?(.*?)\n?```", text, re.DOTALL)
-    if match:
-        text = match.group(1)
+def build_post(synthesis, hashtags):
+    """Build LinkedIn post deterministically from editorial synthesis."""
+    title = synthesis["editorial_title"]
+    summary = synthesis["editorial_summary"]
 
-    text = text.strip()
-    try:
-        data = json.loads(text)
-        if isinstance(data, dict):
-            return data
-    except json.JSONDecodeError:
-        pass
+    # Single \n → \n\n for LinkedIn paragraph spacing
+    body = summary.replace("\n", "\n\n")
 
-    # Try to find object in text
-    match = re.search(r"\{.*\}", text, re.DOTALL)
-    if match:
-        try:
-            data = json.loads(match.group(0))
-            if isinstance(data, dict):
-                return data
-        except json.JSONDecodeError:
-            pass
-
-    return None
+    return f"{title}\n\n{body}\n\nEdition complete en commentaire\n\n{hashtags}"
 
 
-def validate_linkedin(data):
-    """Validate LinkedIn output. Returns list of errors."""
-    errors = []
+def build_comment(editorial, edition_url):
+    """Build LinkedIn comment deterministically from editorial articles."""
+    lines = [f"Edition complete : {edition_url}", "", "Au sommaire :"]
 
-    if not isinstance(data, dict):
-        return ["Response is not a JSON object"]
+    for article in editorial[1:]:
+        title = article.get("editorial_title", "")
+        if not title:
+            continue
+        if article.get("is_not_serious"):
+            lines.append(f"- [Fun] {title}")
+        else:
+            lines.append(f"- {title}")
 
-    post = data.get("post", "")
-    if not post:
-        errors.append("Missing 'post' field")
-    elif len(post) < 200:
-        errors.append(f"Post too short ({len(post)} chars, min 200)")
-    elif len(post) > 3000:
-        errors.append(f"Post too long ({len(post)} chars, max 3000)")
-
-    if not data.get("comment"):
-        errors.append("Missing 'comment' field")
-
-    if not data.get("image_prompt"):
-        errors.append("Missing 'image_prompt' field")
-
-    return errors
+    return "\n".join(lines)
 
 
 def call_claude(prompt):
@@ -120,6 +95,19 @@ def call_claude(prompt):
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
     return result.stdout
+
+
+def validate_image_prompt(text):
+    """Validate image prompt text. Returns list of errors."""
+    errors = []
+    text = text.strip()
+    if not text:
+        errors.append("Empty image prompt")
+    elif len(text) < 20:
+        errors.append(f"Image prompt too short ({len(text)} chars, min 20)")
+    elif len(text) > 2000:
+        errors.append(f"Image prompt too long ({len(text)} chars, max 2000)")
+    return errors
 
 
 def generate_image(prompt, output_path):
@@ -324,9 +312,18 @@ def main():
     # Prepare output directory
     LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Extract synthesis (first item with is_synthesis, or editorial[0])
+    synthesis = None
+    for article in editorial:
+        if article.get("is_synthesis"):
+            synthesis = article
+            break
+    if synthesis is None:
+        synthesis = editorial[0]
+
     # Compute placeholders
     from datetime import datetime, timezone
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = os.environ.get("RP_EDITION_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     archives_dir = PROJECT_DIR / "editions" / "archives"
     edition_number = get_edition_number(archives_dir)
@@ -340,7 +337,17 @@ def main():
     brand_accent = colors.get("accent", "#E63946")
     brand_text = colors.get("text", "#1A1A1A")
 
-    # Load prompt template
+    # --- Deterministic: build post and comment ---
+    post_text = build_post(synthesis, hashtags)
+    comment_text = build_comment(editorial, edition_url)
+
+    (LINKEDIN_DIR / "post.txt").write_text(post_text)
+    (LINKEDIN_DIR / "comment.txt").write_text(comment_text)
+
+    print(f"[LINKEDIN] Post: {len(post_text)} chars (deterministic)", file=sys.stderr)
+    print(f"[LINKEDIN] Comment: {len(comment_text)} chars (deterministic)", file=sys.stderr)
+
+    # --- Claude call: image prompt only ---
     prompt_template = PROMPT_PATH.read_text()
 
     base_prompt = (
@@ -349,68 +356,53 @@ def main():
         .replace("{{DATE}}", today)
         .replace("{{EDITION_NUMBER}}", str(edition_number))
         .replace("{{EDITION_TITLE}}", edition_title)
-        .replace("{{EDITION_URL}}", edition_url)
-        .replace("{{HASHTAGS}}", hashtags)
         .replace("{{BRAND_BG}}", brand_bg)
         .replace("{{BRAND_ACCENT}}", brand_accent)
         .replace("{{BRAND_TEXT}}", brand_text)
     )
 
-    last_errors = []
+    image_prompt = None
     for attempt in range(1, MAX_ATTEMPTS + 1):
-        print(f"[LINKEDIN] Attempt {attempt}/{MAX_ATTEMPTS}...", file=sys.stderr)
-
-        # Build prompt (with error feedback on retry)
-        if attempt == 1:
-            prompt = base_prompt
-        else:
-            error_feedback = "\n".join(f"- {e}" for e in last_errors)
-            prompt = (
-                base_prompt
-                + f"\n\n## ERREURS DE LA TENTATIVE PRECEDENTE\n\n"
-                + f"Corrige ces erreurs dans ta reponse :\n{error_feedback}\n"
-            )
+        print(f"[LINKEDIN] Image prompt generation attempt {attempt}/{MAX_ATTEMPTS}...", file=sys.stderr)
 
         try:
-            raw_response = call_claude(prompt)
+            raw_response = call_claude(base_prompt)
         except Exception as e:
             print(f"[ERROR] claude -p call failed: {e}", file=sys.stderr)
-            last_errors = [str(e)]
             continue
 
         # Save raw response for debugging
         raw_path = LINKEDIN_DIR / f"raw_attempt_{attempt}.txt"
         raw_path.write_text(raw_response)
 
-        # Extract JSON
-        data = extract_json(raw_response)
-        if data is None:
-            print(f"[ERROR] Could not extract JSON from response (attempt {attempt})", file=sys.stderr)
-            last_errors = ["Could not parse JSON from response. Make sure to return ONLY a JSON object."]
-            continue
+        # Claude returns plain text (the image prompt directly)
+        candidate = raw_response.strip()
 
-        # Validate
-        errors = validate_linkedin(data)
+        # Strip markdown fences if present
+        if candidate.startswith("```"):
+            lines = candidate.split("\n")
+            lines = [l for l in lines if not l.strip().startswith("```")]
+            candidate = "\n".join(lines).strip()
+
+        errors = validate_image_prompt(candidate)
         if errors:
-            print(f"[ERROR] Validation failed ({len(errors)} errors, attempt {attempt}):", file=sys.stderr)
+            print(f"[ERROR] Image prompt validation failed (attempt {attempt}):", file=sys.stderr)
             for err in errors:
                 print(f"  - {err}", file=sys.stderr)
-            last_errors = errors
             continue
 
-        # Success — write outputs
-        post_text = data["post"]
-        comment_text = data["comment"]
-        image_prompt = data["image_prompt"]
+        image_prompt = candidate
+        break
 
-        (LINKEDIN_DIR / "post.txt").write_text(post_text)
-        (LINKEDIN_DIR / "comment.txt").write_text(comment_text)
+    if image_prompt:
         (LINKEDIN_DIR / "image_prompt.txt").write_text(image_prompt)
+        print(f"[LINKEDIN] Image prompt: {len(image_prompt)} chars", file=sys.stderr)
+    else:
+        print("[WARN] Image prompt generation failed, skipping image", file=sys.stderr)
 
-        print(f"[LINKEDIN] Post: {len(post_text)} chars", file=sys.stderr)
-        print(f"[LINKEDIN] Comment: {len(comment_text)} chars", file=sys.stderr)
-
-        # Generate image (tolerant) + text overlay
+    # Generate image (tolerant) + text overlay
+    image_generated = False
+    if image_prompt:
         image_path = LINKEDIN_DIR / "image.png"
         image_generated = generate_image(image_prompt, image_path)
 
@@ -421,35 +413,27 @@ def main():
             shutil.copy2(image_path, raw_path)
             print(f"[LINKEDIN] Raw API image saved: {raw_path}", file=sys.stderr)
 
-            # Extract editorial subtitle from synthesis article
-            edito_subtitle = ""
-            for article in editorial:
-                if article.get("editorial_title"):
-                    edito_subtitle = article["editorial_title"]
-                    break
+            # Editorial subtitle from synthesis
+            edito_subtitle = synthesis.get("editorial_title", "")
             overlay_text_on_image(image_path, edition_title, edition_number, edito_subtitle)
 
-        # Copy to clipboard
-        if linkedin_config.get("clipboard", True):
-            if copy_to_clipboard(post_text):
-                print("[LINKEDIN] Post copied to clipboard", file=sys.stderr)
-            else:
-                print("[WARN] Could not copy to clipboard", file=sys.stderr)
+    # Copy to clipboard
+    if linkedin_config.get("clipboard", True):
+        if copy_to_clipboard(post_text):
+            print("[LINKEDIN] Post copied to clipboard", file=sys.stderr)
+        else:
+            print("[WARN] Could not copy to clipboard", file=sys.stderr)
 
-        # Recap
-        print(f"\n[LINKEDIN] Done! Files in {LINKEDIN_DIR}/", file=sys.stderr)
-        print(f"  post.txt      ({len(post_text)} chars)", file=sys.stderr)
-        print(f"  comment.txt   ({len(comment_text)} chars)", file=sys.stderr)
-        if (LINKEDIN_DIR / "image.png").exists():
-            print(f"  image.png     (generated)", file=sys.stderr)
-        print(f"  image_prompt.txt", file=sys.stderr)
+    # Recap
+    print(f"\n[LINKEDIN] Done! Files in {LINKEDIN_DIR}/", file=sys.stderr)
+    print(f"  post.txt      ({len(post_text)} chars)", file=sys.stderr)
+    print(f"  comment.txt   ({len(comment_text)} chars)", file=sys.stderr)
+    if image_prompt:
+        print(f"  image_prompt.txt ({len(image_prompt)} chars)", file=sys.stderr)
+    if image_generated:
+        print(f"  image.png     (generated)", file=sys.stderr)
 
-        print(str(LINKEDIN_DIR))
-        return
-
-    # All attempts failed
-    print(f"[ERROR] LinkedIn post generation failed after {MAX_ATTEMPTS} attempts", file=sys.stderr)
-    sys.exit(1)
+    print(str(LINKEDIN_DIR))
 
 
 if __name__ == "__main__":

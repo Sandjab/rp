@@ -9,6 +9,7 @@ Tolerant: if the call fails, writes [] and logs a warning.
 """
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -76,7 +77,7 @@ def extract_json(text):
 def main():
     PIPELINE_DIR.mkdir(exist_ok=True)
     config = load_config()
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = os.environ.get("RP_EDITION_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     # Load and fill prompt template
     prompt_template = PROMPT_PATH.read_text()
