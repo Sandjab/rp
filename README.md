@@ -71,9 +71,26 @@ Sans deploy ni LinkedIn :
 bash scripts/run_edition.sh --no-deploy --no-linkedin
 ```
 
-### Iterer avant de publier
+### Iterer sur le style editorial
 
-Generer plusieurs editions, comparer, puis deployer la meilleure :
+Le script `iterate_editorials.sh` collecte une seule fois, puis genere plusieurs variantes editoriales (styles differents) a comparer avant de publier :
+
+```bash
+# Collecter + generer 3 variantes (deep, angle, focused), choisir, publier
+bash scripts/iterate_editorials.sh --tomorrow
+
+# Sans deploy ni LinkedIn (iteration locale)
+bash scripts/iterate_editorials.sh --tomorrow --no-deploy --no-linkedin
+
+# Regener une seule variante sans recolleter
+bash scripts/iterate_editorials.sh --skip-collect --styles=deep
+```
+
+Le script affiche un resume comparatif (titre, extrait, articles) puis demande interactivement quelle variante retenir avant de generer le HTML.
+
+### Iterer avec run_edition.sh
+
+Approche alternative : generer plusieurs editions completes, comparer, puis deployer la meilleure :
 
 ```bash
 # 1. Generer plusieurs editions sans deployer ni LinkedIn
@@ -101,6 +118,7 @@ config/
   rss-feeds.yaml       # Flux RSS
 scripts/
   run_edition.sh       # Orchestrateur (5 phases)
+  iterate_editorials.sh # Multi-variantes editoriales
   websearch_collect.py # Phase 0 : WebSearch via claude -p
   collect.py           # Phase 1 : RSS + merge + dedup + rank
   write_editorial.py   # Phase 2 : selection + edito via claude -p
@@ -134,6 +152,22 @@ Lance les 5 phases sequentiellement. Recree `.pipeline/` a chaque run. Les Phase
 | `--date=YYYY-MM-DD` | date du jour | Force la date d'edition (propage `RP_EDITION_DATE`) |
 | `--edito-style=<style>` | `focused` | Style editorial : `focused`, `angle`, `deep` (propage `EDITO_STYLE`) |
 | `--prompt-version=<v>` | `v1` | Version du prompt : `v1`, `v2` (propage `PROMPT_VERSION`) |
+
+### `iterate_editorials.sh` — Multi-variantes editoriales
+
+Collecte une fois (Phases 0+1), puis genere N variantes editoriales (Phase 2) avec des styles differents. Affiche un resume comparatif, demande un choix interactif, puis genere le HTML (Phase 3) + LinkedIn et deploy optionnels.
+
+| Parametre | Default | Description |
+|-----------|---------|-------------|
+| `--styles=s1,s2,...` | `deep,angle,focused` | Styles a generer (separes par des virgules) |
+| `--skip-collect` | collecte active | Reutilise `.pipeline/01_candidates.json` existant |
+| `--tomorrow` | date du jour | Date d'edition = J+1 (propage `RP_EDITION_DATE`) |
+| `--date=YYYY-MM-DD` | date du jour | Force la date d'edition |
+| `--prompt-version=<v>` | config | Version du prompt : `v1`, `v2` |
+| `--no-linkedin` | LinkedIn actif | Saute la Phase 3b |
+| `--no-deploy` | deploy actif | Saute la Phase 4 |
+
+Les variantes sont sauvegardees dans `.pipeline/variants/editorial_{style}.json`.
 
 ### `websearch_collect.py` — Phase 0 : recherche web
 
