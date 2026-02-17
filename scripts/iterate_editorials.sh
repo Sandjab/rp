@@ -14,6 +14,54 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 PIPELINE_DIR="$PROJECT_DIR/.pipeline"
 VARIANTS_DIR="$PIPELINE_DIR/variants"
 
+# ── Help ──
+usage() {
+  cat <<'HELP'
+Usage: bash scripts/iterate_editorials.sh [OPTIONS]
+
+Collecte les candidats une fois, genere plusieurs variantes editoriales
+(styles differents), affiche un resume comparatif, puis genere le HTML
+a partir de la variante choisie interactivement.
+
+Options:
+  --styles=s1,s2,...     Styles a generer, separes par des virgules
+                         (default: deep,angle,focused)
+                         Styles disponibles : deep, angle, focused
+  --skip-collect         Reutiliser .pipeline/01_candidates.json existant
+                         (saute les Phases 0+1)
+  --tomorrow             Date d'edition = demain (propage RP_EDITION_DATE)
+  --date=YYYY-MM-DD      Force la date d'edition (propage RP_EDITION_DATE)
+  --prompt-version=v     Version du prompt : v1 ou v2 (default: config)
+  --no-linkedin          Saute la Phase 3b (post LinkedIn)
+  --no-deploy            Saute la Phase 4 (deploy gh-pages)
+  -h, --help             Affiche cette aide et quitte
+
+Exemples:
+  # Collecter + 3 variantes + LinkedIn + deploy
+  bash scripts/iterate_editorials.sh --tomorrow
+
+  # Iteration locale sans publier
+  bash scripts/iterate_editorials.sh --tomorrow --no-deploy --no-linkedin
+
+  # Regener une seule variante sans recolleter
+  bash scripts/iterate_editorials.sh --skip-collect --styles=deep
+
+  # Deux variantes avec prompt v2
+  bash scripts/iterate_editorials.sh --styles=deep,angle --prompt-version=v2
+
+Workflow:
+  1. Phases 0+1 : WebSearch + RSS + dedup + rank → 01_candidates.json
+  2. Phase 2    : Pour chaque style, genere une variante editoriale
+                  → .pipeline/variants/editorial_{style}.json
+  3. Resume     : Affiche titre, extrait et articles de chaque variante
+  4. Choix      : Selection interactive de la variante a retenir
+  5. Phase 3    : Generation HTML a partir de la variante choisie
+  6. Phase 3b   : Post LinkedIn (sauf --no-linkedin)
+  7. Phase 4    : Deploy gh-pages (sauf --no-deploy)
+HELP
+  exit 0
+}
+
 # ── Defaults ──
 STYLES="deep,angle,focused"
 SKIP_COLLECT=false
@@ -32,7 +80,8 @@ for arg in "$@"; do
     --prompt-version=*) PROMPT_VERSION="${arg#*=}" ;;
     --no-linkedin)     LINKEDIN=false ;;
     --no-deploy)       DEPLOY=false ;;
-    *) echo "[ERROR] Unknown argument: $arg" >&2; exit 1 ;;
+    -h|--help)         usage ;;
+    *) echo "[ERROR] Unknown argument: $arg" >&2; echo "Use -h or --help for usage." >&2; exit 1 ;;
   esac
 done
 
