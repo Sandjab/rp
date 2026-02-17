@@ -22,6 +22,7 @@ Les etapes deterministes (RSS, dedup, HTML, deploy) sont des scripts Python. Les
 | `config/revue-presse.yaml` | Config globale (max_articles: 8, topics, queries, source_authority, styling) |
 | `config/rss-feeds.yaml` | Flux RSS |
 | `scripts/run_edition.sh` | Orchestrateur principal (5 phases, `--no-deploy`) |
+| `scripts/iterate_editorials.sh` | Multi-variantes editoriales (collecte 1x, N styles, choix interactif) |
 | `scripts/websearch_collect.py` | Phase 0 : WebSearch via claude -p |
 | `scripts/collect.py` | Phase 1 : RSS + merge + dedup + rank |
 | `scripts/write_editorial.py` | Phase 2 : selection + edito via claude -p |
@@ -43,6 +44,7 @@ Repertoire local (gitignore) recree a chaque run. Contient les artefacts interme
 - `01_candidates.json` — 20 candidats post-dedup/rank
 - `02_editorial.json` — sortie finale (1 synthese + 8 articles)
 - `02_raw_attempt_N.txt` — reponses brutes claude -p pour debug
+- `variants/editorial_{style}.json` — variantes editoriales (via `iterate_editorials.sh`)
 
 ## Archives et snapshots
 
@@ -53,7 +55,26 @@ Chaque run de `generate_edition.py` produit dans `editions/archives/` :
 
 Le `manifest.json` et `latest.html` generiques sont ecrases a chaque run.
 
-### Workflow multi-edition (iterer avant deploy)
+### Iterer sur le style editorial (recommande)
+
+`iterate_editorials.sh` collecte une fois, genere N variantes de styles differents, affiche un resume comparatif, puis demande un choix interactif avant de generer le HTML.
+
+```bash
+# Collecter + 3 variantes (deep, angle, focused), choisir, publier
+bash scripts/iterate_editorials.sh --tomorrow
+
+# Iteration locale sans publier
+bash scripts/iterate_editorials.sh --tomorrow --no-deploy --no-linkedin
+
+# Regener une seule variante sans recolleter
+bash scripts/iterate_editorials.sh --skip-collect --styles=deep
+```
+
+Flags : `--styles=s1,s2`, `--skip-collect`, `--tomorrow`, `--date=YYYY-MM-DD`, `--prompt-version=v1|v2`, `--no-linkedin`, `--no-deploy`, `-h`/`--help`.
+
+Les variantes sont sauvegardees dans `.pipeline/variants/editorial_{style}.json`.
+
+### Workflow multi-edition (alternative via run_edition.sh)
 
 ```bash
 # 1. Generer plusieurs editions sans deployer ni LinkedIn
