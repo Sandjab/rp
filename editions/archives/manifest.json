@@ -1,5 +1,40 @@
 [
   {
+    "date": "2026-02-18",
+    "number": 5,
+    "title": "Quand l'Europe dit non — et que tout le monde fait pareil",
+    "urls": [
+      "https://arstechnica.com/tech-policy/2026/02/eu-launches-probe-into-xai-over-sexualized-images/",
+      "https://www.wired.com/story/openclaw-banned-by-tech-companies-as-security-concerns-mount/",
+      "https://techcrunch.com/2026/02/17/anthropic-releases-sonnet-4-6/",
+      "https://techcrunch.com/2026/02/17/mistral-ai-buys-koyeb-in-first-acquisition-to-back-its-cloud-ambitions/",
+      "https://techcrunch.com/2026/02/17/european-parliament-blocks-ai-on-lawmakers-devices-citing-security-risks/",
+      "https://www.theverge.com/tech/880293/apple-ai-hardware-smart-glasses-pin-airpods",
+      "https://www.nature.com/articles/d41586-026-00474-3",
+      "https://techcrunch.com/2026/02/17/running-ai-models-is-turning-into-a-memory-game/",
+      "https://www.science.org/content/article/if-ai-discovers-drug-who-gets-money",
+      "https://techcrunch.com/2026/02/17/emergent-hits-100m-arr-eight-months-after-launch-rolls-out-mobile-app/",
+      "https://www.theverge.com/tech/880223/wordpress-launches-ai-assistant",
+      "https://techcrunch.com/2026/02/17/thrive-raises-10b-for-new-fund-its-largest-yet/",
+      "https://www.theverge.com/gadgets/877893/lens-lizard-backup-camera-cleaner-aftermarket-wiper-fluid-kickstarter"
+    ],
+    "titles": [
+      "EU launches probe into xAI over sexualized images",
+      "Meta and Other Tech Companies Ban OpenClaw Over Cybersecurity Concerns",
+      "Anthropic releases Sonnet 4.6",
+      "Mistral AI buys Koyeb in first acquisition to back its cloud ambitions",
+      "European Parliament blocks AI on lawmakers' devices, citing security risks",
+      "Apple is reportedly planning to launch AI-powered glasses, a pendant, and AirPods",
+      "Why sky-high pay for AI researchers is bad for the future of science",
+      "Running AI models is turning into a memory game",
+      "If AI discovers a drug, who gets the money?",
+      "Just 8 months in, India's vibe-coding startup Emergent claims ARR of over $100M",
+      "WordPress's new AI assistant will let users edit their sites with prompts",
+      "Thrive raises $10B for new fund, its largest yet",
+      "This backup camera cleaner hides behind your license plate"
+    ]
+  },
+  {
     "date": "2026-02-11",
     "number": 4,
     "title": "Alphabet parie sur un siècle d'IA — et ce n'est pas une métaphore",
