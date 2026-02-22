@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-02-23",
+    "number": 6,
+    "title": "L'IA entre dans l'âge des conséquences",
+    "urls": [
+      "https://techcrunch.com/2026/02/21/openai-debated-calling-police-about-suspected-canadian-shooters-chats/",
+      "https://futurism.com/artificial-intelligence/ai-civiclick-environment",
+      "https://futurism.com/artificial-intelligence/ai-surveillance-flock-contracts",
+      "https://techcrunch.com/2026/02/21/google-vp-warns-that-two-types-of-ai-startups-may-not-survive/",
+      "https://spectrum.ieee.org/ai-data-centers-hts-superconductors",
+      "https://www.technologyreview.com/2026/02/20/1133368/exclusive-ebook-the-great-al-hype-correction-of-2025/",
+      "https://techcrunch.com/2026/02/20/apples-ios-26-4-arrives-in-public-beta-with-ai-music-playlists-video-podcasts-and-more/",
+      "https://techcrunch.com/2026/02/21/microsofts-new-gaming-ceo-vows-not-to-flood-the-ecosystem-with-endless-ai-slop/",
+      "https://techcrunch.com/2026/02/20/indias-sarvam-launches-indus-ai-chat-app-as-competition-heats-up/",
+      "https://simonwillison.net/2026/Feb/22/how-i-think-about-codex/#atom-everything",
+      "https://futurism.com/artificial-intelligence/woman-apologizes-ai-burning-house"
+    ],
+    "titles": [
+      "OpenAI debated calling police about suspected Canadian shooter’s chats",
+      "Barrage of Emails From AI Politics Platform Defeats Clean Air Initiative",
+      "Cities Are Shredding Their AI Surveillance Contracts en Masse",
+      "Google VP warns that two types of AI startups may not survive",
+      "AI Data Centers Turn to High-Temperature Superconductors",
+      "Exclusive eBook: The great Al hype correction of 2025",
+      "Apple’s iOS 26.4 arrives in public beta with AI music playlists, video podcasts, and more",
+      "Microsoft’s new gaming CEO vows not to flood the ecosystem with ‘endless AI slop’",
+      "India’s Sarvam launches Indus AI chat app as competition heats up",
+      "How I think about Codex",
+      "Woman Uses AI to Apologize for Burning Down House, Biting Cop"
+    ]
+  },
+  {
     "date": "2026-02-18",
     "number": 5,
     "title": "Quand l'Europe dit non — et que tout le monde fait pareil",
