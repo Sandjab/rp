@@ -126,6 +126,26 @@
   {
     "date": "2026-02-08",
     "number": 1,
-    "title": "L'IA agentique vaut 2 milliards, les PRs pourries, zéro."
+    "title": "L'IA agentique vaut 2 milliards, les PRs pourries, zéro.",
+    "urls": [
+      "https://aimagazine.com/news/how-manus-puts-meta-ahead-in-the-agentic-ai-economy",
+      "https://simonwillison.net/2026/Feb/8/thomas-ptacek/#atom-everything",
+      "https://simonwillison.net/2026/Feb/7/claude-fast-mode/#atom-everything",
+      "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOM3JncDg0RmY2ekpyaTE1bktpM0VEaEp2NnJ4aHBncjRfcktKZ25MS1ZNZzZpcVBncExyYUxPMEdlUlZ1OXlhRjRqSEdJMlprc0J3S0lmaDZMUTcwZVlRTDAyRGVubzFZSVM1N1VkZ0xLY0k2ZTNwMGREY09NUTJVRmw3VnI1blRjSWdYMXlDb29Mbmp4anRLQ21EVzRUY0gzZFNTTzRzODAwMmo3N1JxS1RaU01weU01bVZobUdETE8?oc=5",
+      "https://techcrunch.com/video/how-elon-musk-is-rewriting-the-rules-on-founder-power/",
+      "https://simonwillison.net/2026/Feb/7/vouch/#atom-everything",
+      "https://www.technologyreview.com/2026/02/06/1132448/moltbook-was-peak-ai-theater/",
+      "https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game"
+    ],
+    "titles": [
+      "Meta rachète Manus pour 2 milliards et parie tout sur l'IA agentique",
+      "Claude Opus 4.6 détecte 500 zero-days : les LLMs deviennent des hackers",
+      "Anthropic lance un mode rapide à 6x le prix : l'impatience se monnaie",
+      "Intel et Vista Equity injectent des millions dans SambaNova, la bataille des puces IA s'intensifie",
+      "Musk fusionne SpaceX et xAI : le conglomérat personnel devient réalité",
+      "Mitchell Hashimoto lance Vouch pour bloquer le spam de PRs générées par IA",
+      "Moltbook, le Reddit pour bots, implose après 48h de buzz",
+      "Le Super Bowl LX sera bourré de pubs IA, comme le crypto en 2022"
+    ]
   }
 ]
