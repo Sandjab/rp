@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-03-16",
+    "number": 7,
+    "title": "Quinze mille huit cents",
+    "urls": [
+      "https://www.theverge.com/business/895026/meta-laying-off-20-percent",
+      "https://www.technologyreview.com/2026/03/13/1134278/the-download-defense-official-ai-chatbots-targeting-pentagon-claude-pollute-military-supply-chain/",
+      "https://www.nature.com/articles/d41586-026-00814-3",
+      "https://techcrunch.com/2026/03/14/how-to-use-the-new-chatgpt-app-integrations-including-doordash-spotify-uber-and-others/",
+      "https://techcrunch.com/2026/03/13/lawyer-behind-ai-psychosis-cases-warns-of-mass-casualty-risks/",
+      "https://techcrunch.com/2026/03/13/not-built-right-the-first-time-musks-xai-is-starting-over-again-again/",
+      "https://simonwillison.net/2026/Mar/14/jannis-leidel/#atom-everything",
+      "https://www.technologyreview.com/2026/03/13/1134184/why-physical-ai-is-becoming-manufacturings-next-advantage/",
+      "https://futurism.com/artificial-intelligence/data-center-rage",
+      "https://techcrunch.com/2026/03/13/steven-spielberg-says-hes-never-used-ai-in-any-of-his-films/",
+      "https://futurism.com/artificial-intelligence/new-data-centers-human-brain-cells"
+    ],
+    "titles": [
+      "Meta is reportedly laying off up to 20 percent of its staff",
+      "The Download: how AI is used for military targeting, and the Pentagon’s war on Claude",
+      "Top brass in China reaffirm goal to be world leaders in tech, AI",
+      "How to use the new ChatGPT app integrations, including DoorDash, Spotify, Uber, and others",
+      "Lawyer behind AI psychosis cases warns of mass casualty risks",
+      "‘Not built right the first time’ — Musk’s xAI is starting over again, again",
+      "Quoting Jannis Leidel",
+      "Why physical AI is becoming manufacturing’s next advantage",
+      "Americans’ Anger Against AI Data Centers Is Boiling Over",
+      "Steven Spielberg says he’s ‘never used AI’ in any of his films",
+      "New Data Centers Will Be Powered by Human Brain Cells"
+    ]
+  },
+  {
     "date": "2026-02-23",
     "number": 6,
     "title": "L'IA entre dans l'âge des conséquences",
