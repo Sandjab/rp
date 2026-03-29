@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-03-29",
+    "number": 8,
+    "title": "Washington découvre qu'on ne régule pas l'IA a coups de décrets contradictoires",
+    "urls": [
+      "https://x.com/DavidSacks/status/2034972134380900812",
+      "https://arstechnica.com/tech-policy/2026/03/hegseth-trump-had-no-authority-to-order-anthropic-to-be-blacklisted-judge-says/",
+      "https://techcrunch.com/2026/03/27/why-softbanks-new-40b-loan-points-to-a-2026-openai-ipo/",
+      "https://news.crunchbase.com/ma/data-openai-2023-2026-acquisitions-open-source-astral-promptfoo/",
+      "https://techcrunch.com/2026/03/28/anthropics-claude-popularity-with-paying-consumers-is-skyrocketing/",
+      "https://dev.to/aibughunter/the-llm-and-ai-agent-releases-that-actually-matter-this-week-march-2026-5d7i",
+      "https://gizmodo.com/ahead-of-the-spacex-ipo-xai-has-now-shed-all-11-of-its-non-elon-musk-founders-2000739465",
+      "https://arstechnica.com/ai/2026/03/openai-brings-plugins-to-codex-closing-some-of-the-gap-with-claude-code/",
+      "https://techcrunch.com/2026/03/28/stanford-study-outlines-dangers-of-asking-ai-chatbots-for-personal-advice/",
+      "https://futurism.com/artificial-intelligence/wikipedia-editors-ban-ai-content",
+      "https://www.theverge.com/gadgets/902829/birdbuddy-netvue-smart-bird-feeders-amazon-big-spring-sale-2026-deals"
+    ],
+    "titles": [
+      "David Sacks announces 'One Rulebook' national AI framework details",
+      "Hegseth, Trump had no authority to order Anthropic to be blacklisted, judge says",
+      "Why SoftBank’s new $40B loan points to a 2026 OpenAI IPO",
+      "OpenAI acquires Astral and Promptfoo, reaching 6 acquisitions in 2026",
+      "Anthropic’s Claude popularity with paying consumers is skyrocketing",
+      "Cursor crosses 1 million paying developers, launches BugBot and parallel subagents",
+      "Ahead of the SpaceX IPO, xAI Has Now Shed All 11 of Its Non-Elon Musk Founders",
+      "With new plugins feature, OpenAI officially takes Codex beyond coding",
+      "Stanford study outlines dangers of asking AI chatbots for personal advice",
+      "Wikipedia Editors Tried and Tried to Work With AI Content, Eventually Realized It Was Total Trash and Banned It Entirely",
+      "Amazon’s Big Spring Sale is a great time to get a fancy, AI-powered bird feeder"
+    ]
+  },
+  {
     "date": "2026-03-16",
     "number": 7,
     "title": "Quinze mille huit cents",
