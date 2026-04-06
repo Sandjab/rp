@@ -43,6 +43,7 @@ export function ProductionTab() {
   const [currentPhase, setCurrentPhase] = useState<PhaseName | null>(null);
   const [logs, setLogs] = useState<PipelineEvent[]>([]);
   const [pipelineDone, setPipelineDone] = useState(false);
+  const [pipelineSuccess, setPipelineSuccess] = useState(true);
 
   // Artifacts for idle mode
   const [artifacts, setArtifacts] = useState<Record<string, ArtifactInfo>>({});
@@ -207,6 +208,7 @@ export function ProductionTab() {
           setRunning(false);
           setCurrentPhase(null);
           setPipelineDone(true);
+          setPipelineSuccess(event.success !== false);
           // Refresh artifacts after pipeline completes
           fetchArtifacts();
           break;
@@ -380,33 +382,58 @@ export function ProductionTab() {
 
     // Pipeline done
     if (pipelineDone && !running) {
+      const failedPhases = Object.entries(phaseStatus)
+        .filter(([, s]) => s === "error")
+        .map(([p]) => p);
+
       return (
         <div className="flex flex-col items-center justify-center gap-4 py-16">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-3xl text-emerald-400">
-            &#10003;
-          </div>
-          <h2 className="text-xl font-semibold">Pipeline terminé</h2>
-          <p className="text-sm text-muted-foreground">
-            L&apos;édition a été générée avec succès.
-          </p>
-          <div className="mt-4 flex gap-3">
-            <CopyLinkedInButton />
-            <Button
-              variant="outline"
-              onClick={() => {
-                setPipelineDone(false);
-                setRunning(false);
-                setPhaseStatus(initialPhaseStatus());
-                setPhaseTimes({});
-                setCurrentPhase(null);
-                setLogs([]);
-                setIdleView(null);
-                fetchArtifacts();
-              }}
-            >
-              Nouvelle édition
-            </Button>
-          </div>
+          {pipelineSuccess ? (
+            <>
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-3xl text-emerald-400">
+                &#10003;
+              </div>
+              <h2 className="text-xl font-semibold">Pipeline terminé</h2>
+              <p className="text-sm text-muted-foreground">
+                L&apos;édition a été générée avec succès.
+              </p>
+              <div className="mt-4 flex gap-3">
+                <CopyLinkedInButton />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-3xl text-destructive">
+                &#10007;
+              </div>
+              <h2 className="text-xl font-semibold">Pipeline échoué</h2>
+              <p className="text-sm text-muted-foreground">
+                {failedPhases.length > 0
+                  ? `Erreur sur : ${failedPhases.join(", ")}`
+                  : "Une erreur est survenue."}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Consultez les logs ci-dessous pour plus de détails.
+              </p>
+            </>
+          )}
+          <Button
+            variant="outline"
+            className="mt-2"
+            onClick={() => {
+              setPipelineDone(false);
+              setPipelineSuccess(true);
+              setRunning(false);
+              setPhaseStatus(initialPhaseStatus());
+              setPhaseTimes({});
+              setCurrentPhase(null);
+              setLogs([]);
+              setIdleView(null);
+              fetchArtifacts();
+            }}
+          >
+            Nouvelle édition
+          </Button>
         </div>
       );
     }

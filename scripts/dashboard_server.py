@@ -664,7 +664,12 @@ class PipelineRun:
             return  # already finished
         self.running = False
         self.current_phase = None
-        self.emit({"type": "pipeline_done", "aborted": self.aborted})
+        has_error = any(s == "error" for s in self.phase_status.values())
+        self.emit({
+            "type": "pipeline_done",
+            "aborted": self.aborted,
+            "success": not self.aborted and not has_error,
+        })
 
     def abort(self):
         """Abort the running pipeline."""

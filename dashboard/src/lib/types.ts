@@ -75,6 +75,7 @@ export interface PipelineEvent {
   error?: string;
   reason?: string;
   timestamp?: string;
+  success?: boolean;
 }
 
 // ── Artifact / resume types ─────────────────────────────────────────────────
