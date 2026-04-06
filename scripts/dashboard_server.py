@@ -785,6 +785,16 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._handle_image_preview()
             return
 
+        # ── Config API ────────────────────────────────────────────────────
+        if path == "/api/config":
+            self._handle_config_get()
+            return
+
+        # ── Archives API ──────────────────────────────────────────────────
+        if path == "/api/archives":
+            self._handle_archives()
+            return
+
         # ── Static file serving (SPA fallback) ─────────────────────────────
         self._serve_static(path)
 
@@ -854,6 +864,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         if path == "/api/image/prompt/save":
             self._handle_image_prompt_save()
+            return
+
+        # ── Config API ────────────────────────────────────────────────────
+        if path == "/api/config":
+            self._handle_config_post()
             return
 
         self._send_error(404, "Not found")
@@ -1067,6 +1082,79 @@ class DashboardHandler(BaseHTTPRequestHandler):
         LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
         LINKEDIN_PROMPT.write_text(prompt, encoding="utf-8")
         self._send_json({"ok": True})
+
+    # ── Config API handlers ────────────────────────────────────────────────
+
+    def _handle_config_get(self):
+        """GET /api/config — return YAML config as raw string."""
+        try:
+            content = CONFIG_PATH.read_text(encoding="utf-8")
+            self._send_json({"content": content})
+        except OSError as e:
+            self._send_error(500, f"Failed to read config: {e}")
+
+    def _handle_config_post(self):
+        """POST /api/config — write YAML config back to file."""
+        try:
+            body = json.loads(self._read_body())
+        except json.JSONDecodeError as e:
+            self._send_error(400, f"Invalid JSON: {e}")
+            return
+
+        content = body.get("content", "")
+        if not isinstance(content, str):
+            self._send_error(400, "Expected 'content' to be a string")
+            return
+
+        # Validate YAML before writing
+        try:
+            yaml.safe_load(content)
+        except yaml.YAMLError as e:
+            self._send_error(400, f"Invalid YAML: {e}")
+            return
+
+        try:
+            CONFIG_PATH.write_text(content, encoding="utf-8")
+            self._send_json({"ok": True})
+        except OSError as e:
+            self._send_error(500, f"Failed to write config: {e}")
+
+    # ── Archives API handler ──────────────────────────────────────────────
+
+    def _handle_archives(self):
+        """GET /api/archives — return archived editions from gh-pages manifest."""
+        manifest_data = None
+
+        try:
+            result = subprocess.run(
+                ["git", "show", "origin/gh-pages:editions/archives/manifest.json"],
+                capture_output=True, cwd=str(PROJECT_DIR), timeout=10,
+            )
+            if result.returncode == 0:
+                manifest_data = result.stdout.decode("utf-8", errors="replace")
+        except Exception:
+            pass
+
+        if not manifest_data:
+            self._send_json({"editions": []})
+            return
+
+        try:
+            entries = json.loads(manifest_data)
+        except (json.JSONDecodeError, ValueError):
+            self._send_json({"editions": []})
+            return
+
+        editions = []
+        for entry in entries:
+            editions.append({
+                "date": entry.get("date", ""),
+                "number": entry.get("number", 0),
+                "title": entry.get("title", ""),
+                "article_count": len(entry.get("titles", [])),
+            })
+
+        self._send_json({"editions": editions})
 
     # ── Pipeline artifacts ─────────────────────────────────────────────────
 

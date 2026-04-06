@@ -1,5 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { ProductionTab } from "@/components/production/ProductionTab"
+import { ConfigTab } from "@/components/config/ConfigTab"
+import { ArchivesTab } from "@/components/archives/ArchivesTab"
 
 function App() {
   return (
@@ -29,15 +31,11 @@ function App() {
           </TabsContent>
 
           <TabsContent value="config" className="mt-4">
-            <div className="rounded-lg border border-border p-8 text-center text-muted-foreground">
-              Config — parametres de la revue de presse
-            </div>
+            <ConfigTab />
           </TabsContent>
 
           <TabsContent value="archives" className="mt-4">
-            <div className="rounded-lg border border-border p-8 text-center text-muted-foreground">
-              Archives — editions precedentes
-            </div>
+            <ArchivesTab />
           </TabsContent>
         </Tabs>
       </main>

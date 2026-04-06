@@ -1,4 +1,4 @@
-import type { ArtifactInfo, EditionInfo, ImageModel, PipelineEvent, PipelineStatus, VariantArticle } from "./types";
+import type { ArchiveEdition, ArtifactInfo, EditionInfo, ImageModel, PipelineEvent, PipelineStatus, VariantArticle } from "./types";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -124,6 +124,29 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
     }).then((r) => json(r));
+  },
+
+  // ── Config API ──────────────────────────────────────────────────────
+
+  /** Get YAML config as raw string. */
+  getConfig(): Promise<{ content: string }> {
+    return fetch("/api/config").then((r) => json<{ content: string }>(r));
+  },
+
+  /** Save YAML config. */
+  saveConfig(content: string): Promise<{ ok: boolean }> {
+    return fetch("/api/config", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    }).then((r) => json(r));
+  },
+
+  // ── Archives API ────────────────────────────────────────────────────
+
+  /** Get archived editions from gh-pages manifest. */
+  getArchives(): Promise<{ editions: ArchiveEdition[] }> {
+    return fetch("/api/archives").then((r) => json<{ editions: ArchiveEdition[] }>(r));
   },
 };
 

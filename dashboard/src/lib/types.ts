@@ -106,3 +106,12 @@ export interface VariantArticle {
   comment?: string;
   [key: string]: unknown;
 }
+
+// ── Archive types ───────────────────────────────────────────────────────────
+
+export interface ArchiveEdition {
+  date: string;
+  number: number;
+  title: string;
+  article_count: number;
+}
