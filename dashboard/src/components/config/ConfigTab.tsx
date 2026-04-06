@@ -30,7 +30,7 @@ export function ConfigTab() {
     setStatus(null);
     try {
       await api.saveConfig(content);
-      setStatus({ type: "success", message: "Configuration sauvegardee" });
+      setStatus({ type: "success", message: "Configuration sauvegardée" });
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Erreur inconnue";
@@ -69,7 +69,7 @@ export function ConfigTab() {
   }
 
   return (
-    <div className="flex flex-col" style={{ height: "calc(100vh - 200px)" }}>
+    <div className="flex flex-1 flex-col min-h-0">
       {/* Sticky header bar */}
       <div className="sticky top-0 z-10 flex items-center gap-3 bg-background pb-3 border-b border-border mb-3">
         <button
@@ -101,7 +101,6 @@ export function ConfigTab() {
         onChange={(e) => setContent(e.target.value)}
         spellCheck={false}
         className="flex-1 w-full resize-none rounded-md border border-border bg-muted/50 p-4 font-mono text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-        style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
         placeholder="# YAML configuration..."
       />
     </div>

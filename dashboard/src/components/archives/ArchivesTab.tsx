@@ -43,7 +43,7 @@ export function ArchivesTab() {
   if (editions.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-muted-foreground">
-        Aucune edition archivee
+        Aucune édition archivée
       </div>
     );
   }
@@ -61,20 +61,14 @@ export function ArchivesTab() {
           >
             {/* Edition number */}
             <span
-              className="shrink-0 text-sm text-muted-foreground"
-              style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-              }}
+              className="shrink-0 font-mono text-sm text-muted-foreground"
             >
               N&deg;{edition.number}
             </span>
 
             {/* Date */}
             <span
-              className="shrink-0 text-sm text-muted-foreground"
-              style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-              }}
+              className="shrink-0 font-mono text-sm text-muted-foreground"
             >
               {edition.date}
             </span>
@@ -86,10 +80,7 @@ export function ArchivesTab() {
 
             {/* Article count */}
             <span
-              className="shrink-0 text-xs text-muted-foreground"
-              style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-              }}
+              className="shrink-0 font-mono text-xs text-muted-foreground"
             >
               {edition.article_count} art.
             </span>

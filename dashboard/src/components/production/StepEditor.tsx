@@ -163,7 +163,7 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
   }
 
   return (
-    <div className="relative flex gap-4 overflow-x-auto p-2">
+    <div className="relative flex h-full gap-0 overflow-x-auto">
       {/* Copy target popover */}
       {copyPopover?.visible && (
         <div
@@ -197,7 +197,7 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
           <div
             key={variant.name}
             className={cn(
-              "flex flex-1 flex-col gap-3 rounded-lg border p-4",
+              "flex flex-1 flex-col gap-3 border-r border-border last:border-r-0 p-4",
               variant.dirty && "bg-amber-500/5",
               isPublished && "border-b-4 border-b-emerald-500",
             )}
@@ -233,7 +233,7 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
                 type="text"
                 value={synthesis?.editorial_title ?? ""}
                 onChange={(e) => updateField(variant.name, "editorial_title", e.target.value)}
-                placeholder="Titre editorial"
+                placeholder="Titre éditorial"
                 className="rounded border border-input bg-transparent px-2 py-1 font-serif text-lg outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
               />
               {variants.length > 1 && (
@@ -261,7 +261,7 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
                   updateField(variant.name, "editorial_summary", e.target.value);
                   autoResize(e.target);
                 }}
-                placeholder="Synthese editoriale"
+                placeholder="Synthèse éditoriale"
                 className="min-h-[120px] resize-none rounded border border-input bg-transparent px-2 py-1.5 text-sm leading-relaxed outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
               />
               {variants.length > 1 && (
@@ -270,7 +270,7 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
                   className="self-start text-[11px] font-mono text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/summary:opacity-100"
                   onClick={(e) => openCopyPopover(e, variant.name, "editorial_summary")}
                 >
-                  copier edito &rarr;
+                  copier édito &rarr;
                 </button>
               )}
             </div>

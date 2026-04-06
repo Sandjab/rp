@@ -36,7 +36,7 @@ export function StepDeploy({ editionNumber, editionDate, onDeploy }: StepDeployP
   return (
     <div className="flex flex-col items-center gap-6 py-16">
       <h2 className="text-xl font-semibold">
-        Deployer l&apos;edition #{editionNumber}
+        Déployer l&apos;édition #{editionNumber}
       </h2>
 
       <div className="flex flex-col items-center gap-1 text-sm text-muted-foreground">
@@ -60,7 +60,7 @@ export function StepDeploy({ editionNumber, editionDate, onDeploy }: StepDeployP
         className="mt-4 text-base"
         onClick={handleClick}
       >
-        {confirming ? "Confirmer le deploy ?" : "Deployer"}
+        {confirming ? "Confirmer le déploiement ?" : "Déployer"}
       </Button>
     </div>
   );

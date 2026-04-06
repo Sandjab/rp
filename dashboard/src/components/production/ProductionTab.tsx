@@ -323,7 +323,7 @@ export function ProductionTab() {
       return (
         <div className="flex flex-col items-center justify-center gap-4 py-16">
           <p className="text-sm text-muted-foreground">
-            Les donnees existantes seront ecrasees. Continuer ?
+            Les données existantes seront écrasées. Continuer ?
           </p>
           <div className="flex gap-3">
             <Button
@@ -385,9 +385,9 @@ export function ProductionTab() {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-3xl text-emerald-400">
             &#10003;
           </div>
-          <h2 className="text-xl font-semibold">Pipeline termine</h2>
+          <h2 className="text-xl font-semibold">Pipeline terminé</h2>
           <p className="text-sm text-muted-foreground">
-            L&apos;edition a ete generee avec succes.
+            L&apos;édition a été générée avec succès.
           </p>
           <div className="mt-4 flex gap-3">
             <CopyLinkedInButton />
@@ -404,7 +404,7 @@ export function ProductionTab() {
                 fetchArtifacts();
               }}
             >
-              Nouvelle edition
+              Nouvelle édition
             </Button>
           </div>
         </div>
@@ -455,7 +455,7 @@ export function ProductionTab() {
     // Fallback: something is running but we don't have a specific phase yet
     return (
       <div className="flex items-center justify-center py-16 text-muted-foreground">
-        Demarrage du pipeline...
+        Démarrage du pipeline...
       </div>
     );
   }

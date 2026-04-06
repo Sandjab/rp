@@ -29,15 +29,15 @@ function eventColor(event: PipelineEvent) {
 function formatEvent(event: PipelineEvent): string {
   switch (event.type) {
     case "phase_start":
-      return `>> ${event.phase} started`;
+      return `▶ ${event.phase}`;
     case "phase_done":
-      return `<< ${event.phase} done${event.duration_s != null ? ` (${Math.round(event.duration_s)}s)` : ""}`;
+      return `✓ ${event.phase}${event.duration_s != null ? ` (${Math.round(event.duration_s)}s)` : ""}`;
     case "phase_error":
-      return `!! ${event.phase} error: ${event.error ?? `exit ${event.exit_code}`}`;
+      return `✗ ${event.phase} : ${event.error ?? `exit ${event.exit_code}`}`;
     case "pause":
-      return `|| paused at ${event.phase}: ${event.reason ?? "waiting"}`;
+      return `⏸ ${event.phase} — en attente`;
     case "pipeline_done":
-      return `== Pipeline termine`;
+      return `● Pipeline terminé`;
     case "no_run":
       return `-- Aucun pipeline en cours`;
     case "log":

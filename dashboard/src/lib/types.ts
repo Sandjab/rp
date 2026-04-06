@@ -31,11 +31,11 @@ export const PHASE_ORDER: PhaseName[] = [
 export const PHASE_LABELS: Record<PhaseName, string> = {
   websearch: "Recherche web",
   collect: "Collecte RSS",
-  editorial: "Redaction",
+  editorial: "Rédaction",
   editor: "Choix variante",
   image: "Image LinkedIn",
-  html: "Generation HTML",
-  deploy: "Deploiement",
+  html: "Génération HTML",
+  deploy: "Déploiement",
 };
 
 // ── API response types ───────────────────────────────────────────────────────

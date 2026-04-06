@@ -147,7 +147,7 @@ export function Stepper({
   onStepClick,
 }: StepperProps) {
   return (
-    <div className="flex w-[160px] shrink-0 flex-col gap-1 py-2">
+    <div className="flex w-[160px] shrink-0 flex-col gap-1 py-2 border-r border-border">
       {PHASE_ORDER.map((phase, i) => {
         if (mode === "running") {
           // ── Running mode: original behavior ──
@@ -230,7 +230,7 @@ export function Stepper({
 
       {editionNumber != null && (
         <div className="mt-auto border-t border-border px-2 pt-3 text-[10px] text-muted-foreground">
-          Edition #{editionNumber}
+          Édition #{editionNumber}
           {editionDate && <> &middot; {editionDate}</>}
         </div>
       )}

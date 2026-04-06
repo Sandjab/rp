@@ -75,7 +75,7 @@ export function StepLauncher({ edition, onStart }: StepLauncherProps) {
 
       {/* Style badges */}
       <div className="flex flex-col items-center gap-2">
-        <span className="text-sm text-muted-foreground">Styles editoriaux</span>
+        <span className="text-sm text-muted-foreground">Styles éditoriaux</span>
         <div className="flex gap-2">
           {AVAILABLE_STYLES.map((style) => (
             <Badge
@@ -111,13 +111,13 @@ export function StepLauncher({ edition, onStart }: StepLauncherProps) {
             checked={noDeploy}
             onCheckedChange={(v) => setNoDeploy(v === true)}
           />
-          Sans deploiement
+          Sans déploiement
         </label>
       </div>
 
       {/* Launch button */}
       <Button type="submit" size="lg" className="mt-4 text-base" disabled={styles.length === 0}>
-        Lancer l&apos;edition #{edition.number}
+        Lancer l&apos;édition #{edition.number}
       </Button>
     </form>
   );

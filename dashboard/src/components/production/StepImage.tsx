@@ -65,7 +65,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
             }
           } catch (err) {
             if (!cancelled) {
-              setError(`Erreur generation prompt: ${err instanceof Error ? err.message : String(err)}`);
+              setError(`Erreur génération prompt: ${err instanceof Error ? err.message : String(err)}`);
             }
           } finally {
             if (!cancelled) setLoadingPrompt(false);
@@ -91,7 +91,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
       setPrompt(res.prompt);
       promptDirty.current = false;
     } catch (err) {
-      setError(`Erreur generation prompt: ${err instanceof Error ? err.message : String(err)}`);
+      setError(`Erreur génération prompt: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setLoadingPrompt(false);
     }
@@ -118,7 +118,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
       setImageTimestamp(Date.now());
       setImageInfo({ model: res.model, duration_s: res.duration_s });
     } catch (err) {
-      setError(`Erreur generation image: ${err instanceof Error ? err.message : String(err)}`);
+      setError(`Erreur génération image: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setLoadingImage(false);
     }
@@ -144,7 +144,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
           {loadingPrompt ? (
             <div className="flex h-full items-center justify-center rounded-lg border border-input bg-muted/20">
               <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
-              <span className="ml-2 text-sm text-muted-foreground">Generation du prompt...</span>
+              <span className="ml-2 text-sm text-muted-foreground">Génération du prompt...</span>
             </div>
           ) : (
             <textarea
@@ -163,7 +163,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
         <div className="flex flex-wrap items-center gap-2">
           <Select value={selectedModel} onValueChange={setSelectedModel}>
             <SelectTrigger className="w-[220px]">
-              <SelectValue placeholder="Modele" />
+              <SelectValue placeholder="Modèle" />
             </SelectTrigger>
             <SelectContent>
               {models.map((m) => (
@@ -182,7 +182,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
             disabled={loadingPrompt}
           >
             {loadingPrompt && <Loader2Icon className="mr-1 size-3.5 animate-spin" />}
-            Regenerer prompt
+            Régénérer prompt
           </Button>
 
           <Button
@@ -191,13 +191,13 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
             disabled={loadingImage || loadingPrompt || !prompt.trim()}
           >
             {loadingImage && <Loader2Icon className="mr-1 size-3.5 animate-spin" />}
-            Generer image
+            Générer image
           </Button>
         </div>
       </div>
 
       {/* ── Right column: Preview ── */}
-      <div className="flex w-[400px] shrink-0 flex-col gap-3">
+      <div className="flex w-[400px] shrink-0 flex-col gap-3 border-l border-border pl-4">
         <label className="text-sm font-semibold text-muted-foreground">
           Preview
         </label>
@@ -206,7 +206,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
           {loadingImage ? (
             <div className="flex flex-col items-center gap-2">
               <Loader2Icon className="size-8 animate-spin text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Generation en cours...</span>
+              <span className="text-sm text-muted-foreground">Génération en cours...</span>
             </div>
           ) : imageTimestamp ? (
             <img
@@ -216,7 +216,7 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
             />
           ) : (
             <span className="text-sm text-muted-foreground">
-              Aucune image generee
+              Aucune image générée
             </span>
           )}
         </div>
@@ -235,14 +235,13 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
             disabled={loadingImage || !prompt.trim()}
           >
             {loadingImage && <Loader2Icon className="mr-1 size-3.5 animate-spin" />}
-            Regenerer
+            Régénérer
           </Button>
 
           <CopyLinkedInButton size="sm" />
 
           <Button
             size="sm"
-            className="bg-emerald-600 hover:bg-emerald-700"
             onClick={onValidate}
             disabled={!imageTimestamp}
           >
