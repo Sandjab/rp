@@ -1,0 +1,111 @@
+# Modeles de generation d'image Google — Reference (avril 2026)
+#
+# Deux familles de modeles : Gemini (generate_content) et Imagen (generate_images).
+# Les alias "Nano Banana" viennent du surnom de Naina Raisinghani (PM DeepMind).
+# Le nom a ete popularise lors des tests anonymes sur Arena (aout 2025).
+
+gemini:
+  # API: client.models.generate_content(..., config=GenerateContentConfig(response_modalities=["IMAGE"]))
+  # Supporte le texte + image en entree/sortie (multimodal)
+
+  gemini-2.5-flash-image:
+    alias: "Nano Banana"
+    release: "2025-08-26"
+    resolution: "1K max"
+    speed: "~3s"
+    prix: "$0.039/image"
+    points_forts:
+      - Rapide et economique
+      - Bon pour la majorite des cas
+      - Texte dans l'image ~80% de precision
+    limites:
+      - Resolution limitee a 1K
+      - Pas de controles avances (lighting, focus)
+    usage: "Iterations rapides, previews, volume eleve"
+
+  gemini-3-pro-image-preview:
+    alias: "Nano Banana Pro"
+    release: "2025-11-20"
+    resolution: "1K / 2K / 4K"
+    speed: "~8-12s"
+    prix: "$0.134/image (2K)"
+    aspect_ratios: ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"]
+    points_forts:
+      - Haute resolution jusqu'a 4K
+      - Texte dans l'image ~94% de precision
+      - Controles avances (lighting, focus, camera)
+      - Edits localises
+      - Coherence du sujet entre images
+      - Support Google Search (infos temps reel)
+    limites:
+      - Plus lent (~8-12s)
+      - Plus cher
+    usage: "Qualite finale, texte precis, images editoriales"
+
+  gemini-3.1-flash-image-preview:
+    alias: "Nano Banana 2"
+    release: "2026-02-26"
+    resolution: "jusqu'a 4K"
+    speed: "~4-6s"
+    points_forts:
+      - Meilleur suivi d'instructions que Nano Banana 1
+      - Texte ameliore
+      - Integre dans Gemini app, Search AI Mode, Lens
+    usage: "Remplacant recommande de gemini-2.5-flash-image"
+
+imagen:
+  # API: client.models.generate_images(..., config=GenerateImagesConfig(...))
+  # Text-to-image uniquement, pas multimodal
+
+  imagen-3.0-generate-002:
+    alias: "Imagen 3"
+    note: "Modele de reference dans la doc SDK"
+    usage: "Generation d'images standard via API Imagen"
+
+  imagen-4.0-fast-generate-001:
+    alias: "Imagen 4 Fast"
+    release: "2026-02-17"
+    prix: "$0.02/image"
+    points_forts:
+      - Le moins cher de la famille Imagen 4
+      - Rapide
+    usage: "Volume eleve, previews rapides"
+
+  imagen-4.0-generate-001:
+    alias: "Imagen 4"
+    release: "2026-02-17"
+    resolution: "jusqu'a 2K"
+    prix: "$0.04/image"
+    points_forts:
+      - Bonne qualite generale
+      - Typographie amelioree (posters, invitations)
+      - SynthID watermarking
+    usage: "Usage general, bon rapport qualite/prix"
+
+  imagen-4.0-ultra-generate-001:
+    alias: "Imagen 4 Ultra"
+    release: "2026-02-17"
+    resolution: "jusqu'a 2K"
+    prix: "$0.06/image"
+    points_forts:
+      - Meilleure qualite de la famille Imagen
+      - Typographie optimale
+      - SynthID watermarking
+    usage: "Qualite maximale Imagen"
+
+# --- Modeles deprecies ---
+deprecated:
+  gemini-2.0-flash-preview-image-generation:
+    status: "supprime (404 depuis ~2026)"
+    remplace_par: "gemini-2.5-flash-image ou gemini-3-1-flash-image-preview"
+
+# --- Recommandations pour le projet ---
+#
+# Production (linkedin_post.py) : gemini-3-pro-image-preview (Nano Banana Pro)
+#   → Meilleure qualite, haute resolution, ideal pour l'image editoriale LinkedIn
+#
+# Test rapide : gemini-2.5-flash-image ou gemini-3-1-flash-image-preview
+#   → Rapide et economique pour les iterations
+#
+# Alternative Imagen : imagen-4.0-generate-001
+#   → Si on prefere l'API generate_images (plus simple, text-to-image pur)
