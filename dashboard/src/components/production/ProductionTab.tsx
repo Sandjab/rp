@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api, subscribePipelineEvents } from "@/lib/api";
 import type {
+  ArtifactInfo,
   EditionInfo,
   PhaseName,
   PhaseStatus,
@@ -41,12 +42,31 @@ export function ProductionTab() {
   const [logs, setLogs] = useState<PipelineEvent[]>([]);
   const [pipelineDone, setPipelineDone] = useState(false);
 
+  // Artifacts for idle mode
+  const [artifacts, setArtifacts] = useState<Record<string, ArtifactInfo>>({});
+
+  // Overwrite confirmation state
+  const [confirmPhase, setConfirmPhase] = useState<PhaseName | null>(null);
+
+  // Active idle-mode view (editor/image when clicked from stepper)
+  const [idleView, setIdleView] = useState<PhaseName | null>(null);
+
   // Track elapsed time for running phase
   const [elapsed, setElapsed] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const phaseStartRef = useRef<number | null>(null);
 
   const cleanupSSE = useRef<(() => void) | null>(null);
+
+  // ── Fetch artifacts ──
+  const fetchArtifacts = useCallback(async () => {
+    try {
+      const res = await api.getArtifacts();
+      setArtifacts(res.artifacts);
+    } catch (err) {
+      console.error("Failed to fetch artifacts", err);
+    }
+  }, []);
 
   // ── Bootstrap: fetch edition info + check existing run ──
   useEffect(() => {
@@ -70,6 +90,9 @@ export function ProductionTab() {
           setPhaseTimes(status.phase_times);
           setCurrentPhase(status.current_phase as PhaseName | null);
           connectSSE();
+        } else {
+          // Idle: fetch artifacts
+          fetchArtifacts();
         }
       } catch (err) {
         console.error("Failed to init ProductionTab", err);
@@ -182,12 +205,14 @@ export function ProductionTab() {
           setRunning(false);
           setCurrentPhase(null);
           setPipelineDone(true);
+          // Refresh artifacts after pipeline completes
+          fetchArtifacts();
           break;
       }
     });
 
     cleanupSSE.current = close;
-  }, []);
+  }, [fetchArtifacts]);
 
   // ── Handlers ──
   const handleStart = useCallback(
@@ -205,6 +230,8 @@ export function ProductionTab() {
       setLogs([]);
       setPipelineDone(false);
       setRunning(true);
+      setIdleView(null);
+      setConfirmPhase(null);
 
       try {
         await api.startPipeline(params);
@@ -225,9 +252,125 @@ export function ProductionTab() {
     }
   }, []);
 
+  // ── Idle step click ──
+  const handleStepClick = useCallback(
+    (phase: PhaseName) => {
+      if (running) return;
+
+      // Interactive phases: show their view directly
+      if (phase === "editor") {
+        setIdleView("editor");
+        setConfirmPhase(null);
+        return;
+      }
+      if (phase === "image") {
+        setIdleView("image");
+        setConfirmPhase(null);
+        return;
+      }
+
+      // Auto phases: check if artifacts exist (overwrite warning)
+      const art = artifacts[phase];
+      if (art?.exists) {
+        setConfirmPhase(phase);
+        setIdleView(null);
+        return;
+      }
+
+      // No existing artifact: launch directly
+      launchSinglePhase(phase);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [running, artifacts, edition],
+  );
+
+  const launchSinglePhase = useCallback(
+    async (phase: PhaseName) => {
+      if (!edition) return;
+
+      setConfirmPhase(null);
+      setIdleView(null);
+
+      // Reset state for single-phase run
+      setPhaseStatus(initialPhaseStatus());
+      setPhaseTimes({});
+      setCurrentPhase(null);
+      setLogs([]);
+      setPipelineDone(false);
+      setRunning(true);
+
+      try {
+        await api.runPhase({
+          phase,
+          date: edition.date,
+          styles: edition.styles,
+        });
+        connectSSE();
+      } catch (err) {
+        console.error("Failed to run phase", err);
+        setRunning(false);
+      }
+    },
+    [edition, connectSSE],
+  );
+
   // ── Determine which main content to show ──
   function renderMainContent() {
-    // Not started yet
+    // Overwrite confirmation prompt
+    if (confirmPhase && !running) {
+      return (
+        <div className="flex flex-col items-center justify-center gap-4 py-16">
+          <p className="text-sm text-muted-foreground">
+            Les donnees existantes seront ecrasees. Continuer ?
+          </p>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setConfirmPhase(null)}
+            >
+              Annuler
+            </Button>
+            <Button onClick={() => launchSinglePhase(confirmPhase)}>
+              Continuer
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    // Idle view: editor
+    if (idleView === "editor" && !running) {
+      return (
+        <StepEditor
+          onPublishAndContinue={() => {
+            setIdleView(null);
+            fetchArtifacts();
+          }}
+        />
+      );
+    }
+
+    // Idle view: image placeholder
+    if (idleView === "image" && !running) {
+      return (
+        <div className="flex flex-col items-center justify-center gap-4 py-16">
+          <h2 className="text-lg font-semibold">Image LinkedIn</h2>
+          <p className="text-sm text-muted-foreground">
+            Etape image LinkedIn — fonctionnalite a venir.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIdleView(null);
+            }}
+          >
+            Retour
+          </Button>
+        </div>
+      );
+    }
+
+    // Not started yet (idle)
     if (!running && !pipelineDone) {
       if (!edition) {
         return (
@@ -260,6 +403,8 @@ export function ProductionTab() {
               setPhaseTimes({});
               setCurrentPhase(null);
               setLogs([]);
+              setIdleView(null);
+              fetchArtifacts();
             }}
           >
             Nouvelle edition
@@ -321,21 +466,23 @@ export function ProductionTab() {
     );
   }
 
-  const showSidebar = running || pipelineDone;
+  const isIdle = !running && !pipelineDone;
+  const stepperMode = running || pipelineDone ? "running" : "idle";
   const showLogs = logs.length > 0;
 
   return (
     <div className="flex h-full flex-col">
       <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar: Stepper */}
-        {showSidebar && (
-          <Stepper
-            phaseStatus={phaseStatus}
-            phaseTimes={phaseTimes}
-            editionNumber={edition?.number}
-            editionDate={edition?.date}
-          />
-        )}
+        {/* Left sidebar: Stepper — always visible */}
+        <Stepper
+          phaseStatus={phaseStatus}
+          phaseTimes={phaseTimes}
+          editionNumber={edition?.number}
+          editionDate={edition?.date}
+          mode={stepperMode}
+          artifacts={isIdle ? artifacts : undefined}
+          onStepClick={isIdle ? handleStepClick : undefined}
+        />
 
         {/* Main area */}
         <div className="flex-1 overflow-y-auto">{renderMainContent()}</div>

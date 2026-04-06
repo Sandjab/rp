@@ -77,6 +77,16 @@ export interface PipelineEvent {
   timestamp?: string;
 }
 
+// ── Artifact / resume types ─────────────────────────────────────────────────
+
+export interface ArtifactInfo {
+  exists: boolean;
+  modified?: string;
+  count?: number;
+}
+
+export type PhaseAvailability = "available" | "blocked" | "done";
+
 // ── Variant / article types ──────────────────────────────────────────────────
 
 export interface VariantArticle {

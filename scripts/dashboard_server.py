@@ -38,6 +38,9 @@ DIST_DIR = PROJECT_DIR / "dashboard" / "dist"
 CONFIG_PATH = PROJECT_DIR / "config" / "revue-presse.yaml"
 MANIFEST_PATH = PROJECT_DIR / "editions" / "archives" / "manifest.json"
 PIPELINE_DIR = PROJECT_DIR / ".pipeline"
+EDITIONS_DIR = PROJECT_DIR / "editions"
+LATEST_HTML = EDITIONS_DIR / "latest.html"
+LINKEDIN_IMAGE = PIPELINE_DIR / "linkedin" / "image.png"
 
 VARIANT_NAME_RE = re.compile(r"^[a-z0-9_]+$")
 
@@ -487,6 +490,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._handle_pipeline_status()
             return
 
+        if path == "/api/pipeline/artifacts":
+            self._handle_pipeline_artifacts()
+            return
+
         if path == "/api/pipeline/events":
             self._handle_pipeline_events()
             return
@@ -543,6 +550,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         if path == "/api/pipeline/abort":
             self._handle_pipeline_abort()
+            return
+
+        if path == "/api/pipeline/run-phase":
+            self._handle_run_phase()
             return
 
         self._send_error(404, "Not found")
@@ -679,6 +690,173 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         current_run.abort()
         self._send_json({"ok": True})
+
+    # ── Pipeline artifacts ─────────────────────────────────────────────────
+
+    def _handle_pipeline_artifacts(self):
+        """Return existence/modified status of pipeline artifacts."""
+        artifacts: dict[str, dict] = {}
+
+        # Simple file artifacts
+        file_artifacts = {
+            "websearch": PIPELINE_DIR / "00_websearch.json",
+            "collect": PIPELINE_DIR / "01_candidates.json",
+            "editor": EDITORIAL_PATH,
+            "image": LINKEDIN_IMAGE,
+            "html": LATEST_HTML,
+        }
+        for key, fpath in file_artifacts.items():
+            if fpath.exists():
+                mtime = os.path.getmtime(fpath)
+                artifacts[key] = {
+                    "exists": True,
+                    "modified": datetime.fromtimestamp(mtime).isoformat(),
+                }
+            else:
+                artifacts[key] = {"exists": False}
+
+        # Editorial variants directory
+        if VARIANTS_DIR.exists():
+            variant_files = list(VARIANTS_DIR.glob("editorial_*.json"))
+            if variant_files:
+                latest_mtime = max(os.path.getmtime(f) for f in variant_files)
+                artifacts["editorial"] = {
+                    "exists": True,
+                    "modified": datetime.fromtimestamp(latest_mtime).isoformat(),
+                    "count": len(variant_files),
+                }
+            else:
+                artifacts["editorial"] = {"exists": False}
+        else:
+            artifacts["editorial"] = {"exists": False}
+
+        # Deploy: launchable if html exists, no real artifact to check
+        artifacts["deploy"] = {"exists": artifacts["html"]["exists"]}
+
+        self._send_json({"artifacts": artifacts})
+
+    # ── Run single phase ──────────────────────────────────────────────────
+
+    def _handle_run_phase(self):
+        """Run a single pipeline phase (manual resume mode)."""
+        global current_run
+
+        with run_lock:
+            if current_run is not None and current_run.running:
+                self._send_error(409, "Pipeline already running")
+                return
+
+            try:
+                body = json.loads(self._read_body())
+            except json.JSONDecodeError as e:
+                self._send_error(400, f"Invalid JSON: {e}")
+                return
+
+            phase = body.get("phase", "")
+            date = body.get("date", "")
+            styles = body.get("styles", ["deep", "angle", "focused"])
+
+            valid_phases = {"websearch", "collect", "editorial", "html", "deploy"}
+            if phase not in valid_phases:
+                self._send_error(400, f"Invalid phase: {phase}. Must be one of {sorted(valid_phases)}")
+                return
+
+            if not date:
+                self._send_error(400, "Missing 'date' field")
+                return
+
+            run_id = f"phase_{phase}_{int(time.time())}_{os.getpid()}"
+
+            # Build a PipelineRun that only runs the requested phase
+            run = PipelineRun(
+                run_id=run_id,
+                date=date,
+                styles=styles,
+                options={},
+            )
+            # Mark all phases as skipped except the target
+            for p in PHASES:
+                run.phase_status[p] = "skipped"
+            run.phase_status[phase] = "pending"
+
+            current_run = run
+
+            def run_single_phase():
+                python = sys.executable
+                PIPELINE_DIR.mkdir(parents=True, exist_ok=True)
+
+                if phase == "websearch":
+                    run.run_phase_script(
+                        "websearch",
+                        [python, str(SCRIPTS_DIR / "websearch_collect.py")],
+                    )
+                elif phase == "collect":
+                    run.run_phase_script(
+                        "collect",
+                        [python, str(SCRIPTS_DIR / "collect.py")],
+                    )
+                elif phase == "editorial":
+                    run.current_phase = "editorial"
+                    run.phase_status["editorial"] = "running"
+                    editorial_start = time.time()
+                    run.phase_times["editorial"] = {"start": editorial_start}
+                    run.emit({"type": "phase_start", "phase": "editorial"})
+
+                    VARIANTS_DIR.mkdir(parents=True, exist_ok=True)
+                    generated = []
+
+                    for style in styles:
+                        if run.aborted:
+                            break
+                        sub_phase = f"editorial_{style}"
+                        run.emit({"type": "log", "phase": "editorial", "stream": "stdout",
+                                  "text": f"── Generating variant: {style} ──"})
+                        ok = run.run_phase_script(
+                            sub_phase,
+                            [python, str(SCRIPTS_DIR / "write_editorial.py")],
+                            env_extra={"EDITO_STYLE": style},
+                        )
+                        if ok:
+                            src = EDITORIAL_PATH
+                            dst = VARIANTS_DIR / f"editorial_{style}.json"
+                            if src.exists():
+                                shutil.copy2(src, dst)
+                                generated.append(style)
+                                run.emit({"type": "log", "phase": "editorial", "stream": "stdout",
+                                          "text": f"[OK] Variant '{style}' saved"})
+                        else:
+                            run.emit({"type": "log", "phase": "editorial", "stream": "stderr",
+                                      "text": f"[WARN] Variant '{style}' failed"})
+
+                    editorial_end = time.time()
+                    run.phase_times["editorial"]["end"] = editorial_end
+                    run.phase_times["editorial"]["duration"] = round(editorial_end - editorial_start, 2)
+
+                    if generated:
+                        run.phase_status["editorial"] = "done"
+                        run.emit({"type": "phase_done", "phase": "editorial"})
+                    else:
+                        run.phase_status["editorial"] = "error"
+                        run.emit({"type": "phase_error", "phase": "editorial", "error": "No variants generated"})
+
+                elif phase == "html":
+                    run.run_phase_script(
+                        "html",
+                        [python, str(SCRIPTS_DIR / "generate_edition.py"),
+                         str(EDITORIAL_PATH)],
+                    )
+                elif phase == "deploy":
+                    run.run_phase_script(
+                        "deploy",
+                        [python, str(SCRIPTS_DIR / "deploy.py")],
+                    )
+
+                run._finish_pipeline()
+
+            t = threading.Thread(target=run_single_phase, daemon=True)
+            t.start()
+
+        self._send_json({"ok": True, "run_id": run_id})
 
     # ── Pipeline SSE events ────────────────────────────────────────────────
 

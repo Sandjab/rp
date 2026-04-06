@@ -1,4 +1,4 @@
-import type { EditionInfo, PipelineEvent, PipelineStatus, VariantArticle } from "./types";
+import type { ArtifactInfo, EditionInfo, PipelineEvent, PipelineStatus, VariantArticle } from "./types";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -77,6 +77,22 @@ export const api = {
   publishVariant(name: string): Promise<{ ok: boolean; published: string }> {
     return fetch(`/api/publish/${encodeURIComponent(name)}`, {
       method: "POST",
+    }).then((r) => json(r));
+  },
+
+  /** Get pipeline artifact status (for manual resume). */
+  getArtifacts(): Promise<{ artifacts: Record<string, ArtifactInfo> }> {
+    return fetch("/api/pipeline/artifacts").then((r) =>
+      json<{ artifacts: Record<string, ArtifactInfo> }>(r),
+    );
+  },
+
+  /** Run a single pipeline phase (manual resume). */
+  runPhase(params: { phase: string; date: string; styles?: string[] }): Promise<{ ok: boolean; run_id: string }> {
+    return fetch("/api/pipeline/run-phase", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
     }).then((r) => json(r));
   },
 };
