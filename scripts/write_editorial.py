@@ -211,6 +211,7 @@ def call_claude(prompt, timeout=480):
         input=prompt,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         timeout=timeout,
     )
     if result.returncode != 0:
@@ -228,13 +229,13 @@ def main():
         logger.error(f"[ERROR] Candidates file not found: {CANDIDATES_PATH}")
         sys.exit(1)
 
-    with open(CANDIDATES_PATH) as f:
+    with open(CANDIDATES_PATH, encoding="utf-8") as f:
         candidates = json.load(f)
 
     logger.info(f"[EDITORIAL] {len(candidates)} candidates loaded")
 
     # Load prompt template
-    prompt_template = PROMPT_PATH.read_text()
+    prompt_template = PROMPT_PATH.read_text(encoding="utf-8")
     topics_list = ", ".join(t["tag"] for t in config.get("topics", []))
 
     # Determine prompt version: env var overrides config
@@ -305,7 +306,7 @@ def main():
             continue
 
         # Success
-        with open(OUTPUT_PATH, "w") as f:
+        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
         logger.info(f"[EDITORIAL] Success: {len(data)} articles (1 synthesis + {len(data)-1} articles) -> {OUTPUT_PATH}")

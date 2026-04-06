@@ -55,7 +55,7 @@ def setup_logging(name: str) -> logging.Logger:
 
             # Truncate if too large
             if log_path.exists() and log_path.stat().st_size > _MAX_LOG_SIZE:
-                log_path.write_text("")
+                log_path.write_text("", encoding="utf-8")
 
             file_handler = logging.FileHandler(str(log_path), mode="a", encoding="utf-8")
             file_handler.setLevel(logging.DEBUG)

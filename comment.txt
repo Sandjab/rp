@@ -1,0 +1,14 @@
+Edition complete : https://sandjab.github.io/rp/
+
+Au sommaire :
+- L'Iran menace de frapper les data centers de l'IA américaine
+- Taxe robot et semaine de quatre jours : OpenAI dessine sa vision de l'économie IA
+- Nvidia rachète SchedMD et fait trembler l'écosystème du calcul scientifique
+- Désapprendre : le nouveau défi technique des modèles d'IA
+- Emploi et IA : la donnée qui manque pour trancher le débat
+- Pénurie de mémoire HBM : le goulet d'étranglement matériel de l'IA
+- Google lance une app de dictée IA qui fonctionne sans connexion
+- ChatGPT intègre Spotify, Uber et DoorDash : l'IA en route vers la super-app
+- Quand l'IA d'Alibaba dicte aux petits vendeurs quoi fabriquer
+- L'espagnole Xoople lève 130 millions pour cartographier la Terre au service de l'IA
+- [Fun] Dr. Algorithm vous recevra : une IA autorisée à prescrire des psychotropes

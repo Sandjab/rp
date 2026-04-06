@@ -54,6 +54,9 @@ export function ProductionTab() {
   // Active idle-mode view (editor/image when clicked from stepper)
   const [idleView, setIdleView] = useState<PhaseName | null>(null);
 
+  // Styles selected for the current/last run (for single-phase reruns)
+  const [selectedStyles, setSelectedStyles] = useState<string[] | null>(null);
+
   // Track elapsed time for running phase
   const [elapsed, setElapsed] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -245,6 +248,7 @@ export function ProductionTab() {
       setRunning(true);
       setIdleView(null);
       setConfirmPhase(null);
+      setSelectedStyles(params.styles);
 
       try {
         await api.startPipeline(params);
@@ -316,7 +320,7 @@ export function ProductionTab() {
         await api.runPhase({
           phase,
           date: edition.date,
-          styles: edition.styles,
+          styles: selectedStyles ?? edition.styles,
         });
         connectSSE();
       } catch (err) {

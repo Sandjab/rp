@@ -21,7 +21,7 @@ import threading
 import time
 import webbrowser
 from datetime import datetime, timedelta
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
@@ -152,7 +152,7 @@ def generate_image_prompt() -> str:
     result = subprocess.run(
         ["claude", "-p", "--model", "opus", "--permission-mode", "default",
          "--tools", "", "--output-format", "text", "--no-session-persistence"],
-        input=prompt_text, capture_output=True, text=True,
+        input=prompt_text, capture_output=True, text=True, encoding="utf-8",
         timeout=load_config().get("edition", {}).get("timeouts", {}).get("linkedin", 120),
     )
     if result.returncode != 0:
@@ -758,7 +758,12 @@ class DashboardHandler(BaseHTTPRequestHandler):
             if not fpath.exists():
                 self._send_error(404, f"Variant '{name}' not found")
                 return
-            data = json.loads(fpath.read_text("utf-8"))
+            raw = fpath.read_bytes()
+            try:
+                text = raw.decode("utf-8")
+            except UnicodeDecodeError:
+                text = raw.decode("cp1252")
+            data = json.loads(text)
             self._send_json(data)
             return
 
@@ -1462,7 +1467,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):
         """Keep logs concise: suppress API requests."""
-        msg = args[0] if args else ""
+        msg = str(args[0]) if args else ""
         if "/api/" in msg and "events" not in msg:
             return
         if msg.endswith(".js") or msg.endswith(".css") or msg.endswith(".svg"):
@@ -1488,7 +1493,7 @@ def main():
         print("Run 'npm run build' in dashboard/ to create it.\n")
 
     url = f"http://127.0.0.1:{args.port}"
-    server = HTTPServer(("127.0.0.1", args.port), DashboardHandler)
+    server = ThreadingHTTPServer(("127.0.0.1", args.port), DashboardHandler)
     print(f"Dashboard server: {url}")
 
     if DEV_MODE:

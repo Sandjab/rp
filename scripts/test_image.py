@@ -31,7 +31,7 @@ if len(sys.argv) > 1:
 else:
     prompt_path = Path(__file__).parent.parent / ".pipeline" / "linkedin" / "image_prompt.txt"
     if prompt_path.exists():
-        prompt = prompt_path.read_text().strip()
+        prompt = prompt_path.read_text(encoding="utf-8").strip()
     else:
         prompt = "a futuristic cityscape at sunset, digital art style"
 

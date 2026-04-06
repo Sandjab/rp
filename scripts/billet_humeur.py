@@ -133,7 +133,7 @@ MAX_ATTEMPTS = 2
 
 def extract_articles_from_html(html_path):
     """Extract the articles JSON embedded in the HTML edition."""
-    text = Path(html_path).read_text()
+    text = Path(html_path).read_text(encoding="utf-8")
     match = re.search(r'const\s+articles\s*=\s*(\[.*?\])\s*;', text, re.DOTALL)
     if not match:
         return None
@@ -211,7 +211,7 @@ class _HTMLTextExtractor(HTMLParser):
 
 def extract_text_from_html(html_path):
     """Extract visible text from any HTML file. Returns (title, text) or (None, None)."""
-    content = Path(html_path).read_text(errors="replace")
+    content = Path(html_path).read_text(encoding="utf-8", errors="replace")
     extractor = _HTMLTextExtractor()
     extractor.feed(content)
     text = extractor.get_text()
@@ -380,6 +380,7 @@ def call_claude(prompt, timeout=300):
         input=prompt,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         timeout=timeout,
     )
     if result.returncode != 0:
@@ -540,7 +541,7 @@ def main():
 
         # Save raw response for debugging
         raw_path = PIPELINE_DIR / f"billet_raw_attempt_{attempt}.txt"
-        raw_path.write_text(raw_response)
+        raw_path.write_text(raw_response, encoding="utf-8")
 
         # Parse
         title, billet = parse_billet(raw_response)
@@ -563,12 +564,12 @@ def main():
             return
         elif output_path:
             out = Path(output_path)
-            out.write_text(output_text)
+            out.write_text(output_text, encoding="utf-8")
             logger.info(f"[BILLET] Ecrit dans {out}")
             print(str(out))
         else:
             out = PIPELINE_DIR / "billet.txt"
-            out.write_text(output_text)
+            out.write_text(output_text, encoding="utf-8")
             logger.info(f"[BILLET] Ecrit dans {out}")
             print(str(out))
 

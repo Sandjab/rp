@@ -20,12 +20,12 @@ TIMEOUT = 10
 
 def load_feeds():
     config_path = Path(__file__).parent.parent / "config" / "rss-feeds.yaml"
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         return yaml.safe_load(f)["feeds"]
 
 def load_authority():
     config_path = Path(__file__).parent.parent / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         return yaml.safe_load(f).get("source_authority", {})
 
 def parse_date(entry):

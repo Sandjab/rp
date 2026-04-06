@@ -37,7 +37,7 @@ def get_edition_number(archives_dir):
     manifest = archives_dir / "manifest.json"
     if manifest.exists():
         import json
-        with open(manifest) as f:
+        with open(manifest, encoding="utf-8") as f:
             entries = json.load(f)
         if entries:
             from datetime import datetime
@@ -90,6 +90,7 @@ def call_claude(prompt, timeout=120):
         input=prompt,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         timeout=timeout,
     )
     if result.returncode != 0:
@@ -152,9 +153,7 @@ def overlay_text_on_image(image_path, edition_title, edition_number, subtitle):
     PADDING_H = 60  # horizontal padding inside banner
     PADDING_V = 20  # vertical padding inside banner
 
-    # Font paths (macOS system fonts)
-    LUCIDA_PATH = "/System/Library/Fonts/LucidaGrande.ttc"
-    HELVETICA_PATH = "/System/Library/Fonts/HelveticaNeue.ttc"
+    import platform
 
     img = Image.open(image_path).convert("RGBA")
 
@@ -162,15 +161,45 @@ def overlay_text_on_image(image_path, edition_title, edition_number, subtitle):
     if img.size != (TARGET_W, TARGET_H):
         img = img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
 
-    # Load fonts with fallback
-    try:
-        font_title = ImageFont.truetype(LUCIDA_PATH, 52, index=0)
-    except (OSError, IndexError):
-        font_title = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial Bold.ttf", 52)
+    # Load fonts with platform-aware fallback
+    if platform.system() == "Darwin":
+        title_candidates = [
+            ("/System/Library/Fonts/LucidaGrande.ttc", 52, 0),
+            ("/System/Library/Fonts/Supplemental/Arial Bold.ttf", 52, None),
+        ]
+        subtitle_candidates = [
+            ("/System/Library/Fonts/HelveticaNeue.ttc", 26, 0),
+        ]
+    else:
+        import os
+        fonts_dir = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
+        title_candidates = [
+            (os.path.join(fonts_dir, "arialbd.ttf"), 52, None),
+            (os.path.join(fonts_dir, "segoeui.ttf"), 52, None),
+        ]
+        subtitle_candidates = [
+            (os.path.join(fonts_dir, "arial.ttf"), 26, None),
+            (os.path.join(fonts_dir, "segoeui.ttf"), 26, None),
+        ]
 
-    try:
-        font_subtitle = ImageFont.truetype(HELVETICA_PATH, 26, index=0)
-    except OSError:
+    font_title = None
+    for path, size, idx in title_candidates:
+        try:
+            font_title = ImageFont.truetype(path, size, index=idx or 0) if idx is not None else ImageFont.truetype(path, size)
+            break
+        except (OSError, IndexError):
+            continue
+    if font_title is None:
+        font_title = ImageFont.load_default()
+
+    font_subtitle = None
+    for path, size, idx in subtitle_candidates:
+        try:
+            font_subtitle = ImageFont.truetype(path, size, index=idx or 0) if idx is not None else ImageFont.truetype(path, size)
+            break
+        except (OSError, IndexError):
+            continue
+    if font_subtitle is None:
         font_subtitle = ImageFont.load_default()
 
     # Compose title line: "IA qu'à demander N°2"
@@ -268,7 +297,7 @@ def main():
             logger.error(f"[ERROR] {prompt_file} not found. Run without --image-only first.")
             sys.exit(1)
 
-        image_prompt = prompt_file.read_text().strip()
+        image_prompt = prompt_file.read_text(encoding="utf-8").strip()
         logger.info(f"[LINKEDIN] --image-only: reusing existing prompt ({len(image_prompt)} chars)")
 
         archives_dir = PROJECT_DIR / "editions" / "archives"
@@ -289,7 +318,7 @@ def main():
         # Editorial subtitle for overlay
         edito_subtitle = ""
         if editorial_path.exists():
-            with open(editorial_path) as f:
+            with open(editorial_path, encoding="utf-8") as f:
                 editorial = json.load(f)
             for article in editorial:
                 if article.get("editorial_title"):
@@ -342,14 +371,14 @@ def main():
     post_text = build_post(synthesis, hashtags)
     comment_text = build_comment(editorial, edition_url)
 
-    (LINKEDIN_DIR / "post.txt").write_text(post_text)
-    (LINKEDIN_DIR / "comment.txt").write_text(comment_text)
+    (LINKEDIN_DIR / "post.txt").write_text(post_text, encoding="utf-8")
+    (LINKEDIN_DIR / "comment.txt").write_text(comment_text, encoding="utf-8")
 
     logger.info(f"[LINKEDIN] Post: {len(post_text)} chars (deterministic)")
     logger.info(f"[LINKEDIN] Comment: {len(comment_text)} chars (deterministic)")
 
     # --- Claude call: image prompt only ---
-    prompt_template = PROMPT_PATH.read_text()
+    prompt_template = PROMPT_PATH.read_text(encoding="utf-8")
 
     base_prompt = (
         prompt_template
@@ -374,7 +403,7 @@ def main():
 
         # Save raw response for debugging
         raw_path = LINKEDIN_DIR / f"raw_attempt_{attempt}.txt"
-        raw_path.write_text(raw_response)
+        raw_path.write_text(raw_response, encoding="utf-8")
 
         # Claude returns plain text (the image prompt directly)
         candidate = raw_response.strip()
@@ -396,7 +425,7 @@ def main():
         break
 
     if image_prompt:
-        (LINKEDIN_DIR / "image_prompt.txt").write_text(image_prompt)
+        (LINKEDIN_DIR / "image_prompt.txt").write_text(image_prompt, encoding="utf-8")
         logger.info(f"[LINKEDIN] Image prompt: {len(image_prompt)} chars")
     else:
         logger.warning("[WARN] Image prompt generation failed, skipping image")

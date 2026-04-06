@@ -32,7 +32,7 @@ def build_deploy_archive_index(deploy_archives, manifest_path, config_title):
     """Generate archive index.html from manifest.json."""
     # Load manifest or build minimal fallback from filenames
     if manifest_path.exists():
-        with open(manifest_path) as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = json.load(f)
     else:
         manifest = []
@@ -115,7 +115,7 @@ transition:color .2s}}
 </html>'''
 
     index_path = deploy_archives / "index.html"
-    with open(index_path, "w") as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         f.write(archive_html)
     logger.info(f"[INFO] Archive index generated: {index_path}")
 
@@ -192,7 +192,7 @@ def main():
                 ts = f.stem  # e.g. "2026-02-10.001737"
                 snapshot = archives_dir / f"manifest.{ts}.json"
                 if snapshot.exists():
-                    with open(snapshot) as sf:
+                    with open(snapshot, encoding="utf-8") as sf:
                         snap_data = json.load(sf)
                     # Extract only the entry for this date
                     for entry in snap_data:
@@ -203,14 +203,14 @@ def main():
             # Fill remaining dates from the generic manifest
             manifest_src = archives_dir / "manifest.json"
             if manifest_src.exists():
-                with open(manifest_src) as mf:
+                with open(manifest_src, encoding="utf-8") as mf:
                     generic = json.load(mf)
                 for entry in generic:
                     if entry.get("date") not in seen_dates:
                         merged_manifest.append(entry)
                         seen_dates.add(entry["date"])
             merged_manifest.sort(key=lambda e: e.get("date", ""), reverse=True)
-            with open(manifest_dst, "w") as mf:
+            with open(manifest_dst, "w", encoding="utf-8") as mf:
                 json.dump(merged_manifest, mf, ensure_ascii=False, indent=2)
         else:
             manifest_src = archives_dir / "manifest.json" if archives_dir.exists() else None
@@ -220,10 +220,10 @@ def main():
 
         # Rewrite nav links for archive context (relative paths differ from root)
         for html_file in deploy_archives.glob("????-??-??.html"):
-            content = html_file.read_text()
+            content = html_file.read_text(encoding="utf-8")
             content = content.replace('href="editions/archives/index.html"', 'href="index.html"')
             content = content.replace('href="editions/archives/', 'href="')
-            html_file.write_text(content)
+            html_file.write_text(content, encoding="utf-8")
 
         # Git add, commit, push
         run(["git", "add", "-A"], cwd=tmp_dir)

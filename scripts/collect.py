@@ -35,7 +35,7 @@ AI_WORD_BOUNDARY = re.compile(r'\bAI\b')
 def load_ai_keywords():
     """Charge tous les keywords IA depuis revue-presse.yaml."""
     config_path = PROJECT_DIR / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         config = yaml.safe_load(f)
     keywords = set()
     for topic in config.get("topics", []):
@@ -95,7 +95,7 @@ def filter_already_published(articles):
     Graceful degradation: returns articles unchanged if manifest is missing/unreadable.
     """
     config_path = PROJECT_DIR / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         config = yaml.safe_load(f)
     history_days = config.get("edition", {}).get("history_days", 3)
 
@@ -105,7 +105,7 @@ def filter_already_published(articles):
         return articles
 
     try:
-        with open(manifest_path) as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = json.load(f)
     except (json.JSONDecodeError, Exception) as e:
         logger.warning(f"[WARN] Could not read manifest: {e}")
@@ -166,6 +166,7 @@ def run_script(script_name, input_data=None, env_extra=None):
         input=input_data,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         env=env,
     )
     elapsed = time.time() - t0
@@ -191,7 +192,7 @@ def main():
     all_articles = list(rss_articles)
     if WEBSEARCH_PATH.exists():
         try:
-            with open(WEBSEARCH_PATH) as f:
+            with open(WEBSEARCH_PATH, encoding="utf-8") as f:
                 ws_articles = json.load(f)
             if ws_articles:
                 all_articles.extend(ws_articles)
@@ -225,7 +226,7 @@ def main():
     )
 
     # 5. Write output
-    with open(OUTPUT_PATH, "w") as f:
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(ranked, f, ensure_ascii=False, indent=2)
 
     logger.info(f"[COLLECT] Done: {len(ranked)} articles -> {OUTPUT_PATH}")

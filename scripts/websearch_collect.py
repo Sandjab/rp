@@ -74,7 +74,7 @@ def main():
     today = os.environ.get("RP_EDITION_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     # Load and fill prompt template
-    prompt_template = PROMPT_PATH.read_text()
+    prompt_template = PROMPT_PATH.read_text(encoding="utf-8")
     queries_block = build_queries_block(config)
     prompt = prompt_template.replace("{{QUERIES}}", queries_block).replace("{{DATE}}", today)
 
@@ -95,6 +95,7 @@ def main():
             input=prompt,
             capture_output=True,
             text=True,
+            encoding="utf-8",
             timeout=timeout,
         )
 
@@ -102,7 +103,7 @@ def main():
 
         if result.returncode != 0:
             logger.warning(f"[WARN] claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
-            with open(OUTPUT_PATH, "w") as f:
+            with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
                 json.dump([], f)
             print(str(OUTPUT_PATH))
             return
@@ -112,7 +113,7 @@ def main():
             logger.warning("[WARN] Could not extract JSON from claude response")
             # Save raw response for debugging
             raw_path = PIPELINE_DIR / "00_raw_websearch.txt"
-            raw_path.write_text(result.stdout)
+            raw_path.write_text(result.stdout, encoding="utf-8")
             logger.warning(f"[WARN] Raw response saved to {raw_path}")
             articles = []
 
@@ -120,22 +121,22 @@ def main():
         valid = [a for a in articles if isinstance(a, dict) and a.get("url") and a.get("title")]
         logger.info(f"[WEBSEARCH] Got {len(valid)} valid articles from WebSearch")
 
-        with open(OUTPUT_PATH, "w") as f:
+        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
             json.dump(valid, f, ensure_ascii=False, indent=2)
 
     except subprocess.TimeoutExpired:
         logger.warning(f"[WARN] claude -p timed out ({timeout}s)")
-        with open(OUTPUT_PATH, "w") as f:
+        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
             json.dump([], f)
 
     except FileNotFoundError:
         logger.warning("[WARN] claude CLI not found in PATH")
-        with open(OUTPUT_PATH, "w") as f:
+        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
             json.dump([], f)
 
     except Exception as e:
         logger.warning(f"[WARN] WebSearch failed: {e}")
-        with open(OUTPUT_PATH, "w") as f:
+        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
             json.dump([], f)
 
     print(str(OUTPUT_PATH))

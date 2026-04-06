@@ -18,7 +18,7 @@ logger = setup_logging("generate")
 
 def load_template():
     tpl_path = Path(__file__).parent.parent / "templates" / "edition.html"
-    with open(tpl_path) as f:
+    with open(tpl_path, encoding="utf-8") as f:
         return f.read()
 
 def get_edition_date(tz):
@@ -32,7 +32,7 @@ def get_edition_number(archives_dir):
     """Derive edition number from manifest.json history (resilient to HTML deletion)."""
     manifest = archives_dir / "manifest.json"
     if manifest.exists():
-        with open(manifest) as f:
+        with open(manifest, encoding="utf-8") as f:
             entries = json.load(f)
         if entries:
             unique_days = set(e.get("date", "") for e in entries)
@@ -319,7 +319,7 @@ font-family:var(--font-m);font-size:0.9rem;transition:color .2s}}
 </html>'''
 
     archive_path = archives_dir / "index.html"
-    with open(archive_path, "w") as f:
+    with open(archive_path, "w", encoding="utf-8") as f:
         f.write(archive_html)
     logger.info(f"[INFO] Archive page updated: {archive_path}")
 
@@ -351,7 +351,7 @@ def main():
         globals()["logger"] = _setup("generate")
 
     if args.input:
-        with open(args.input) as f:
+        with open(args.input, encoding="utf-8") as f:
             articles = json.load(f)
     else:
         articles = json.load(sys.stdin)
@@ -421,7 +421,7 @@ def main():
 
     # Archive with timestamp
     archive_path = archives_dir / f"{timestamp_str}.html"
-    with open(archive_path, "w") as f:
+    with open(archive_path, "w", encoding="utf-8") as f:
         f.write(html)
 
     logger.info(f"[INFO] Archived: {archive_path}")
@@ -436,7 +436,7 @@ def main():
     # Update manifest.json with edition metadata
     manifest_path = archives_dir / "manifest.json"
     if manifest_path.exists():
-        with open(manifest_path) as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = json.load(f)
     else:
         manifest = []
@@ -459,19 +459,19 @@ def main():
     manifest.append(entry)
     manifest.sort(key=lambda e: e.get("date", ""), reverse=True)
 
-    with open(manifest_path, "w") as f:
+    with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
     logger.info(f"[INFO] Manifest updated: {manifest_path}")
 
     # Save timestamped manifest snapshot alongside the archive HTML
     manifest_snapshot = archives_dir / f"manifest.{timestamp_str}.json"
-    with open(manifest_snapshot, "w") as f:
+    with open(manifest_snapshot, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
     logger.info(f"[INFO] Manifest snapshot: {manifest_snapshot}")
 
     # Also write latest.html for deploy script
     latest_path = editions_dir / "latest.html"
-    with open(latest_path, "w") as f:
+    with open(latest_path, "w", encoding="utf-8") as f:
         f.write(html)
 
     # Update archive index
