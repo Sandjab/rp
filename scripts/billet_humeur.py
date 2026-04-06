@@ -21,8 +21,6 @@ import sys
 from html.parser import HTMLParser
 from pathlib import Path
 
-import yaml
-
 EDITO_STYLES = {
     "focused": """   **Structure du billet :**
    - Choisis 2-3 themes parmi les articles selectionnes et construis un fil conducteur entre eux
@@ -126,15 +124,11 @@ EDITO_STYLES_ARTICLE_V2 = {
 
 TEXT_MAX_CHARS = 8000
 
-PROJECT_DIR = Path(__file__).parent.parent
-PIPELINE_DIR = PROJECT_DIR / ".pipeline"
+from log_utils import setup_logging, load_config, PROJECT_DIR, PIPELINE_DIR
+
+logger = setup_logging("billet")
+
 MAX_ATTEMPTS = 2
-
-
-def load_config():
-    config_path = PROJECT_DIR / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
-        return yaml.safe_load(f)
 
 
 def extract_articles_from_html(html_path):
@@ -372,7 +366,7 @@ Le texte du billet, 10-15 phrases...
 """
 
 
-def call_claude(prompt):
+def call_claude(prompt, timeout=300):
     """Call claude -p and return stdout."""
     result = subprocess.run(
         [
@@ -386,7 +380,7 @@ def call_claude(prompt):
         input=prompt,
         capture_output=True,
         text=True,
-        timeout=300,
+        timeout=timeout,
     )
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
@@ -433,18 +427,31 @@ def main():
         "--prompt-version", choices=["v1", "v2"], default=None,
         help="Version du prompt (default: config ou env PROMPT_VERSION)"
     )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Activer le mode debug (logging detaille)"
+    )
     args = parser.parse_args()
+
+    if args.debug:
+        os.environ["RP_DEBUG"] = "1"
+        import logging
+        for h_ in logger.handlers[:]:
+            logger.removeHandler(h_)
+        from log_utils import setup_logging as _setup
+        globals()["logger"] = _setup("billet")
 
     html_path = Path(args.html_file)
     if not html_path.exists():
-        print(f"[ERROR] Fichier introuvable : {html_path}", file=sys.stderr)
+        logger.error(f"[ERROR] Fichier introuvable : {html_path}")
         sys.exit(1)
 
     PIPELINE_DIR.mkdir(exist_ok=True)
     config = load_config()
+    claude_timeout = config.get("edition", {}).get("timeouts", {}).get("billet", 300)
 
     # Detect mode: edition (embedded JSON) or article (raw HTML)
-    print(f"[BILLET] Extraction depuis {html_path}...", file=sys.stderr)
+    logger.info(f"[BILLET] Extraction depuis {html_path}...")
     mode = None
     articles = None
     article_title = None
@@ -466,19 +473,19 @@ def main():
                 serious_articles.append(article)
 
         if not serious_articles:
-            print("[ERROR] Aucun article serieux trouve dans l'edition", file=sys.stderr)
+            logger.error("[ERROR] Aucun article serieux trouve dans l'edition")
             sys.exit(1)
 
         mode = "edition"
-        print(f"[BILLET] Mode: edition ({len(serious_articles)} articles)", file=sys.stderr)
+        logger.info(f"[BILLET] Mode: edition ({len(serious_articles)} articles)")
     else:
         # Try article mode
         article_title, article_text = extract_text_from_html(html_path)
         if article_text:
             mode = "article"
-            print(f"[BILLET] Mode: article (\"{article_title[:50]}...\", {len(article_text)} chars)", file=sys.stderr)
+            logger.info(f"[BILLET] Mode: article (\"{article_title[:50]}...\", {len(article_text)} chars)")
         else:
-            print("[ERROR] Impossible d'extraire du contenu depuis le HTML (ni JSON d'edition, ni texte exploitable)", file=sys.stderr)
+            logger.error("[ERROR] Impossible d'extraire du contenu depuis le HTML (ni JSON d'edition, ni texte exploitable)")
             sys.exit(1)
 
     # Determine prompt version: CLI > env > config > fallback v1
@@ -502,7 +509,7 @@ def main():
         styles_dict = EDITO_STYLES if mode == "edition" else EDITO_STYLES_ARTICLE
         anti_tics = ""
     style_instructions = styles_dict.get(edito_style, styles_dict["focused"])
-    print(f"[BILLET] Style : {edito_style}, Prompt : {prompt_version}", file=sys.stderr)
+    logger.info(f"[BILLET] Style : {edito_style}, Prompt : {prompt_version}")
 
     # Build prompt
     if mode == "edition":
@@ -512,7 +519,7 @@ def main():
 
     last_errors = []
     for attempt in range(1, MAX_ATTEMPTS + 1):
-        print(f"[BILLET] Tentative {attempt}/{MAX_ATTEMPTS}...", file=sys.stderr)
+        logger.info(f"[BILLET] Tentative {attempt}/{MAX_ATTEMPTS}...")
 
         if attempt == 1:
             prompt = base_prompt
@@ -525,9 +532,9 @@ def main():
             )
 
         try:
-            raw_response = call_claude(prompt)
+            raw_response = call_claude(prompt, timeout=claude_timeout)
         except Exception as e:
-            print(f"[ERROR] claude -p failed: {e}", file=sys.stderr)
+            logger.error(f"[ERROR] claude -p failed: {e}")
             last_errors = [str(e)]
             continue
 
@@ -541,9 +548,9 @@ def main():
         # Validate
         errors = validate_billet(title, billet)
         if errors:
-            print(f"[ERROR] Validation echouee ({len(errors)} erreurs, tentative {attempt}) :", file=sys.stderr)
+            logger.error(f"[ERROR] Validation echouee ({len(errors)} erreurs, tentative {attempt}) :")
             for err in errors:
-                print(f"  - {err}", file=sys.stderr)
+                logger.error(f"  - {err}")
             last_errors = errors
             continue
 
@@ -557,20 +564,20 @@ def main():
         elif output_path:
             out = Path(output_path)
             out.write_text(output_text)
-            print(f"[BILLET] Ecrit dans {out}", file=sys.stderr)
+            logger.info(f"[BILLET] Ecrit dans {out}")
             print(str(out))
         else:
             out = PIPELINE_DIR / "billet.txt"
             out.write_text(output_text)
-            print(f"[BILLET] Ecrit dans {out}", file=sys.stderr)
+            logger.info(f"[BILLET] Ecrit dans {out}")
             print(str(out))
 
-        print(f"[BILLET] Titre : {title}", file=sys.stderr)
-        print(f"[BILLET] Longueur : {len(billet)} caracteres", file=sys.stderr)
+        logger.info(f"[BILLET] Titre : {title}")
+        logger.info(f"[BILLET] Longueur : {len(billet)} caracteres")
         return
 
     # All attempts failed
-    print(f"[ERROR] Generation du billet echouee apres {MAX_ATTEMPTS} tentatives", file=sys.stderr)
+    logger.error(f"[ERROR] Generation du billet echouee apres {MAX_ATTEMPTS} tentatives")
     sys.exit(1)
 
 

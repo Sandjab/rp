@@ -6,6 +6,10 @@ import sys
 from difflib import SequenceMatcher
 from urllib.parse import urlparse
 
+from log_utils import setup_logging
+
+logger = setup_logging("deduplicate")
+
 # Thresholds
 SAME_DOMAIN_THRESHOLD = 0.75
 CROSS_DOMAIN_THRESHOLD = 0.85
@@ -62,8 +66,10 @@ def deduplicate(articles):
 
 def main():
     data = json.load(sys.stdin)
+    logger.debug(f"Input: {len(data)} articles, thresholds: same_domain={SAME_DOMAIN_THRESHOLD}, cross_domain={CROSS_DOMAIN_THRESHOLD}")
     deduped = deduplicate(data)
-    print(f"[INFO] Deduplication: {len(data)} -> {len(deduped)} articles", file=sys.stderr)
+    logger.info(f"[INFO] Deduplication: {len(data)} -> {len(deduped)} articles")
+    logger.debug(f"Removed {len(data) - len(deduped)} duplicates")
     json.dump(deduped, sys.stdout, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":

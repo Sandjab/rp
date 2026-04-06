@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -20,9 +21,11 @@ from urllib.parse import urlparse
 
 import yaml
 
+from log_utils import setup_logging, PROJECT_DIR, PIPELINE_DIR
+
+logger = setup_logging("collect")
+
 SCRIPTS_DIR = Path(__file__).parent
-PROJECT_DIR = SCRIPTS_DIR.parent
-PIPELINE_DIR = PROJECT_DIR / ".pipeline"
 WEBSEARCH_PATH = PIPELINE_DIR / "00_websearch.json"
 OUTPUT_PATH = PIPELINE_DIR / "01_candidates.json"
 
@@ -69,10 +72,10 @@ def filter_ai_relevant(articles):
 
     # Garde-fou : si filtre trop agressif, desactiver
     if len(articles) > 0 and len(kept) / len(articles) < 0.2:
-        print(f"[WARN] AI filter too aggressive ({len(kept)}/{len(articles)}), disabled", file=sys.stderr)
+        logger.warning(f"[WARN] AI filter too aggressive ({len(kept)}/{len(articles)}), disabled")
         return articles
 
-    print(f"[COLLECT] AI filter: {len(articles)} -> {len(kept)} articles", file=sys.stderr)
+    logger.info(f"[COLLECT] AI filter: {len(articles)} -> {len(kept)} articles")
     return kept
 
 
@@ -98,14 +101,14 @@ def filter_already_published(articles):
 
     manifest_path = PROJECT_DIR / "editions" / "archives" / "manifest.json"
     if not manifest_path.exists():
-        print(f"[COLLECT] No manifest found, skipping history dedup", file=sys.stderr)
+        logger.info(f"[COLLECT] No manifest found, skipping history dedup")
         return articles
 
     try:
         with open(manifest_path) as f:
             manifest = json.load(f)
     except (json.JSONDecodeError, Exception) as e:
-        print(f"[WARN] Could not read manifest: {e}", file=sys.stderr)
+        logger.warning(f"[WARN] Could not read manifest: {e}")
         return articles
 
     today_str = os.environ.get("RP_EDITION_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -146,10 +149,7 @@ def filter_already_published(articles):
         kept.append(article)
 
     removed = len(articles) - len(kept)
-    print(
-        f"[COLLECT] History dedup ({history_days}d): {len(articles)} -> {len(kept)} articles ({removed} removed)",
-        file=sys.stderr,
-    )
+    logger.info(f"[COLLECT] History dedup ({history_days}d): {len(articles)} -> {len(kept)} articles ({removed} removed)")
     return kept
 
 
@@ -159,6 +159,8 @@ def run_script(script_name, input_data=None, env_extra=None):
     env = os.environ.copy()
     if env_extra:
         env.update(env_extra)
+    logger.debug(f"Running: {sys.executable} {script_path}")
+    t0 = time.time()
     result = subprocess.run(
         [sys.executable, str(script_path)],
         input=input_data,
@@ -166,11 +168,13 @@ def run_script(script_name, input_data=None, env_extra=None):
         text=True,
         env=env,
     )
+    elapsed = time.time() - t0
+    logger.debug(f"{script_name} finished in {elapsed:.1f}s (rc={result.returncode}, stdout={len(result.stdout)}B, stderr={len(result.stderr)}B)")
     # Forward stderr (log lines) to our stderr
     if result.stderr:
         print(result.stderr, end="", file=sys.stderr)
     if result.returncode != 0:
-        print(f"[ERROR] {script_name} exited with code {result.returncode}", file=sys.stderr)
+        logger.error(f"[ERROR] {script_name} exited with code {result.returncode}")
         sys.exit(1)
     return json.loads(result.stdout)
 
@@ -180,7 +184,7 @@ def main():
     PIPELINE_DIR.mkdir(exist_ok=True)
 
     # 1. Collect RSS
-    print("[COLLECT] Phase 1: RSS feeds...", file=sys.stderr)
+    logger.info("[COLLECT] Phase 1: RSS feeds...")
     rss_articles = run_script("parse_rss.py")
 
     # 2. Merge with WebSearch JSON if present
@@ -191,16 +195,16 @@ def main():
                 ws_articles = json.load(f)
             if ws_articles:
                 all_articles.extend(ws_articles)
-                print(f"[COLLECT] +{len(ws_articles)} WebSearch articles", file=sys.stderr)
+                logger.info(f"[COLLECT] +{len(ws_articles)} WebSearch articles")
         except (json.JSONDecodeError, Exception) as e:
-            print(f"[WARN] Could not read WebSearch file: {e}", file=sys.stderr)
+            logger.warning(f"[WARN] Could not read WebSearch file: {e}")
     else:
-        print("[COLLECT] No WebSearch file found, continuing with RSS only", file=sys.stderr)
+        logger.info("[COLLECT] No WebSearch file found, continuing with RSS only")
 
-    print(f"[COLLECT] Total before dedup: {len(all_articles)}", file=sys.stderr)
+    logger.info(f"[COLLECT] Total before dedup: {len(all_articles)}")
 
     # 3. Deduplicate
-    print("[COLLECT] Phase 2: Deduplication...", file=sys.stderr)
+    logger.info("[COLLECT] Phase 2: Deduplication...")
     merged_json = json.dumps(all_articles, ensure_ascii=False)
     deduped = run_script("deduplicate.py", input_data=merged_json)
 
@@ -211,7 +215,7 @@ def main():
     deduped = filter_already_published(deduped)
 
     # 4. Rank — propagate RP_MAX_CANDIDATES (default 20 for pipeline)
-    print("[COLLECT] Phase 3: Ranking...", file=sys.stderr)
+    logger.info("[COLLECT] Phase 3: Ranking...")
     max_candidates = os.environ.get("RP_MAX_CANDIDATES", "25")
     deduped_json = json.dumps(deduped, ensure_ascii=False)
     ranked = run_script(
@@ -224,7 +228,7 @@ def main():
     with open(OUTPUT_PATH, "w") as f:
         json.dump(ranked, f, ensure_ascii=False, indent=2)
 
-    print(f"[COLLECT] Done: {len(ranked)} articles -> {OUTPUT_PATH}", file=sys.stderr)
+    logger.info(f"[COLLECT] Done: {len(ranked)} articles -> {OUTPUT_PATH}")
     # Output path on stdout for pipeline chaining
     print(str(OUTPUT_PATH))
 

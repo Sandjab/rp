@@ -152,7 +152,8 @@ def generate_image_prompt() -> str:
     result = subprocess.run(
         ["claude", "-p", "--model", "opus", "--permission-mode", "default",
          "--tools", "", "--output-format", "text", "--no-session-persistence"],
-        input=prompt_text, capture_output=True, text=True, timeout=120,
+        input=prompt_text, capture_output=True, text=True,
+        timeout=load_config().get("edition", {}).get("timeouts", {}).get("linkedin", 120),
     )
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
@@ -374,8 +375,9 @@ class PipelineRun:
         self.run_id = run_id
         self.date = date
         self.styles = styles
-        self.options = options  # skip_collect, no_linkedin, no_deploy
+        self.options = options  # skip_collect, no_linkedin, no_deploy, debug
         self.single_phase = single_phase  # True when running a single phase via manual resume
+        self.debug = options.get("debug", False)
 
         # Phase tracking
         self.phase_status: dict[str, str] = {}  # phase -> pending|running|done|error|skipped|paused|resumed
@@ -428,6 +430,8 @@ class PipelineRun:
         env = os.environ.copy()
         env["RP_EDITION_DATE"] = self.date
         env["PYTHONUNBUFFERED"] = "1"
+        if self.debug:
+            env["RP_DEBUG"] = "1"
         if env_extra:
             env.update(env_extra)
 
@@ -968,6 +972,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
             skip_collect = body.get("skip_collect", False)
             no_linkedin = body.get("no_linkedin", False)
             no_deploy = body.get("no_deploy", False)
+            debug = body.get("debug", False)
 
             if not date:
                 self._send_error(400, "Missing 'date' field")
@@ -982,6 +987,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     "skip_collect": skip_collect,
                     "no_linkedin": no_linkedin,
                     "no_deploy": no_deploy,
+                    "debug": debug,
                 },
             )
 
@@ -1252,6 +1258,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
             phase = body.get("phase", "")
             date = body.get("date", "")
             styles = body.get("styles", ["deep", "angle", "focused"])
+            debug = body.get("debug", False)
 
             valid_phases = {"websearch", "collect", "editorial", "html", "deploy"}
             if phase not in valid_phases:
@@ -1269,7 +1276,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 run_id=run_id,
                 date=date,
                 styles=styles,
-                options={},
+                options={"debug": debug},
                 single_phase=True,
             )
             # Mark all phases as skipped except the target

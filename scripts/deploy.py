@@ -11,19 +11,20 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-import yaml
+from log_utils import setup_logging, load_config
 
-def load_config():
-    config_path = Path(__file__).parent.parent / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
-        return yaml.safe_load(f)
+logger = setup_logging("deploy")
+
 
 def run(cmd, cwd=None, check=True):
     """Run a shell command."""
-    print(f"[CMD] {' '.join(cmd)}", file=sys.stderr)
+    logger.info(f"[CMD] {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+    logger.debug(f"  rc={result.returncode}, stdout={len(result.stdout)}B, stderr={len(result.stderr)}B")
+    if result.stdout.strip():
+        logger.debug(f"  stdout: {result.stdout.strip()[:200]}")
     if check and result.returncode != 0:
-        print(f"[ERROR] {result.stderr}", file=sys.stderr)
+        logger.error(f"[ERROR] {result.stderr}")
         raise RuntimeError(f"Command failed: {' '.join(cmd)}")
     return result
 
@@ -116,7 +117,7 @@ transition:color .2s}}
     index_path = deploy_archives / "index.html"
     with open(index_path, "w") as f:
         f.write(archive_html)
-    print(f"[INFO] Archive index generated: {index_path}", file=sys.stderr)
+    logger.info(f"[INFO] Archive index generated: {index_path}")
 
 
 def main():
@@ -130,7 +131,7 @@ def main():
     # Find latest edition
     latest = editions_dir / "latest.html"
     if not latest.exists():
-        print("[ERROR] No latest.html found. Run generate_edition.py first.", file=sys.stderr)
+        logger.error("[ERROR] No latest.html found. Run generate_edition.py first.")
         sys.exit(1)
 
     tz = ZoneInfo(config["edition"]["timezone"])
@@ -141,7 +142,7 @@ def main():
 
     # Clone into temp dir
     tmp_dir = tempfile.mkdtemp(prefix="rp-deploy-")
-    print(f"[INFO] Cloning into {tmp_dir}", file=sys.stderr)
+    logger.info(f"[INFO] Cloning into {tmp_dir}")
 
     try:
         # Clone only gh-pages branch (shallow)
@@ -160,14 +161,14 @@ def main():
         # Remove legacy dated editions from editions/ root (now only in archives/)
         for f in deploy_editions.glob("*.html"):
             f.unlink()
-            print(f"[INFO] Removed legacy edition: editions/{f.name}", file=sys.stderr)
+            logger.debug(f"Removed legacy edition: editions/{f.name}")
 
         # Remove legacy timestamped archives (YYYY-MM-DD.HHMMSS.html)
         ts_pattern = re.compile(r"\d{4}-\d{2}-\d{2}\.\d{6}\.html$")
         for f in deploy_archives.glob("*.html"):
             if ts_pattern.match(f.name):
                 f.unlink()
-                print(f"[INFO] Removed legacy archive: {f.name}", file=sys.stderr)
+                logger.debug(f"Removed legacy archive: {f.name}")
 
         # Copy archives: keep only latest file per day
         if archives_dir.exists():
@@ -230,19 +231,19 @@ def main():
         # Check if there are changes
         status = run(["git", "status", "--porcelain"], cwd=tmp_dir)
         if not status.stdout.strip():
-            print("[INFO] No changes to deploy.", file=sys.stderr)
+            logger.info("[INFO] No changes to deploy.")
             return
 
         run(["git", "commit", "-m", f"Edition {timestamp_str}"], cwd=tmp_dir)
         run(["git", "push", "origin", branch], cwd=tmp_dir)
 
-        print(f"[INFO] Deployed to https://sandjab.github.io/rp/", file=sys.stderr)
+        logger.info(f"[INFO] Deployed to https://sandjab.github.io/rp/")
         print(f"https://sandjab.github.io/rp/")
 
     finally:
         # Cleanup
         shutil.rmtree(tmp_dir, ignore_errors=True)
-        print(f"[INFO] Cleaned up {tmp_dir}", file=sys.stderr)
+        logger.info(f"[INFO] Cleaned up {tmp_dir}")
 
 if __name__ == "__main__":
     main()

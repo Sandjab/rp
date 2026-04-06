@@ -10,6 +10,7 @@ interface StartParams {
   skip_collect: boolean;
   no_linkedin: boolean;
   no_deploy: boolean;
+  debug: boolean;
 }
 
 interface StepLauncherProps {
@@ -35,6 +36,7 @@ export function StepLauncher({ edition, onStart }: StepLauncherProps) {
   const [skipCollect, setSkipCollect] = useState(false);
   const [noLinkedin, setNoLinkedin] = useState(false);
   const [noDeploy, setNoDeploy] = useState(false);
+  const [debug, setDebug] = useState(false);
 
   function toggleStyle(style: string) {
     setStyles((prev) =>
@@ -50,6 +52,7 @@ export function StepLauncher({ edition, onStart }: StepLauncherProps) {
       skip_collect: skipCollect,
       no_linkedin: noLinkedin,
       no_deploy: noDeploy,
+      debug,
     });
   }
 
@@ -112,6 +115,13 @@ export function StepLauncher({ edition, onStart }: StepLauncherProps) {
             onCheckedChange={(v) => setNoDeploy(v === true)}
           />
           Sans déploiement
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox
+            checked={debug}
+            onCheckedChange={(v) => setDebug(v === true)}
+          />
+          Mode debug
         </label>
       </div>
 

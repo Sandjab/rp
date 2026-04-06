@@ -15,21 +15,21 @@ import subprocess
 import sys
 from pathlib import Path
 
-import yaml
 from PIL import Image, ImageDraw, ImageFont
 
-PROJECT_DIR = Path(__file__).parent.parent
-PIPELINE_DIR = PROJECT_DIR / ".pipeline"
+from log_utils import setup_logging, load_config, PROJECT_DIR, PIPELINE_DIR
+
+# Handle --debug before logger init
+if "--debug" in sys.argv:
+    os.environ["RP_DEBUG"] = "1"
+    sys.argv.remove("--debug")
+
+logger = setup_logging("linkedin")
+
 LINKEDIN_DIR = PIPELINE_DIR / "linkedin"
 PROMPT_PATH = PROJECT_DIR / "scripts" / "prompts" / "linkedin.md"
 EDITORIAL_PATH = PIPELINE_DIR / "02_editorial.json"
 MAX_ATTEMPTS = 2
-
-
-def load_config():
-    config_path = PROJECT_DIR / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
-        return yaml.safe_load(f)
 
 
 def get_edition_number(archives_dir):
@@ -76,7 +76,7 @@ def build_comment(editorial, edition_url):
     return "\n".join(lines)
 
 
-def call_claude(prompt):
+def call_claude(prompt, timeout=120):
     """Call claude -p and return stdout."""
     result = subprocess.run(
         [
@@ -90,7 +90,7 @@ def call_claude(prompt):
         input=prompt,
         capture_output=True,
         text=True,
-        timeout=120,
+        timeout=timeout,
     )
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
@@ -114,7 +114,7 @@ def generate_image(prompt, output_path):
     """Generate image via Gemini Pro (generate_content API). Tolerant."""
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
-        print("[WARN] GOOGLE_API_KEY not set, skipping image generation", file=sys.stderr)
+        logger.warning("[WARN] GOOGLE_API_KEY not set, skipping image generation")
         return False
     try:
         from google import genai
@@ -132,12 +132,12 @@ def generate_image(prompt, output_path):
             if part.inline_data and part.inline_data.mime_type.startswith("image/"):
                 with open(output_path, "wb") as f:
                     f.write(part.inline_data.data)
-                print(f"[LINKEDIN] Image generated (gemini-3-pro): {output_path}", file=sys.stderr)
+                logger.info(f"[LINKEDIN] Image generated (gemini-3-pro): {output_path}")
                 return True
-        print("[WARN] No image returned by API", file=sys.stderr)
+        logger.warning("[WARN] No image returned by API")
         return False
     except Exception as e:
-        print(f"[WARN] Image generation failed: {e}", file=sys.stderr)
+        logger.warning(f"[WARN] Image generation failed: {e}")
         return False
 
 
@@ -221,7 +221,7 @@ def overlay_text_on_image(image_path, edition_title, edition_number, subtitle):
 
     # Save as RGB PNG
     img.convert("RGB").save(image_path, "PNG")
-    print(f"[LINKEDIN] Text overlay applied: {image_path}", file=sys.stderr)
+    logger.info(f"[LINKEDIN] Text overlay applied: {image_path}")
 
 
 def copy_to_clipboard(text):
@@ -243,32 +243,33 @@ def main():
         if idx + 1 < len(sys.argv):
             editorial_override = Path(sys.argv[idx + 1])
             if not editorial_override.exists():
-                print(f"[ERROR] Editorial file not found: {editorial_override}", file=sys.stderr)
+                logger.error(f"[ERROR] Editorial file not found: {editorial_override}")
                 sys.exit(1)
-            print(f"[LINKEDIN] Using editorial override: {editorial_override}", file=sys.stderr)
+            logger.info(f"[LINKEDIN] Using editorial override: {editorial_override}")
         else:
-            print("[ERROR] --editorial requires a path argument", file=sys.stderr)
+            logger.error("[ERROR] --editorial requires a path argument")
             sys.exit(1)
 
     editorial_path = editorial_override or EDITORIAL_PATH
 
     config = load_config()
+    claude_timeout = config.get("edition", {}).get("timeouts", {}).get("linkedin", 120)
 
     # Check if LinkedIn is enabled
     linkedin_config = config.get("linkedin", {})
     if not linkedin_config.get("enabled", True):
-        print("[LINKEDIN] Disabled in config, skipping", file=sys.stderr)
+        logger.info("[LINKEDIN] Disabled in config, skipping")
         return
 
     # --image-only: regenerate image from existing prompt, skip claude -p
     if image_only:
         prompt_file = LINKEDIN_DIR / "image_prompt.txt"
         if not prompt_file.exists():
-            print(f"[ERROR] {prompt_file} not found. Run without --image-only first.", file=sys.stderr)
+            logger.error(f"[ERROR] {prompt_file} not found. Run without --image-only first.")
             sys.exit(1)
 
         image_prompt = prompt_file.read_text().strip()
-        print(f"[LINKEDIN] --image-only: reusing existing prompt ({len(image_prompt)} chars)", file=sys.stderr)
+        logger.info(f"[LINKEDIN] --image-only: reusing existing prompt ({len(image_prompt)} chars)")
 
         archives_dir = PROJECT_DIR / "editions" / "archives"
         edition_number = get_edition_number(archives_dir)
@@ -276,14 +277,14 @@ def main():
 
         image_path = LINKEDIN_DIR / "image.png"
         if not generate_image(image_prompt, image_path):
-            print("[ERROR] Image generation failed", file=sys.stderr)
+            logger.error("[ERROR] Image generation failed")
             sys.exit(1)
 
         # Save raw API image before overlay (debug)
         raw_path = LINKEDIN_DIR / "image_raw.png"
         import shutil
         shutil.copy2(image_path, raw_path)
-        print(f"[LINKEDIN] Raw API image saved: {raw_path}", file=sys.stderr)
+        logger.info(f"[LINKEDIN] Raw API image saved: {raw_path}")
 
         # Editorial subtitle for overlay
         edito_subtitle = ""
@@ -296,18 +297,18 @@ def main():
                     break
 
         overlay_text_on_image(image_path, edition_title, edition_number, edito_subtitle)
-        print(f"[LINKEDIN] Image regenerated: {image_path}", file=sys.stderr)
+        logger.info(f"[LINKEDIN] Image regenerated: {image_path}")
         return
 
     # Check editorial JSON exists
     if not editorial_path.exists():
-        print(f"[ERROR] Editorial file not found: {editorial_path}", file=sys.stderr)
+        logger.error(f"[ERROR] Editorial file not found: {editorial_path}")
         sys.exit(1)
 
     with open(editorial_path) as f:
         editorial = json.load(f)
 
-    print(f"[LINKEDIN] {len(editorial)} articles loaded from editorial", file=sys.stderr)
+    logger.info(f"[LINKEDIN] {len(editorial)} articles loaded from editorial")
 
     # Prepare output directory
     LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
@@ -344,8 +345,8 @@ def main():
     (LINKEDIN_DIR / "post.txt").write_text(post_text)
     (LINKEDIN_DIR / "comment.txt").write_text(comment_text)
 
-    print(f"[LINKEDIN] Post: {len(post_text)} chars (deterministic)", file=sys.stderr)
-    print(f"[LINKEDIN] Comment: {len(comment_text)} chars (deterministic)", file=sys.stderr)
+    logger.info(f"[LINKEDIN] Post: {len(post_text)} chars (deterministic)")
+    logger.info(f"[LINKEDIN] Comment: {len(comment_text)} chars (deterministic)")
 
     # --- Claude call: image prompt only ---
     prompt_template = PROMPT_PATH.read_text()
@@ -363,12 +364,12 @@ def main():
 
     image_prompt = None
     for attempt in range(1, MAX_ATTEMPTS + 1):
-        print(f"[LINKEDIN] Image prompt generation attempt {attempt}/{MAX_ATTEMPTS}...", file=sys.stderr)
+        logger.info(f"[LINKEDIN] Image prompt generation attempt {attempt}/{MAX_ATTEMPTS}...")
 
         try:
-            raw_response = call_claude(base_prompt)
+            raw_response = call_claude(base_prompt, timeout=claude_timeout)
         except Exception as e:
-            print(f"[ERROR] claude -p call failed: {e}", file=sys.stderr)
+            logger.error(f"[ERROR] claude -p call failed: {e}")
             continue
 
         # Save raw response for debugging
@@ -386,9 +387,9 @@ def main():
 
         errors = validate_image_prompt(candidate)
         if errors:
-            print(f"[ERROR] Image prompt validation failed (attempt {attempt}):", file=sys.stderr)
+            logger.error(f"[ERROR] Image prompt validation failed (attempt {attempt}):")
             for err in errors:
-                print(f"  - {err}", file=sys.stderr)
+                logger.error(f"  - {err}")
             continue
 
         image_prompt = candidate
@@ -396,9 +397,9 @@ def main():
 
     if image_prompt:
         (LINKEDIN_DIR / "image_prompt.txt").write_text(image_prompt)
-        print(f"[LINKEDIN] Image prompt: {len(image_prompt)} chars", file=sys.stderr)
+        logger.info(f"[LINKEDIN] Image prompt: {len(image_prompt)} chars")
     else:
-        print("[WARN] Image prompt generation failed, skipping image", file=sys.stderr)
+        logger.warning("[WARN] Image prompt generation failed, skipping image")
 
     # Generate image (tolerant) + text overlay
     image_generated = False
@@ -411,7 +412,7 @@ def main():
             raw_path = LINKEDIN_DIR / "image_raw.png"
             import shutil
             shutil.copy2(image_path, raw_path)
-            print(f"[LINKEDIN] Raw API image saved: {raw_path}", file=sys.stderr)
+            logger.info(f"[LINKEDIN] Raw API image saved: {raw_path}")
 
             # Editorial subtitle from synthesis
             edito_subtitle = synthesis.get("editorial_title", "")
@@ -420,18 +421,18 @@ def main():
     # Copy to clipboard
     if linkedin_config.get("clipboard", True):
         if copy_to_clipboard(post_text):
-            print("[LINKEDIN] Post copied to clipboard", file=sys.stderr)
+            logger.info("[LINKEDIN] Post copied to clipboard")
         else:
-            print("[WARN] Could not copy to clipboard", file=sys.stderr)
+            logger.warning("[WARN] Could not copy to clipboard")
 
     # Recap
-    print(f"\n[LINKEDIN] Done! Files in {LINKEDIN_DIR}/", file=sys.stderr)
-    print(f"  post.txt      ({len(post_text)} chars)", file=sys.stderr)
-    print(f"  comment.txt   ({len(comment_text)} chars)", file=sys.stderr)
+    logger.info(f"\n[LINKEDIN] Done! Files in {LINKEDIN_DIR}/")
+    logger.info(f"  post.txt      ({len(post_text)} chars)")
+    logger.info(f"  comment.txt   ({len(comment_text)} chars)")
     if image_prompt:
-        print(f"  image_prompt.txt ({len(image_prompt)} chars)", file=sys.stderr)
+        logger.info(f"  image_prompt.txt ({len(image_prompt)} chars)")
     if image_generated:
-        print(f"  image.png     (generated)", file=sys.stderr)
+        logger.info(f"  image.png     (generated)")
 
     print(str(LINKEDIN_DIR))
 

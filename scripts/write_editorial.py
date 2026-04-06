@@ -15,7 +15,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import yaml
+from log_utils import setup_logging, load_config, PROJECT_DIR, PIPELINE_DIR
+
+logger = setup_logging("editorial")
 
 EDITO_STYLES = {
     "focused": """   **Structure du billet :**
@@ -74,18 +76,10 @@ EDITO_STYLES_V2 = {
    - REGLE : le billet est une chronique monothematique. Profondeur > largeur.""",
 }
 
-PROJECT_DIR = Path(__file__).parent.parent
-PIPELINE_DIR = PROJECT_DIR / ".pipeline"
 PROMPT_PATH = PROJECT_DIR / "scripts" / "prompts" / "editorial.md"
 CANDIDATES_PATH = PIPELINE_DIR / "01_candidates.json"
 OUTPUT_PATH = PIPELINE_DIR / "02_editorial.json"
 MAX_ATTEMPTS = 2
-
-
-def load_config():
-    config_path = PROJECT_DIR / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
-        return yaml.safe_load(f)
 
 
 def _repair_json_quotes(text):
@@ -203,7 +197,7 @@ def validate_editorial(data):
     return errors
 
 
-def call_claude(prompt):
+def call_claude(prompt, timeout=480):
     """Call claude -p and return stdout."""
     result = subprocess.run(
         [
@@ -217,7 +211,7 @@ def call_claude(prompt):
         input=prompt,
         capture_output=True,
         text=True,
-        timeout=300,
+        timeout=timeout,
     )
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
@@ -227,16 +221,17 @@ def call_claude(prompt):
 def main():
     PIPELINE_DIR.mkdir(exist_ok=True)
     config = load_config()
+    timeout = config.get("edition", {}).get("timeouts", {}).get("editorial", 480)
     today = os.environ.get("RP_EDITION_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     if not CANDIDATES_PATH.exists():
-        print(f"[ERROR] Candidates file not found: {CANDIDATES_PATH}", file=sys.stderr)
+        logger.error(f"[ERROR] Candidates file not found: {CANDIDATES_PATH}")
         sys.exit(1)
 
     with open(CANDIDATES_PATH) as f:
         candidates = json.load(f)
 
-    print(f"[EDITORIAL] {len(candidates)} candidates loaded", file=sys.stderr)
+    logger.info(f"[EDITORIAL] {len(candidates)} candidates loaded")
 
     # Load prompt template
     prompt_template = PROMPT_PATH.read_text()
@@ -253,7 +248,7 @@ def main():
     styles_dict = EDITO_STYLES_V2 if prompt_version == "v2" else EDITO_STYLES
     anti_tics = ANTI_TICS_V2 if prompt_version == "v2" else ""
     style_instructions = styles_dict.get(edito_style, styles_dict["focused"])
-    print(f"[EDITORIAL] Style: {edito_style}, Prompt: {prompt_version}", file=sys.stderr)
+    logger.info(f"[EDITORIAL] Style: {edito_style}, Prompt: {prompt_version}")
 
     base_prompt = (
         prompt_template
@@ -263,10 +258,11 @@ def main():
         .replace("{{TOPICS}}", topics_list)
         .replace("{{EDITO_STYLE_INSTRUCTIONS}}", anti_tics + "\n" + style_instructions if anti_tics else style_instructions)
     )
+    logger.debug(f"Prompt length: {len(base_prompt)} chars, candidates: {len(candidates)}")
 
     last_errors = []
     for attempt in range(1, MAX_ATTEMPTS + 1):
-        print(f"[EDITORIAL] Attempt {attempt}/{MAX_ATTEMPTS}...", file=sys.stderr)
+        logger.info(f"[EDITORIAL] Attempt {attempt}/{MAX_ATTEMPTS}...")
 
         # Build prompt (with error feedback on retry)
         if attempt == 1:
@@ -280,9 +276,9 @@ def main():
             )
 
         try:
-            raw_response = call_claude(prompt)
+            raw_response = call_claude(prompt, timeout=timeout)
         except Exception as e:
-            print(f"[ERROR] claude -p call failed: {e}", file=sys.stderr)
+            logger.error(f"[ERROR] claude -p call failed: {e}")
             last_errors = [str(e)]
             continue
 
@@ -290,19 +286,21 @@ def main():
         raw_path = PIPELINE_DIR / f"02_raw_attempt_{attempt}.txt"
         raw_path.write_text(raw_response)
 
+        logger.debug(f"Raw response: {len(raw_response)} chars, saved to {raw_path}")
+
         # Extract JSON
         data = extract_json(raw_response)
         if data is None:
-            print(f"[ERROR] Could not extract JSON from response (attempt {attempt})", file=sys.stderr)
+            logger.error(f"[ERROR] Could not extract JSON from response (attempt {attempt})")
             last_errors = ["Could not parse JSON from response. Make sure to return ONLY a JSON array."]
             continue
 
         # Validate
         errors = validate_editorial(data)
         if errors:
-            print(f"[ERROR] Validation failed ({len(errors)} errors, attempt {attempt}):", file=sys.stderr)
+            logger.error(f"[ERROR] Validation failed ({len(errors)} errors, attempt {attempt}):")
             for err in errors:
-                print(f"  - {err}", file=sys.stderr)
+                logger.error(f"  - {err}")
             last_errors = errors
             continue
 
@@ -310,12 +308,12 @@ def main():
         with open(OUTPUT_PATH, "w") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        print(f"[EDITORIAL] Success: {len(data)} articles (1 synthesis + {len(data)-1} articles) -> {OUTPUT_PATH}", file=sys.stderr)
+        logger.info(f"[EDITORIAL] Success: {len(data)} articles (1 synthesis + {len(data)-1} articles) -> {OUTPUT_PATH}")
         print(str(OUTPUT_PATH))
         return
 
     # All attempts failed
-    print(f"[ERROR] Editorial generation failed after {MAX_ATTEMPTS} attempts", file=sys.stderr)
+    logger.error(f"[ERROR] Editorial generation failed after {MAX_ATTEMPTS} attempts")
     sys.exit(1)
 
 

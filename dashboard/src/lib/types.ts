@@ -69,6 +69,7 @@ export interface PipelineEvent {
     | "no_run";
   phase?: PhaseName;
   line?: string;
+  text?: string;
   stream?: "stdout" | "stderr";
   duration_s?: number;
   exit_code?: number;

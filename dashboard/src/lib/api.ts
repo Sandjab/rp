@@ -30,6 +30,7 @@ export const api = {
     skip_collect: boolean;
     no_linkedin: boolean;
     no_deploy: boolean;
+    debug?: boolean;
   }): Promise<{ ok: boolean; run_id: string }> {
     return fetch("/api/pipeline/start", {
       method: "POST",
@@ -88,7 +89,7 @@ export const api = {
   },
 
   /** Run a single pipeline phase (manual resume). */
-  runPhase(params: { phase: string; date: string; styles?: string[] }): Promise<{ ok: boolean; run_id: string }> {
+  runPhase(params: { phase: string; date: string; styles?: string[]; debug?: boolean }): Promise<{ ok: boolean; run_id: string }> {
     return fetch("/api/pipeline/run-phase", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

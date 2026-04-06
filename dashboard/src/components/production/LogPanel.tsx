@@ -19,8 +19,11 @@ function eventColor(event: PipelineEvent) {
       return "text-amber-400";
     case "pipeline_done":
       return "text-emerald-400";
-    case "log":
+    case "log": {
+      const logText = event.text ?? event.line ?? "";
+      if (logText.includes(" DEBUG]")) return "text-zinc-500";
       return event.stream === "stderr" ? "text-amber-400" : "text-foreground/80";
+    }
     default:
       return "text-muted-foreground";
   }
@@ -41,7 +44,7 @@ function formatEvent(event: PipelineEvent): string {
     case "no_run":
       return `-- Aucun pipeline en cours`;
     case "log":
-      return event.line ?? "";
+      return event.text ?? event.line ?? "";
     default:
       return JSON.stringify(event);
   }

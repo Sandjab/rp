@@ -10,10 +10,15 @@ Usage:
 
 import os
 import sys
+import time
 from pathlib import Path
 
 from google import genai
 from google.genai import types
+
+from log_utils import setup_logging
+
+logger = setup_logging("test_image")
 
 api_key = os.environ.get("GOOGLE_API_KEY")
 if not api_key:
@@ -45,13 +50,18 @@ def run_test(name, func):
     print("=" * 60)
     print(f"  {name}")
     print("=" * 60)
+    t0 = time.time()
     try:
         path = func()
+        elapsed = time.time() - t0
         print(f"  OK -> {path}")
+        logger.debug(f"{name}: OK in {elapsed:.1f}s -> {path}")
         results.append((name, "OK", str(path)))
     except Exception as e:
+        elapsed = time.time() - t0
         err = str(e).split("\n")[0][:120]
         print(f"  ERREUR: {err}")
+        logger.debug(f"{name}: ERREUR in {elapsed:.1f}s: {err}")
         results.append((name, "ERREUR", err))
     print()
 

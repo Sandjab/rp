@@ -11,6 +11,10 @@ from pathlib import Path
 import feedparser
 import yaml
 
+from log_utils import setup_logging
+
+logger = setup_logging("parse_rss")
+
 HOURS_CUTOFF = 48
 TIMEOUT = 10
 
@@ -59,13 +63,13 @@ def fetch_feed(feed_config, cutoff, authority):
     try:
         d = feedparser.parse(url)
     except Exception as e:
-        print(f"[WARN] Failed to fetch {name}: {e}", file=sys.stderr)
+        logger.warning(f"[WARN] Failed to fetch {name}: {e}")
         return articles
     finally:
         socket.setdefaulttimeout(old_timeout)
 
     if d.bozo and not d.entries:
-        print(f"[WARN] Feed error for {name}: {d.bozo_exception}", file=sys.stderr)
+        logger.warning(f"[WARN] Feed error for {name}: {d.bozo_exception}")
         return articles
 
     for entry in d.entries:
@@ -97,13 +101,15 @@ def main():
     authority = load_authority()
     cutoff = datetime.now(timezone.utc) - timedelta(hours=HOURS_CUTOFF)
 
+    logger.debug(f"Config: {len(feeds)} feeds, cutoff={HOURS_CUTOFF}h")
+
     all_articles = []
     for feed in feeds:
         articles = fetch_feed(feed, cutoff, authority)
         all_articles.extend(articles)
-        print(f"[INFO] {feed['name']}: {len(articles)} articles", file=sys.stderr)
+        logger.info(f"[INFO] {feed['name']}: {len(articles)} articles")
 
-    print(f"[INFO] Total: {len(all_articles)} articles from RSS", file=sys.stderr)
+    logger.info(f"[INFO] Total: {len(all_articles)} articles from RSS")
 
     # Output JSON to stdout
     json.dump(all_articles, sys.stdout, ensure_ascii=False, indent=2)

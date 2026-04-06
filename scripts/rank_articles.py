@@ -2,24 +2,19 @@
 """Score and rank articles, output top N as JSON."""
 
 import json
+import os
 import sys
 from datetime import datetime, timezone
-from pathlib import Path
 
-import os
+from log_utils import setup_logging, load_config
 
-import yaml
+logger = setup_logging("rank_articles")
 
 BREAKING_KEYWORDS = [
     "breaking", "urgent", "just in", "exclusive", "major",
     "announces", "launches", "acquires", "shuts down", "breach",
     "zero-day", "critical vulnerability", "recall",
 ]
-
-def load_config():
-    config_path = Path(__file__).parent.parent / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
-        return yaml.safe_load(f)
 
 def recency_score(published_str):
     """Score 0-30 based on article age."""
@@ -110,6 +105,8 @@ def rank(articles, config):
         config.get("edition", {}).get("max_articles", 15),
     ))
 
+    logger.debug(f"max_candidates={max_candidates}, {len(articles)} articles to rank")
+
     for article in articles:
         s1 = recency_score(article.get("published"))
         s2 = authority_score(article)
@@ -117,6 +114,7 @@ def rank(articles, config):
         s5 = breaking_score(article)
         article["score"] = s1 + s2 + s4 + s5
         assign_topics(article, topics_config)
+        logger.debug(f"Score {article['score']:3d} | recency={s1:2d} authority={s2:2d} depth={s4:2d} breaking={s5:2d} | {article.get('title', '')[:60]}")
 
     articles.sort(key=lambda a: a["score"], reverse=True)
     return articles[:max_candidates]
@@ -125,7 +123,7 @@ def main():
     config = load_config()
     articles = json.load(sys.stdin)
     ranked = rank(articles, config)
-    print(f"[INFO] Ranked: top {len(ranked)} articles selected", file=sys.stderr)
+    logger.info(f"[INFO] Ranked: top {len(ranked)} articles selected")
     json.dump(ranked, sys.stdout, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":

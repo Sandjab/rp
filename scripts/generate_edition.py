@@ -3,21 +3,18 @@
 
 import argparse
 import json
+import os
 import re
 import shutil
 import sys
-import os
 from datetime import datetime
 from html import escape as h
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-import yaml
+from log_utils import setup_logging, load_config
 
-def load_config():
-    config_path = Path(__file__).parent.parent / "config" / "revue-presse.yaml"
-    with open(config_path) as f:
-        return yaml.safe_load(f)
+logger = setup_logging("generate")
 
 def load_template():
     tpl_path = Path(__file__).parent.parent / "templates" / "edition.html"
@@ -324,7 +321,7 @@ font-family:var(--font-m);font-size:0.9rem;transition:color .2s}}
     archive_path = archives_dir / "index.html"
     with open(archive_path, "w") as f:
         f.write(archive_html)
-    print(f"[INFO] Archive page updated: {archive_path}", file=sys.stderr)
+    logger.info(f"[INFO] Archive page updated: {archive_path}")
 
 def main():
     config = load_config()
@@ -338,7 +335,20 @@ def main():
         "input", nargs="?", default=None,
         help="Fichier JSON editorial (default: stdin)"
     )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Activer le mode debug (logging detaille)"
+    )
     args = parser.parse_args()
+
+    if args.debug:
+        os.environ["RP_DEBUG"] = "1"
+        # Re-init logger with debug level
+        import logging
+        for h_ in logger.handlers[:]:
+            logger.removeHandler(h_)
+        from log_utils import setup_logging as _setup
+        globals()["logger"] = _setup("generate")
 
     if args.input:
         with open(args.input) as f:
@@ -348,9 +358,11 @@ def main():
 
     # Warn about missing editorial content
     missing_editorial = [a for a in articles if not a.get("editorial_title") or not a.get("editorial_summary")]
+    logger.debug(f"Template size: {len(template)} chars, {len(articles)} articles loaded")
+
     if missing_editorial:
-        print(f"[WARN] {len(missing_editorial)}/{len(articles)} articles missing editorial_title or editorial_summary.", file=sys.stderr)
-        print(f"[WARN] Run the skill Phase 4 (editorial rewriting) to add French titles and summaries.", file=sys.stderr)
+        logger.warning(f"[WARN] {len(missing_editorial)}/{len(articles)} articles missing editorial_title or editorial_summary.")
+        logger.warning(f"[WARN] Run the skill Phase 4 (editorial rewriting) to add French titles and summaries.")
 
     tz = ZoneInfo(config["edition"]["timezone"])
     now = datetime.now(tz)                    # temps réel (timestamps, time_ago)
@@ -371,6 +383,7 @@ def main():
     archives_dir = editions_dir / "archives"
     archives_dir.mkdir(exist_ok=True)
     edition_number = get_edition_number(archives_dir)
+    logger.debug(f"Edition #{edition_number}, date={date_str}, timestamp={timestamp_str}")
 
     # Build HTML blocks
     cards_html = ""
@@ -411,14 +424,14 @@ def main():
     with open(archive_path, "w") as f:
         f.write(html)
 
-    print(f"[INFO] Archived: {archive_path}", file=sys.stderr)
+    logger.info(f"[INFO] Archived: {archive_path}")
 
     # Archive editorial JSON alongside the HTML
     editorial_src = Path(__file__).parent.parent / ".pipeline" / "02_editorial.json"
     if editorial_src.exists():
         editorial_snapshot = archives_dir / f"editorial.{timestamp_str}.json"
         shutil.copy2(str(editorial_src), str(editorial_snapshot))
-        print(f"[INFO] Editorial snapshot: {editorial_snapshot}", file=sys.stderr)
+        logger.info(f"[INFO] Editorial snapshot: {editorial_snapshot}")
 
     # Update manifest.json with edition metadata
     manifest_path = archives_dir / "manifest.json"
@@ -448,13 +461,13 @@ def main():
 
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
-    print(f"[INFO] Manifest updated: {manifest_path}", file=sys.stderr)
+    logger.info(f"[INFO] Manifest updated: {manifest_path}")
 
     # Save timestamped manifest snapshot alongside the archive HTML
     manifest_snapshot = archives_dir / f"manifest.{timestamp_str}.json"
     with open(manifest_snapshot, "w") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
-    print(f"[INFO] Manifest snapshot: {manifest_snapshot}", file=sys.stderr)
+    logger.info(f"[INFO] Manifest snapshot: {manifest_snapshot}")
 
     # Also write latest.html for deploy script
     latest_path = editions_dir / "latest.html"

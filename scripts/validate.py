@@ -10,6 +10,10 @@ import json
 import sys
 from pathlib import Path
 
+from log_utils import setup_logging
+
+logger = setup_logging("validate")
+
 
 def validate_candidates(data):
     """Validate candidates JSON (Phase 1 output)."""
@@ -77,7 +81,7 @@ def validate_editorial(data):
 
 def main():
     if len(sys.argv) < 3:
-        print("Usage: validate.py <file.json> --phase <candidates|editorial>", file=sys.stderr)
+        logger.error("Usage: validate.py <file.json> --phase <candidates|editorial>")
         sys.exit(1)
 
     filepath = Path(sys.argv[1])
@@ -87,19 +91,21 @@ def main():
             phase = sys.argv[i + 1]
 
     if phase not in ("candidates", "editorial"):
-        print(f"Unknown phase: {phase}. Use 'candidates' or 'editorial'.", file=sys.stderr)
+        logger.error(f"Unknown phase: {phase}. Use 'candidates' or 'editorial'.")
         sys.exit(1)
 
     if not filepath.exists():
-        print(f"[ERROR] File not found: {filepath}", file=sys.stderr)
+        logger.error(f"[ERROR] File not found: {filepath}")
         sys.exit(1)
 
     try:
         with open(filepath) as f:
             data = json.load(f)
     except json.JSONDecodeError as e:
-        print(f"[ERROR] Invalid JSON: {e}", file=sys.stderr)
+        logger.error(f"[ERROR] Invalid JSON: {e}")
         sys.exit(1)
+
+    logger.debug(f"Validating {filepath} as {phase}: {len(data) if isinstance(data, list) else 'not a list'} items")
 
     if phase == "candidates":
         errors = validate_candidates(data)
@@ -107,12 +113,12 @@ def main():
         errors = validate_editorial(data)
 
     if errors:
-        print(f"[VALIDATION FAILED] {len(errors)} error(s) in {filepath}:", file=sys.stderr)
+        logger.error(f"[VALIDATION FAILED] {len(errors)} error(s) in {filepath}:")
         for err in errors:
-            print(f"  - {err}", file=sys.stderr)
+            logger.error(f"  - {err}")
         sys.exit(1)
     else:
-        print(f"[VALIDATION OK] {filepath} ({phase})", file=sys.stderr)
+        logger.info(f"[VALIDATION OK] {filepath} ({phase})")
 
 
 if __name__ == "__main__":
