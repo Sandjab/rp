@@ -73,7 +73,7 @@ def list_variants() -> list[str]:
 
 
 def load_config() -> dict:
-    with open(CONFIG_PATH) as f:
+    with open(CONFIG_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -553,11 +553,28 @@ class DashboardHandler(BaseHTTPRequestHandler):
         config = load_config()
         tz = ZoneInfo(config.get("edition", {}).get("timezone", "Europe/Paris"))
 
-        # Count unique dates from manifest
+        # Count unique dates from manifest (try local first, then gh-pages)
         unique_dates = set()
+        manifest_data = None
         if MANIFEST_PATH.exists():
             try:
-                entries = json.loads(MANIFEST_PATH.read_text("utf-8"))
+                manifest_data = MANIFEST_PATH.read_text("utf-8")
+            except OSError:
+                pass
+        if not manifest_data:
+            # Fall back to gh-pages branch
+            try:
+                result = subprocess.run(
+                    ["git", "show", "origin/gh-pages:editions/archives/manifest.json"],
+                    capture_output=True, cwd=str(PROJECT_DIR), timeout=10,
+                )
+                if result.returncode == 0:
+                    manifest_data = result.stdout.decode("utf-8", errors="replace")
+            except Exception:
+                pass
+        if manifest_data:
+            try:
+                entries = json.loads(manifest_data)
                 for entry in entries:
                     d = entry.get("date", "")
                     if d:
