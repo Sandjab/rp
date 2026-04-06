@@ -40,7 +40,12 @@ MANIFEST_PATH = PROJECT_DIR / "editions" / "archives" / "manifest.json"
 PIPELINE_DIR = PROJECT_DIR / ".pipeline"
 EDITIONS_DIR = PROJECT_DIR / "editions"
 LATEST_HTML = EDITIONS_DIR / "latest.html"
-LINKEDIN_IMAGE = PIPELINE_DIR / "linkedin" / "image.png"
+LINKEDIN_DIR = PIPELINE_DIR / "linkedin"
+LINKEDIN_IMAGE = LINKEDIN_DIR / "image.png"
+LINKEDIN_IMAGE_RAW = LINKEDIN_DIR / "image_raw.png"
+LINKEDIN_PROMPT = LINKEDIN_DIR / "image_prompt.txt"
+IMAGE_MODELS_PATH = PROJECT_DIR / "config" / "image-models.yaml"
+PROMPT_TEMPLATE_PATH = PROJECT_DIR / "scripts" / "prompts" / "linkedin.md"
 
 VARIANT_NAME_RE = re.compile(r"^[a-z0-9_]+$")
 
@@ -78,6 +83,279 @@ def list_variants() -> list[str]:
 def load_config() -> dict:
     with open(CONFIG_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+# ── Image helpers ─────────────────────────────────────────────────────────────
+
+
+def load_image_models() -> dict:
+    """Parse image-models.yaml and return {models: [...], default: ...}."""
+    with open(IMAGE_MODELS_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+
+    models = []
+    for family in ("gemini", "imagen"):
+        section = data.get(family, {})
+        for model_id, info in section.items():
+            if not isinstance(info, dict) or "alias" not in info:
+                continue
+            models.append({
+                "id": model_id,
+                "alias": info["alias"],
+                "family": family,
+            })
+
+    return {
+        "models": models,
+        "default": "gemini-3-pro-image-preview",
+    }
+
+
+def generate_image_prompt() -> str:
+    """Generate an image prompt from editorial content using claude -p."""
+    # Load editorial
+    if not EDITORIAL_PATH.exists():
+        raise FileNotFoundError("02_editorial.json not found")
+
+    with open(EDITORIAL_PATH, encoding="utf-8") as f:
+        editorial = json.load(f)
+
+    # Load prompt template
+    prompt_template = PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
+
+    # Load config for placeholders
+    config = load_config()
+    edition_title = config.get("edition", {}).get("title", "IA qu'a demander")
+    colors = config.get("styling", {}).get("colors", {}).get("light", {})
+    brand_accent = colors.get("accent", "#E63946")
+    brand_bg = colors.get("background", "#FAFAF8")
+    brand_text = colors.get("text", "#1A1A1A")
+
+    # Edition number
+    archives_dir = PROJECT_DIR / "editions" / "archives"
+    edition_number = _get_edition_number(archives_dir)
+
+    # Edition date
+    today = os.environ.get("RP_EDITION_DATE") or datetime.now().strftime("%Y-%m-%d")
+
+    prompt_text = (
+        prompt_template
+        .replace("{{EDITORIAL_JSON}}", json.dumps(editorial, ensure_ascii=False, indent=2))
+        .replace("{{DATE}}", today)
+        .replace("{{EDITION_NUMBER}}", str(edition_number))
+        .replace("{{EDITION_TITLE}}", edition_title)
+        .replace("{{BRAND_BG}}", brand_bg)
+        .replace("{{BRAND_ACCENT}}", brand_accent)
+        .replace("{{BRAND_TEXT}}", brand_text)
+    )
+
+    result = subprocess.run(
+        ["claude", "-p", "--model", "opus", "--permission-mode", "default",
+         "--tools", "", "--output-format", "text", "--no-session-persistence"],
+        input=prompt_text, capture_output=True, text=True, timeout=120,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
+
+    candidate = result.stdout.strip()
+    # Strip markdown fences if present
+    if candidate.startswith("```"):
+        lines = candidate.split("\n")
+        lines = [line for line in lines if not line.strip().startswith("```")]
+        candidate = "\n".join(lines).strip()
+
+    return candidate
+
+
+def generate_image_from_prompt(prompt: str, model_id: str) -> dict:
+    """Generate an image using Google GenAI, apply overlay, return metadata."""
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("GOOGLE_API_KEY not set")
+
+    from google import genai
+    from google.genai import types
+
+    LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
+    raw_path = LINKEDIN_DIR / "image_raw.png"
+    final_path = LINKEDIN_DIR / "image.png"
+
+    # Determine family from model_id
+    models_info = load_image_models()
+    family = "gemini"
+    for m in models_info["models"]:
+        if m["id"] == model_id:
+            family = m["family"]
+            break
+
+    client = genai.Client(api_key=api_key)
+    start = time.time()
+
+    if family == "imagen":
+        response = client.models.generate_images(
+            model=model_id,
+            prompt=prompt,
+            config=types.GenerateImagesConfig(
+                number_of_images=1,
+            ),
+        )
+        if response.generated_images:
+            with open(raw_path, "wb") as f:
+                f.write(response.generated_images[0].image.image_bytes)
+        else:
+            raise RuntimeError("No image returned by Imagen API")
+    else:
+        # Gemini family
+        response = client.models.generate_content(
+            model=model_id,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_modalities=["IMAGE", "TEXT"],
+            ),
+        )
+        image_found = False
+        for part in response.candidates[0].content.parts:
+            if part.inline_data and part.inline_data.mime_type.startswith("image/"):
+                with open(raw_path, "wb") as f:
+                    f.write(part.inline_data.data)
+                image_found = True
+                break
+        if not image_found:
+            raise RuntimeError("No image returned by Gemini API")
+
+    duration = round(time.time() - start, 2)
+
+    # Copy raw to final, then apply overlay
+    import shutil
+    shutil.copy2(raw_path, final_path)
+
+    # Apply text overlay
+    config = load_config()
+    edition_title = config.get("edition", {}).get("title", "IA qu'a demander")
+    archives_dir = PROJECT_DIR / "editions" / "archives"
+    edition_number = _get_edition_number(archives_dir)
+
+    # Get subtitle from editorial
+    subtitle = ""
+    if EDITORIAL_PATH.exists():
+        with open(EDITORIAL_PATH, encoding="utf-8") as f:
+            editorial = json.load(f)
+        for article in editorial:
+            if article.get("editorial_title"):
+                subtitle = article["editorial_title"]
+                break
+
+    _overlay_text_on_image(str(final_path), edition_title, edition_number, subtitle)
+
+    return {"ok": True, "model": model_id, "duration_s": duration}
+
+
+def _get_edition_number(archives_dir: Path) -> int:
+    """Derive edition number from manifest.json."""
+    manifest = archives_dir / "manifest.json"
+    if manifest.exists():
+        with open(manifest, encoding="utf-8") as f:
+            entries = json.load(f)
+        if entries:
+            unique_days = set(e.get("date", "") for e in entries)
+            today = os.environ.get("RP_EDITION_DATE") or datetime.now().strftime("%Y-%m-%d")
+            if today in unique_days:
+                return len(unique_days)
+            return len(unique_days) + 1
+    return 1
+
+
+def _overlay_text_on_image(image_path: str, edition_title: str, edition_number: int, subtitle: str):
+    """Overlay title + subtitle on image using Pillow."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    TARGET_W, TARGET_H = 1200, 627
+    BANNER_COLOR = (26, 26, 26)  # #1A1A1A
+    BANNER_OPACITY = int(255 * 0.78)
+    ACCENT_COLOR = (230, 57, 70)  # #E63946
+    ACCENT_HEIGHT = 4
+    MARGIN_TOP = 70
+    PADDING_H = 60
+    PADDING_V = 20
+
+    # Font paths with cross-platform fallbacks
+    FONT_TITLE_PATHS = [
+        "/System/Library/Fonts/LucidaGrande.ttc",
+        "C:/Windows/Fonts/arialbd.ttf",
+    ]
+    FONT_SUBTITLE_PATHS = [
+        "/System/Library/Fonts/HelveticaNeue.ttc",
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+        "C:/Windows/Fonts/arial.ttf",
+    ]
+
+    img = Image.open(image_path).convert("RGBA")
+    if img.size != (TARGET_W, TARGET_H):
+        img = img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
+
+    # Load title font
+    font_title = None
+    for fpath in FONT_TITLE_PATHS:
+        try:
+            font_title = ImageFont.truetype(fpath, 52, index=0)
+            break
+        except (OSError, IndexError):
+            continue
+    if font_title is None:
+        font_title = ImageFont.load_default()
+
+    # Load subtitle font
+    font_subtitle = None
+    for fpath in FONT_SUBTITLE_PATHS:
+        try:
+            font_subtitle = ImageFont.truetype(fpath, 26, index=0)
+            break
+        except (OSError, IndexError):
+            continue
+    if font_subtitle is None:
+        font_subtitle = ImageFont.load_default()
+
+    title_text = f"{edition_title} N\u00b0{edition_number}"
+
+    # Truncate subtitle if too long
+    max_subtitle_w = TARGET_W - 2 * PADDING_H
+    if font_subtitle.getlength(subtitle) > max_subtitle_w:
+        while font_subtitle.getlength(subtitle + "\u2026") > max_subtitle_w and len(subtitle) > 10:
+            subtitle = subtitle[:-1].rstrip()
+        subtitle = subtitle + "\u2026"
+
+    title_bbox = font_title.getbbox(title_text)
+    title_h = title_bbox[3] - title_bbox[1]
+    subtitle_bbox = font_subtitle.getbbox(subtitle)
+    subtitle_h = subtitle_bbox[3] - subtitle_bbox[1]
+
+    banner_top = MARGIN_TOP
+    banner_height = PADDING_V + title_h + 12 + subtitle_h + PADDING_V
+    banner_bottom = banner_top + banner_height
+
+    overlay = Image.new("RGBA", (TARGET_W, TARGET_H), (0, 0, 0, 0))
+    draw_overlay = ImageDraw.Draw(overlay)
+    draw_overlay.rectangle(
+        [(0, banner_top), (TARGET_W, banner_bottom)],
+        fill=(*BANNER_COLOR, BANNER_OPACITY),
+    )
+    draw_overlay.rectangle(
+        [(0, banner_bottom), (TARGET_W, banner_bottom + ACCENT_HEIGHT)],
+        fill=(*ACCENT_COLOR, 255),
+    )
+    img = Image.alpha_composite(img, overlay)
+
+    draw = ImageDraw.Draw(img)
+    text_y = banner_top + PADDING_V
+    title_w = font_title.getlength(title_text)
+    title_x = (TARGET_W - title_w) / 2
+    draw.text((title_x, text_y), title_text, font=font_title, fill=(255, 255, 255, 255))
+    text_y += title_h + 12
+    subtitle_w = font_subtitle.getlength(subtitle)
+    subtitle_x = (TARGET_W - subtitle_w) / 2
+    draw.text((subtitle_x, text_y), subtitle, font=font_subtitle, fill=(255, 255, 255, 210))
+
+    img.convert("RGB").save(image_path, "PNG")
 
 
 # ── Pipeline execution ─────────────────────────────────────────────────────────
@@ -498,6 +776,15 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._handle_pipeline_events()
             return
 
+        # ── Image API ─────────────────────────────────────────────────────
+        if path == "/api/image/models":
+            self._handle_image_models()
+            return
+
+        if path == "/api/image/preview":
+            self._handle_image_preview()
+            return
+
         # ── Static file serving (SPA fallback) ─────────────────────────────
         self._serve_static(path)
 
@@ -554,6 +841,19 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         if path == "/api/pipeline/run-phase":
             self._handle_run_phase()
+            return
+
+        # ── Image API ─────────────────────────────────────────────────────
+        if path == "/api/image/prompt":
+            self._handle_image_prompt()
+            return
+
+        if path == "/api/image/generate":
+            self._handle_image_generate()
+            return
+
+        if path == "/api/image/prompt/save":
+            self._handle_image_prompt_save()
             return
 
         self._send_error(404, "Not found")
@@ -689,6 +989,83 @@ class DashboardHandler(BaseHTTPRequestHandler):
             return
 
         current_run.abort()
+        self._send_json({"ok": True})
+
+    # ── Image API handlers ─────────────────────────────────────────────────
+
+    def _handle_image_models(self):
+        """GET /api/image/models — return available image generation models."""
+        try:
+            data = load_image_models()
+            self._send_json(data)
+        except Exception as e:
+            self._send_error(500, str(e))
+
+    def _handle_image_prompt(self):
+        """POST /api/image/prompt — generate image prompt via claude -p."""
+        try:
+            prompt = generate_image_prompt()
+            LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
+            LINKEDIN_PROMPT.write_text(prompt, encoding="utf-8")
+            self._send_json({"prompt": prompt})
+        except Exception as e:
+            self._send_error(500, str(e))
+
+    def _handle_image_generate(self):
+        """POST /api/image/generate — generate image from prompt + model."""
+        try:
+            body = json.loads(self._read_body())
+        except json.JSONDecodeError as e:
+            self._send_error(400, f"Invalid JSON: {e}")
+            return
+
+        prompt = body.get("prompt", "").strip()
+        model = body.get("model", "gemini-3-pro-image-preview")
+
+        if not prompt:
+            self._send_error(400, "Missing 'prompt' field")
+            return
+
+        try:
+            result = generate_image_from_prompt(prompt, model)
+            self._send_json(result)
+        except Exception as e:
+            self._send_error(500, str(e))
+
+    def _handle_image_preview(self):
+        """GET /api/image/preview — serve generated image as PNG."""
+        parsed = urlparse(self.path)
+        raw = "raw=true" in (parsed.query or "")
+        target = LINKEDIN_IMAGE_RAW if raw else LINKEDIN_IMAGE
+
+        if not target.exists():
+            self._send_error(404, "No image generated yet")
+            return
+
+        try:
+            body = target.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "image/png")
+            self.send_header("Content-Length", len(body))
+            self.send_header("Cache-Control", "no-cache")
+            if DEV_MODE:
+                self._add_cors_headers()
+            self.end_headers()
+            self.wfile.write(body)
+        except OSError:
+            self._send_error(500, "Failed to read image file")
+
+    def _handle_image_prompt_save(self):
+        """POST /api/image/prompt/save — save edited prompt text."""
+        try:
+            body = json.loads(self._read_body())
+        except json.JSONDecodeError as e:
+            self._send_error(400, f"Invalid JSON: {e}")
+            return
+
+        prompt = body.get("prompt", "")
+        LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
+        LINKEDIN_PROMPT.write_text(prompt, encoding="utf-8")
         self._send_json({"ok": True})
 
     # ── Pipeline artifacts ─────────────────────────────────────────────────

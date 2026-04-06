@@ -14,6 +14,7 @@ import { StepLauncher } from "./StepLauncher";
 import { StepProgress } from "./StepProgress";
 import { StepEditor } from "./StepEditor";
 import { StepDeploy } from "./StepDeploy";
+import { StepImage } from "./StepImage";
 import { LogPanel } from "./LogPanel";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -350,23 +351,17 @@ export function ProductionTab() {
       );
     }
 
-    // Idle view: image placeholder
+    // Idle view: image
     if (idleView === "image" && !running) {
       return (
-        <div className="flex flex-col items-center justify-center gap-4 py-16">
-          <h2 className="text-lg font-semibold">Image LinkedIn</h2>
-          <p className="text-sm text-muted-foreground">
-            Etape image LinkedIn — fonctionnalite a venir.
-          </p>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setIdleView(null);
-            }}
-          >
-            Retour
-          </Button>
-        </div>
+        <StepImage
+          editionNumber={edition?.number ?? 0}
+          editionDate={edition?.date ?? ""}
+          onValidate={() => {
+            setIdleView(null);
+            fetchArtifacts();
+          }}
+        />
       );
     }
 
@@ -425,15 +420,11 @@ export function ProductionTab() {
       // Paused at image
       if (currentPhase === "image" && status === "paused") {
         return (
-          <div className="flex flex-col items-center justify-center gap-4 py-16">
-            <h2 className="text-lg font-semibold">Image LinkedIn</h2>
-            <p className="text-sm text-muted-foreground">
-              Etape image LinkedIn — passer directement a la generation HTML.
-            </p>
-            <Button className="mt-4" onClick={handleResume}>
-              Passer &rarr; HTML
-            </Button>
-          </div>
+          <StepImage
+            editionNumber={edition?.number ?? 0}
+            editionDate={edition?.date ?? ""}
+            onValidate={handleResume}
+          />
         );
       }
 

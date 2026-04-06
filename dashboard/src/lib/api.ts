@@ -1,4 +1,4 @@
-import type { ArtifactInfo, EditionInfo, PipelineEvent, PipelineStatus, VariantArticle } from "./types";
+import type { ArtifactInfo, EditionInfo, ImageModel, PipelineEvent, PipelineStatus, VariantArticle } from "./types";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -93,6 +93,36 @@ export const api = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
+    }).then((r) => json(r));
+  },
+
+  // ── Image API ─────────────────────────────────────────────────────────
+
+  /** Get available image generation models. */
+  getImageModels(): Promise<{ models: ImageModel[]; default: string }> {
+    return fetch("/api/image/models").then((r) => json(r));
+  },
+
+  /** Generate an image prompt via claude -p. */
+  generateImagePrompt(): Promise<{ prompt: string }> {
+    return fetch("/api/image/prompt", { method: "POST" }).then((r) => json(r));
+  },
+
+  /** Generate an image from a prompt + model. */
+  generateImage(params: { prompt: string; model: string }): Promise<{ ok: boolean; model: string; duration_s: number }> {
+    return fetch("/api/image/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    }).then((r) => json(r));
+  },
+
+  /** Save a manually edited prompt. */
+  saveImagePrompt(prompt: string): Promise<{ ok: boolean }> {
+    return fetch("/api/image/prompt/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
     }).then((r) => json(r));
   },
 };

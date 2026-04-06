@@ -87,6 +87,14 @@ export interface ArtifactInfo {
 
 export type PhaseAvailability = "available" | "blocked" | "done";
 
+// ── Image model types ───────────────────────────────────────────────────────
+
+export interface ImageModel {
+  id: string;
+  alias: string;
+  family: "gemini" | "imagen";
+}
+
 // ── Variant / article types ──────────────────────────────────────────────────
 
 export interface VariantArticle {
