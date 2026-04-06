@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { ProductionTab } from "@/components/production/ProductionTab"
 
 function App() {
   return (
@@ -24,9 +25,7 @@ function App() {
           </TabsList>
 
           <TabsContent value="production" className="mt-4">
-            <div className="rounded-lg border border-border p-8 text-center text-muted-foreground">
-              Production — lancement et suivi du pipeline
-            </div>
+            <ProductionTab />
           </TabsContent>
 
           <TabsContent value="config" className="mt-4">

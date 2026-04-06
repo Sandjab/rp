@@ -5,3 +5,4 @@ __pycache__/
 tmp/
 .pipeline/
 .claude/settings.local.json
+.superpowers/
