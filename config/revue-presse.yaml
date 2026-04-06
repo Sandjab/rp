@@ -7,8 +7,8 @@ edition:
   edito_style: "deep"   # focused | angle | deep
   prompt_version: "v2"   # v1 | v2
   timeouts:
-    websearch: 300       # claude -p WebSearch (secondes)
-    editorial: 480       # claude -p editorial (secondes)
+    websearch: 500       # claude -p WebSearch (secondes)
+    editorial: 900       # claude -p editorial (secondes)
     linkedin: 120        # claude -p image prompt (secondes)
     billet: 300          # claude -p billet d'humeur (secondes)
 

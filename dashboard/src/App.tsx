@@ -29,7 +29,7 @@ function App() {
             <ProductionTab />
           </TabsContent>
 
-          <TabsContent value="config" className="mt-4">
+          <TabsContent value="config" className="flex-1 flex flex-col min-h-0 mt-4">
             <ConfigTab />
           </TabsContent>
 
