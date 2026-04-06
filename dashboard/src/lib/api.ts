@@ -142,6 +142,18 @@ export const api = {
     }).then((r) => json(r));
   },
 
+  // ── LinkedIn API ─────────────────────────────────────────────────────
+
+  /** Get the LinkedIn post text from .pipeline/linkedin/post.txt. */
+  getLinkedInPost(): Promise<{ text: string }> {
+    return fetch("/api/linkedin/post").then((r) => json<{ text: string }>(r));
+  },
+
+  /** Get the LinkedIn comment text from .pipeline/linkedin/comment.txt. */
+  getLinkedInComment(): Promise<{ text: string }> {
+    return fetch("/api/linkedin/comment").then((r) => json<{ text: string }>(r));
+  },
+
   // ── Archives API ────────────────────────────────────────────────────
 
   /** Get archived editions from gh-pages manifest. */

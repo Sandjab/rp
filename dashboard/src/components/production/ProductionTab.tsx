@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api, subscribePipelineEvents } from "@/lib/api";
+import { CopyLinkedInButton } from "./CopyLinkedInButton";
 import type {
   ArtifactInfo,
   EditionInfo,
@@ -388,22 +389,24 @@ export function ProductionTab() {
           <p className="text-sm text-muted-foreground">
             L&apos;edition a ete generee avec succes.
           </p>
-          <Button
-            variant="outline"
-            className="mt-4"
-            onClick={() => {
-              setPipelineDone(false);
-              setRunning(false);
-              setPhaseStatus(initialPhaseStatus());
-              setPhaseTimes({});
-              setCurrentPhase(null);
-              setLogs([]);
-              setIdleView(null);
-              fetchArtifacts();
-            }}
-          >
-            Nouvelle edition
-          </Button>
+          <div className="mt-4 flex gap-3">
+            <CopyLinkedInButton />
+            <Button
+              variant="outline"
+              onClick={() => {
+                setPipelineDone(false);
+                setRunning(false);
+                setPhaseStatus(initialPhaseStatus());
+                setPhaseTimes({});
+                setCurrentPhase(null);
+                setLogs([]);
+                setIdleView(null);
+                fetchArtifacts();
+              }}
+            >
+              Nouvelle edition
+            </Button>
+          </div>
         </div>
       );
     }

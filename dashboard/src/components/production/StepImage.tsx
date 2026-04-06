@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2Icon } from "lucide-react";
+import { CopyLinkedInButton } from "./CopyLinkedInButton";
 
 interface StepImageProps {
   editionNumber: number;
@@ -236,6 +237,8 @@ export function StepImage({ editionNumber, editionDate, onValidate }: StepImageP
             {loadingImage && <Loader2Icon className="mr-1 size-3.5 animate-spin" />}
             Regenerer
           </Button>
+
+          <CopyLinkedInButton size="sm" />
 
           <Button
             size="sm"

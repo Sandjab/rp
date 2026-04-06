@@ -785,6 +785,15 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._handle_image_preview()
             return
 
+        # ── LinkedIn text API ─────────────────────────────────────────────
+        if path == "/api/linkedin/post":
+            self._handle_linkedin_text("post")
+            return
+
+        if path == "/api/linkedin/comment":
+            self._handle_linkedin_text("comment")
+            return
+
         # ── Config API ────────────────────────────────────────────────────
         if path == "/api/config":
             self._handle_config_get()
@@ -1082,6 +1091,21 @@ class DashboardHandler(BaseHTTPRequestHandler):
         LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
         LINKEDIN_PROMPT.write_text(prompt, encoding="utf-8")
         self._send_json({"ok": True})
+
+    # ── LinkedIn text handlers ────────────────────────────────────────────
+
+    def _handle_linkedin_text(self, kind: str):
+        """GET /api/linkedin/post or /api/linkedin/comment — return text content."""
+        filename = f"{kind}.txt"
+        filepath = LINKEDIN_DIR / filename
+        if not filepath.exists():
+            self._send_error(404, f"{filename} not found")
+            return
+        try:
+            text = filepath.read_text(encoding="utf-8")
+            self._send_json({"text": text})
+        except OSError as e:
+            self._send_error(500, f"Failed to read {filename}: {e}")
 
     # ── Config API handlers ────────────────────────────────────────────────
 

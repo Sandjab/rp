@@ -10,6 +10,13 @@ interface VariantData {
   dirty: boolean;
 }
 
+interface CopyPopover {
+  visible: boolean;
+  sourceVariant: string;
+  field: "editorial_title" | "editorial_summary";
+  anchorRect: DOMRect;
+}
+
 interface StepEditorProps {
   onPublishAndContinue: () => void;
 }
@@ -19,6 +26,7 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
   const [published, setPublished] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [focusedVariant, setFocusedVariant] = useState<string | null>(null);
+  const [copyPopover, setCopyPopover] = useState<CopyPopover | null>(null);
   const textareaRefs = useRef<Map<string, HTMLTextAreaElement>>(new Map());
 
   // Load variants on mount
@@ -86,6 +94,43 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
     onPublishAndContinue();
   }
 
+  // Open copy popover
+  function openCopyPopover(
+    e: React.MouseEvent,
+    sourceVariant: string,
+    field: "editorial_title" | "editorial_summary",
+  ) {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setCopyPopover({ visible: true, sourceVariant, field, anchorRect: rect });
+  }
+
+  // Execute copy from source to target
+  function executeCopy(targetVariant: string) {
+    if (!copyPopover) return;
+    const { sourceVariant, field } = copyPopover;
+    const source = variants.find((v) => v.name === sourceVariant);
+    if (!source) return;
+    const value = source.articles[0]?.[field] ?? "";
+    updateField(targetVariant, field, value);
+    setCopyPopover(null);
+  }
+
+  // Close popover on outside click
+  useEffect(() => {
+    if (!copyPopover?.visible) return;
+    function handleClick() {
+      setCopyPopover(null);
+    }
+    // Delay listener to avoid immediate close from the opening click
+    const timer = setTimeout(() => {
+      window.addEventListener("click", handleClick);
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("click", handleClick);
+    };
+  }, [copyPopover?.visible]);
+
   // Ctrl+S shortcut
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -118,7 +163,32 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
   }
 
   return (
-    <div className="flex gap-4 overflow-x-auto p-2">
+    <div className="relative flex gap-4 overflow-x-auto p-2">
+      {/* Copy target popover */}
+      {copyPopover?.visible && (
+        <div
+          className="fixed z-50 rounded border border-border bg-popover px-1 py-1 shadow-md"
+          style={{
+            top: copyPopover.anchorRect.bottom + 4,
+            left: copyPopover.anchorRect.left,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {variants
+            .filter((v) => v.name !== copyPopover.sourceVariant)
+            .map((v) => (
+              <button
+                key={v.name}
+                type="button"
+                className="block w-full rounded px-3 py-1 text-left font-mono text-xs hover:bg-accent hover:text-accent-foreground"
+                onClick={() => executeCopy(v.name)}
+              >
+                {v.name}
+              </button>
+            ))}
+        </div>
+      )}
+
       {variants.map((variant) => {
         const synthesis = variant.articles[0];
         const isPublished = published === variant.name;
@@ -157,31 +227,53 @@ export function StepEditor({ onPublishAndContinue }: StepEditorProps) {
               </div>
             </div>
 
-            {/* Title */}
-            <input
-              type="text"
-              value={synthesis?.editorial_title ?? ""}
-              onChange={(e) => updateField(variant.name, "editorial_title", e.target.value)}
-              placeholder="Titre editorial"
-              className="rounded border border-input bg-transparent px-2 py-1 font-serif text-lg outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
-            />
+            {/* Title + copy button */}
+            <div className="group/title relative flex flex-col gap-1">
+              <input
+                type="text"
+                value={synthesis?.editorial_title ?? ""}
+                onChange={(e) => updateField(variant.name, "editorial_title", e.target.value)}
+                placeholder="Titre editorial"
+                className="rounded border border-input bg-transparent px-2 py-1 font-serif text-lg outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
+              />
+              {variants.length > 1 && (
+                <button
+                  type="button"
+                  className="self-start text-[11px] font-mono text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/title:opacity-100"
+                  onClick={(e) => openCopyPopover(e, variant.name, "editorial_title")}
+                >
+                  copier titre &rarr;
+                </button>
+              )}
+            </div>
 
-            {/* Summary textarea */}
-            <textarea
-              ref={(el) => {
-                if (el) {
-                  textareaRefs.current.set(variant.name, el);
-                  autoResize(el);
-                }
-              }}
-              value={synthesis?.editorial_summary ?? ""}
-              onChange={(e) => {
-                updateField(variant.name, "editorial_summary", e.target.value);
-                autoResize(e.target);
-              }}
-              placeholder="Synthese editoriale"
-              className="min-h-[120px] resize-none rounded border border-input bg-transparent px-2 py-1.5 text-sm leading-relaxed outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
-            />
+            {/* Summary textarea + copy button */}
+            <div className="group/summary relative flex flex-1 flex-col gap-1">
+              <textarea
+                ref={(el) => {
+                  if (el) {
+                    textareaRefs.current.set(variant.name, el);
+                    autoResize(el);
+                  }
+                }}
+                value={synthesis?.editorial_summary ?? ""}
+                onChange={(e) => {
+                  updateField(variant.name, "editorial_summary", e.target.value);
+                  autoResize(e.target);
+                }}
+                placeholder="Synthese editoriale"
+                className="min-h-[120px] resize-none rounded border border-input bg-transparent px-2 py-1.5 text-sm leading-relaxed outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
+              />
+              {variants.length > 1 && (
+                <button
+                  type="button"
+                  className="self-start text-[11px] font-mono text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/summary:opacity-100"
+                  onClick={(e) => openCopyPopover(e, variant.name, "editorial_summary")}
+                >
+                  copier edito &rarr;
+                </button>
+              )}
+            </div>
           </div>
         );
       })}
