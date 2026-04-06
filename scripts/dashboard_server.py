@@ -369,11 +369,13 @@ run_lock = threading.Lock()
 class PipelineRun:
     """Tracks a single pipeline execution with SSE event broadcasting."""
 
-    def __init__(self, run_id: str, date: str, styles: list[str], options: dict):
+    def __init__(self, run_id: str, date: str, styles: list[str], options: dict,
+                 single_phase: bool = False):
         self.run_id = run_id
         self.date = date
         self.styles = styles
         self.options = options  # skip_collect, no_linkedin, no_deploy
+        self.single_phase = single_phase  # True when running a single phase via manual resume
 
         # Phase tracking
         self.phase_status: dict[str, str] = {}  # phase -> pending|running|done|error|skipped|paused|resumed
@@ -669,6 +671,7 @@ class PipelineRun:
             "type": "pipeline_done",
             "aborted": self.aborted,
             "success": not self.aborted and not has_error,
+            "single_phase": self.single_phase,
         })
 
     def abort(self):
@@ -1267,6 +1270,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 date=date,
                 styles=styles,
                 options={},
+                single_phase=True,
             )
             # Mark all phases as skipped except the target
             for p in PHASES:

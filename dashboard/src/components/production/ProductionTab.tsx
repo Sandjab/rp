@@ -207,10 +207,19 @@ export function ProductionTab() {
         case "pipeline_done":
           setRunning(false);
           setCurrentPhase(null);
-          setPipelineDone(true);
-          setPipelineSuccess(event.success !== false);
           // Refresh artifacts after pipeline completes
           fetchArtifacts();
+          if (event.single_phase) {
+            // Single phase run (manual resume) — go back to idle stepper
+            setPipelineDone(false);
+            setPhaseStatus(initialPhaseStatus());
+            setPhaseTimes({});
+            setLogs([]);
+            setIdleView(null);
+          } else {
+            setPipelineDone(true);
+            setPipelineSuccess(event.success !== false);
+          }
           break;
       }
     });
