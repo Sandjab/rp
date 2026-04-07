@@ -191,7 +191,12 @@ def validate_editorial(data):
     if len(data) >= 3:
         last = data[-1]
         if last.get("is_not_serious"):
-            if "C'est pas serieux" not in last.get("matched_topics", []):
+            import unicodedata
+            def _norm(s):
+                s = s.replace("\u2019", "'").replace("\u2018", "'")
+                return unicodedata.normalize("NFD", s).encode("ascii", "ignore").decode().lower()
+            topics = [_norm(t) for t in last.get("matched_topics", [])]
+            if _norm("C'est pas serieux") not in topics:
                 errors.append("'C'est pas serieux' article should have matched_topics containing 'C'est pas serieux'")
 
     return errors
