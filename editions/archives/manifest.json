@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-04-08",
+    "number": 10,
+    "title": "Un modèle trop bon pour être libre",
+    "urls": [
+      "https://www.theverge.com/ai-artificial-intelligence/908114/anthropic-project-glasswing-cybersecurity",
+      "https://techcrunch.com/2026/04/07/anthropic-compute-deal-google-broadcom-tpus/",
+      "https://www.nature.com/articles/d41586-026-01100-y",
+      "https://arstechnica.com/google/2026/04/analysis-finds-google-ai-overviews-is-wrong-10-percent-of-the-time/",
+      "https://simonwillison.net/2026/Apr/7/glm-51/#atom-everything",
+      "https://www.theverge.com/ai-artificial-intelligence/908119/suno-sony-universal-music-ai-disagreement",
+      "https://techcrunch.com/2026/04/07/i-cant-help-rooting-for-tiny-open-source-ai-model-maker-arcee/",
+      "https://techcrunch.com/2026/04/07/vc-eclipse-has-a-new-1-3b-to-back-and-build-physical-ai-startups/",
+      "https://techcrunch.com/2026/04/07/firmus-the-southgate-ai-datacenter-builder-backed-by-nvidia-hits-5-5b-valuation/",
+      "https://techcrunch.com/2026/04/07/uber-is-the-latest-to-be-won-over-by-amazons-ai-chips/",
+      "https://arstechnica.com/ai/2026/04/bluesky-users-are-mastering-the-fine-art-of-blaming-everything-on-vibe-coding/"
+    ],
+    "titles": [
+      "A new Anthropic model found security problems 'in every major operating system and web browser'",
+      "Anthropic ups compute deal with Google and Broadcom amid skyrocketing demand",
+      "Scientists invented a fake disease. AI told people it was real",
+      "Testing suggests Google's AI Overviews tell millions of lies per hour",
+      "GLM-5.1: Towards Long-Horizon Tasks",
+      "Suno and major music labels reportedly clash over AI music sharing",
+      "I can't help rooting for tiny open source AI model maker Arcee",
+      "VC Eclipse has a new $1.3B to back — and build — 'physical AI' startups",
+      "Firmus, the 'Southgate' AI data center builder backed by Nvidia, hits $5.5B valuation",
+      "Uber is the latest to be won over by Amazon's AI chips",
+      "Bluesky users are mastering the fine art of blaming everything on \"vibe coding\""
+    ]
+  },
+  {
     "date": "2026-04-07",
     "number": 9,
     "title": "Les data centers dans le viseur",
