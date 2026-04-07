@@ -1,0 +1,37 @@
+Mythos, un modèle trop bon pour être libre?
+
+
+
+Après sa détection lors du leak de la semaine dernière, Anthropic a fini par officiellement annoncer Claude Mythos, un modèle qu'elle refuse de mettre sur le marché.
+
+
+
+Ses capacités en cybersécurité sont en effet jugées trop avancées pour une diffusion libre : le modèle a déjà identifié des milliers de vulnérabilités critiques dans tous les grands systèmes d'exploitation et navigateurs web du marché. Des failles exploitables, dans des logiciels utilisés par des milliards de personnes.
+
+
+
+Pour l'instant, Mythos reste donc confiné dans un programme baptisé Project Glasswing : un consortium d'une cinquantaine d'organisations triées sur le volet qui accèdent au modèle sous conditions strictes pour auditer leurs propres systèmes. L'objectif affiché est de laisser les défenseurs prendre de l'avance avant que les attaquants ne rattrapent ce niveau de capacité.
+
+
+
+Les plus sceptiques pourraient y voir une campagne de marketing sophistiquée. Après tout, rien ne vend mieux un produit que l'interdiction. Mais avec un run-rate affiché de 30 milliards de dollars et l'élargissement récent de son contrat de compute avec Google et Broadcom, Anthropic n'a pas vraiment besoin de buzz. Elle a besoin que l'écosystème tienne debout quand elle finira par ouvrir les vannes.
+
+
+
+En jouant la carte de la retenue, Anthropic se positionne aussi comme le partenaire de confiance du secteur. Glasswing a peut-être l'allure d'une initiative de sécurité collective, mais c'est surtout un verrouillage commercial élégant, qui vient renforcer l'image de fiabilité que l'entreprise avait acquise en résistant aux pressions du gouvernement US sur l'usage militaire de Claude.
+
+
+
+Nous entrons dans une phase où la puissance d'un modèle se mesure aussi à ce qu'on décide de ne pas en faire, et Anthropic fait le pari que la retenue est un avantage compétitif.
+
+
+
+C'est un pari que seule une entreprise valorisée à 380 milliards de dollars peut se permettre.
+
+
+
+Edition complète en commentaire
+
+
+
+#IA #IntelligenceArtificielle #Tech #AI #RevueDePresse
