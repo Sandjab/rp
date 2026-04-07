@@ -42,73 +42,94 @@ flowchart TD
 
 ## Installation
 
+### Prerequis
+
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) — gestionnaire d'environnement Python
+- `claude` CLI (pour les phases LLM)
+- `GOOGLE_API_KEY` dans l'environnement (pour la generation d'images LinkedIn)
+- Node.js 18+ (pour rebuilder le frontend dashboard)
+
+### macOS / Linux
+
 ```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv && source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
 
-Prerequis :
-- Python 3.11+
-- [uv](https://docs.astral.sh/uv/) (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
-- `claude` CLI (pour les phases LLM)
-- `GOOGLE_API_KEY` dans l'environnement (pour la generation d'images LinkedIn)
+### Windows
 
-## Lancer une edition
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+uv venv
+.venv\Scripts\activate
+uv pip install -r requirements.txt
+```
+
+### Frontend (optionnel, si modification du dashboard)
 
 ```bash
+cd dashboard && npm install && npm run build
+```
+
+## Lancer le dashboard
+
+Le dashboard est la methode recommandee pour piloter la pipeline. Il offre un stepper guide, un editeur de config, et la gestion des archives — le tout depuis le navigateur.
+
+```bash
+# macOS / Linux
+./start.sh
+
+# Windows CMD
+start.bat
+
+# Windows PowerShell
+.\start.ps1
+```
+
+Le serveur demarre sur **http://127.0.0.1:7432** et ouvre le navigateur automatiquement.
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--port <N>` | `7432` | Port d'ecoute |
+| `--no-browser` | *(off)* | Ne pas ouvrir le navigateur au demarrage |
+| `--dev` | *(off)* | Mode dev (headers CORS pour le proxy Vite) |
+
+Exemples :
+
+```bash
+./start.sh --port 8080 --no-browser    # macOS / Linux
+start.bat --dev                         # Windows CMD
+.\start.ps1 --port 9000                 # Windows PowerShell
+```
+
+### Workflow typique
+
+1. Ouvrir le dashboard
+2. Choisir la date, les styles (deep/angle/focused), les options
+3. Cliquer **"Lancer l'edition #N"**
+4. Les etapes auto s'enchainent (websearch → collecte → editorial)
+5. Pause a l'editeur : comparer les variantes, copier des bouts entre elles, publier
+6. Pause a l'image : editer le prompt, choisir le modele, generer/regenerer, valider
+7. Pause au deploy : confirmer
+
+**Reprise manuelle :** quand la pipeline est idle, le stepper montre quelles etapes sont lançables, bloquees ou deja faites. Cliquer sur une etape verte la lance individuellement.
+
+## Scripts legacy (macOS uniquement)
+
+Les scripts bash restent disponibles pour un usage en ligne de commande :
+
+```bash
+# Run simple
 bash scripts/run_edition.sh
-```
-
-Sans deploiement (test local) :
-
-```bash
 bash scripts/run_edition.sh --no-deploy
-```
 
-Sans deploy ni LinkedIn :
-
-```bash
-bash scripts/run_edition.sh --no-deploy --no-linkedin
-```
-
-### Iterer sur le style editorial
-
-Le script `iterate_editorials.sh` collecte une seule fois, puis genere plusieurs variantes editoriales (styles differents) a comparer avant de publier :
-
-```bash
-# Collecter + generer 3 variantes (deep, angle, focused), choisir, publier
+# Multi-variantes (collecte 1x, N styles, choix interactif)
 bash scripts/iterate_editorials.sh --tomorrow
-
-# Sans deploy ni LinkedIn (iteration locale)
 bash scripts/iterate_editorials.sh --tomorrow --no-deploy --no-linkedin
-
-# Regener une seule variante sans recolleter
 bash scripts/iterate_editorials.sh --skip-collect --styles=deep
 ```
-
-Le script affiche un resume comparatif (titre, extrait, articles) puis demande interactivement quelle variante retenir avant de generer le HTML.
-
-### Iterer avec run_edition.sh
-
-Approche alternative : generer plusieurs editions completes, comparer, puis deployer la meilleure :
-
-```bash
-# 1. Generer plusieurs editions sans deployer ni LinkedIn
-bash scripts/run_edition.sh --no-deploy --no-linkedin
-bash scripts/run_edition.sh --no-deploy --no-linkedin
-bash scripts/run_edition.sh --no-deploy --no-linkedin
-
-# 2. Comparer les HTML dans editions/archives/
-#    Garder celui qui plait, supprimer les autres
-
-# 3. Generer le LinkedIn pour l'edition choisie
-python3 scripts/linkedin_post.py --editorial editions/archives/editorial.{timestamp}.json
-
-# 4. Deployer
-python3 scripts/deploy.py
-```
-
-`deploy.py` selectionne automatiquement l'archive HTML la plus recente par date et reconstruit le manifest a partir du snapshot correspondant. Supprimer les archives non retenues suffit pour orienter le deploy.
 
 ## Structure
 
