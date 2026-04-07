@@ -157,6 +157,7 @@ def run_script(script_name, input_data=None, env_extra=None):
     """Run a sibling script, passing JSON via stdin, returning parsed JSON."""
     script_path = SCRIPTS_DIR / script_name
     env = os.environ.copy()
+    env["PYTHONUTF8"] = "1"
     if env_extra:
         env.update(env_extra)
     logger.debug(f"Running: {sys.executable} {script_path}")
@@ -167,6 +168,7 @@ def run_script(script_name, input_data=None, env_extra=None):
         capture_output=True,
         text=True,
         encoding="utf-8",
+        errors="replace",
         env=env,
     )
     elapsed = time.time() - t0

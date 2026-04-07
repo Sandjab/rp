@@ -334,7 +334,7 @@ def main():
         logger.error(f"[ERROR] Editorial file not found: {editorial_path}")
         sys.exit(1)
 
-    with open(editorial_path) as f:
+    with open(editorial_path, encoding="utf-8") as f:
         editorial = json.load(f)
 
     logger.info(f"[LINKEDIN] {len(editorial)} articles loaded from editorial")

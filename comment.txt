@@ -1,14 +1,14 @@
-Edition complete : https://sandjab.github.io/rp/
+Edition complète : https://sandjab.github.io/rp/
 
 Au sommaire :
-- L'Iran menace de frapper les data centers de l'IA américaine
-- Taxe robot et semaine de quatre jours : OpenAI dessine sa vision de l'économie IA
-- Nvidia rachète SchedMD et fait trembler l'écosystème du calcul scientifique
-- Désapprendre : le nouveau défi technique des modèles d'IA
-- Emploi et IA : la donnée qui manque pour trancher le débat
-- Pénurie de mémoire HBM : le goulet d'étranglement matériel de l'IA
-- Google lance une app de dictée IA qui fonctionne sans connexion
-- ChatGPT intègre Spotify, Uber et DoorDash : l'IA en route vers la super-app
-- Quand l'IA d'Alibaba dicte aux petits vendeurs quoi fabriquer
-- L'espagnole Xoople lève 130 millions pour cartographier la Terre au service de l'IA
-- [Fun] Dr. Algorithm vous recevra : une IA autorisée à prescrire des psychotropes
+- Anthropic dévoile Mythos et le garde sous clé : Project Glasswing, la cybersécurité par coalition
+- Anthropic à 30 milliards de dollars : le contrat Google-Broadcom qui accompagne l'explosion
+- Des chercheurs inventent une fausse maladie : les chatbots IA la diagnostiquent sans broncher
+- Les AI Overviews de Google se trompent une fois sur dix — soit des millions d'erreurs par heure
+- Z.ai publie GLM-5.1, un mastodonte open source de 754 milliards de paramètres
+- Suno face aux majors : la bataille du partage de musique générée par IA
+- Arcee, 26 personnes contre les géants : le petit studio qui rivalise en open source
+- Eclipse lève 1,3 milliard de dollars pour l'IA physique : robots, drones et systèmes autonomes
+- Firmus, le bâtisseur de datacenters IA adossé à Nvidia, atteint 5,5 milliards de valorisation
+- Uber migre vers les puces IA d'Amazon, camouflet pour Oracle et Google
+- [Fun] Le vibe coding, nouveau bouc émissaire universel de tous les bugs du monde

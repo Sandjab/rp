@@ -430,6 +430,7 @@ class PipelineRun:
         env = os.environ.copy()
         env["RP_EDITION_DATE"] = self.date
         env["PYTHONUNBUFFERED"] = "1"
+        env["PYTHONUTF8"] = "1"
         if self.debug:
             env["RP_DEBUG"] = "1"
         if env_extra:
