@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-04-12",
+    "number": 11,
+    "title": "Vingt pour cent",
+    "urls": [
+      "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNTE5WeEN6VnpyejdsUVA2OWlMNUZabmVPMGpLUkIzbDVMZXgyZ3JhWjBIU2dwODdZZzZpZThObkFQME9QMk8xX0Y2MXg3TVhBdzZsS3hPXzJJLVQ3aTY5SkxHTVBTWnBRRmVvbEhZcVBrVkswdWZLQlpYbWNZdFF1cW9PbzRRdHU0R3VmQ1NKRnZhSWZ3SGdCSThLdWdMZGNvNnRkQzJObUMtcTBUTWFXb3pNSkNfaE4yUmJrRkpUQWh1Zw?oc=5",
+      "https://futurism.com/artificial-intelligence/ai-automation-replacement",
+      "https://futurism.com/artificial-intelligence/openai-staffers-horrified-insane-plan",
+      "https://www.theverge.com/column/910019/ai-coding-wars-openai-google-anthropic",
+      "https://techcrunch.com/2026/04/12/at-the-humanx-conference-everyone-was-talking-about-claude/",
+      "https://futurism.com/artificial-intelligence/openai-backing-law-protects-ai-causes-mass-deaths",
+      "https://techcrunch.com/2026/04/11/nvidia-backed-sifive-hits-3-65-billion-valuation-for-open-ai-chips/",
+      "https://news.google.com/rss/articles/CBMi4AFBVV95cUxQWTZCZHRBQmRqazZqbnpmUmg5dEJpLW5PeVZuZEZUbjREMktub29fdHdiR1l6NE0tZmxacF83WFZtUmRPRGM5STBVc1FTRWIwaGhueXh3d0ZodHJ4S3k2NVA2dGlrdGpRUnlacjFDLUNwVU1mVkQ3cE5YT0xtbzhrWDhaYTZOOFBEWXB6S1Q5Y284Nm42WDFhQ3l0M242ZjcxeWJuY2FPd0ZMMnlzTGF2Tm55ZC1KWWZHcnFZVTM5a3VQNlVYOC1FaERodmtLRXdHeE5PQnhveUsxd0dQa0hRRg?oc=5",
+      "https://futurism.com/artificial-intelligence/zoomers-ai-sabotage",
+      "https://www.theverge.com/ai-artificial-intelligence/910460/new-yorker-david-szauder-illustration-generative-ai",
+      "https://arstechnica.com/ai/2026/04/ai-models-are-terrible-at-betting-on-soccer-especially-xai-grok/"
+    ],
+    "titles": [
+      "UK financial regulators rush to assess risks of Anthropic’s latest AI model, FT reports - Reuters",
+      "Research Finds That AI Has Already Replaced Work for 20 Percent of Jobs",
+      "OpenAI Staffers Horrified When Senior Leadership Hatched “Insane” Plan to Pit World Governments Against Each Other",
+      "The AI code wars are heating up",
+      "At the HumanX conference, everyone was talking about Claude",
+      "OpenAI Backing Law That Protects It When AI Causes Mass Deaths and Other Mayhem",
+      "Nvidia-backed SiFive hits $3.65 billion valuation for open AI chips",
+      "SoftBank has set up a company in Japan to develop AI domestically, Nikkei says - TradingView — Track All Markets",
+      "Gen Z Sabotaging AI at Work So It Won’t Take Their Job",
+      "Your article about AI doesn’t need AI art",
+      "AI models are terrible at betting on soccer—especially xAI Grok"
+    ]
+  },
+  {
     "date": "2026-04-08",
     "number": 10,
     "title": "Un modèle trop bon pour être libre",
