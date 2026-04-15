@@ -158,6 +158,9 @@ def generate_image_prompt() -> str:
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}): {result.stderr[:500]}")
 
+    LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
+    (LINKEDIN_DIR / "raw_attempt_1.txt").write_text(result.stdout, encoding="utf-8")
+
     candidate = result.stdout.strip()
     # Strip markdown fences if present
     if candidate.startswith("```"):
@@ -357,6 +360,58 @@ def _overlay_text_on_image(image_path: str, edition_title: str, edition_number: 
     draw.text((subtitle_x, text_y), subtitle, font=font_subtitle, fill=(255, 255, 255, 210))
 
     img.convert("RGB").save(image_path, "PNG")
+
+
+# ── LinkedIn deterministic text (post + comment) ──────────────────────────────
+# Mirrors scripts/linkedin_post.py:build_post / build_comment so the dashboard
+# regenerates post.txt and comment.txt during the image phase (parity with
+# run_edition.sh / iterate_editorials.sh which invoke linkedin_post.py).
+
+
+def _build_linkedin_post(synthesis: dict, hashtags: str) -> str:
+    title = synthesis["editorial_title"]
+    body = synthesis["editorial_summary"].replace("\n", "\n\n")
+    return f"{title}\n\n{body}\n\nEdition complete en commentaire\n\n{hashtags}"
+
+
+def _build_linkedin_comment(editorial: list, edition_url: str) -> str:
+    lines = [f"Edition complete : {edition_url}", "", "Au sommaire :"]
+    for article in editorial[1:]:
+        title = article.get("editorial_title", "")
+        if not title:
+            continue
+        if article.get("is_not_serious"):
+            lines.append(f"- [Fun] {title}")
+        else:
+            lines.append(f"- {title}")
+    return "\n".join(lines)
+
+
+def write_linkedin_text_files() -> tuple[int, int]:
+    """Write post.txt and comment.txt from 02_editorial.json. Returns (post_len, comment_len)."""
+    if not EDITORIAL_PATH.exists():
+        raise FileNotFoundError("02_editorial.json not found")
+
+    with open(EDITORIAL_PATH, encoding="utf-8") as f:
+        editorial = json.load(f)
+
+    synthesis = next((a for a in editorial if a.get("is_synthesis")), editorial[0])
+
+    config = load_config()
+    linkedin_config = config.get("linkedin", {})
+    hashtags = linkedin_config.get(
+        "hashtags", "#IA #IntelligenceArtificielle #Tech #AI #RevueDePresse"
+    )
+    edition_url = config.get("github", {}).get("url", "https://sandjab.github.io/rp/")
+
+    post_text = _build_linkedin_post(synthesis, hashtags)
+    comment_text = _build_linkedin_comment(editorial, edition_url)
+
+    LINKEDIN_DIR.mkdir(parents=True, exist_ok=True)
+    (LINKEDIN_DIR / "post.txt").write_text(post_text, encoding="utf-8")
+    (LINKEDIN_DIR / "comment.txt").write_text(comment_text, encoding="utf-8")
+
+    return len(post_text), len(comment_text)
 
 
 # ── Pipeline execution ─────────────────────────────────────────────────────────
@@ -618,6 +673,18 @@ class PipelineRun:
 
             # ── Phase: image (interactive pause for LinkedIn image) ──
             if self.phase_status["image"] != "skipped":
+                # Regenerate post.txt + comment.txt deterministically from the
+                # freshly-chosen editorial, before the interactive image pause.
+                try:
+                    post_len, comment_len = write_linkedin_text_files()
+                    self.emit({"type": "log", "phase": "image", "stream": "stdout",
+                               "text": f"[LINKEDIN] Post: {post_len} chars (deterministic)"})
+                    self.emit({"type": "log", "phase": "image", "stream": "stdout",
+                               "text": f"[LINKEDIN] Comment: {comment_len} chars (deterministic)"})
+                except Exception as e:
+                    self.emit({"type": "log", "phase": "image", "stream": "stderr",
+                               "text": f"[LINKEDIN] Failed to write post/comment: {e}"})
+
                 resumed = self._pause_phase("image")
                 if not resumed:
                     self._finish_pipeline()
