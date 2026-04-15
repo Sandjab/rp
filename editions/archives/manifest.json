@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-04-16",
+    "number": 12,
+    "title": "Quelque chose comme une présence",
+    "urls": [
+      "https://arstechnica.com/ai/2026/04/adobe-takes-creative-cloud-into-claude-code-esque-territory/",
+      "https://techcrunch.com/2026/04/15/openai-updates-its-agents-sdk-to-help-enterprises-build-safer-more-capable-agents/",
+      "https://techcrunch.com/2026/04/15/accel-raises-5b-to-back-late-stage-bets/",
+      "https://www.theverge.com/tech/912638/google-gemini-mac-app",
+      "https://simonwillison.net/2026/Apr/15/gemini-31-flash-tts/#atom-everything",
+      "https://techcrunch.com/2026/04/15/can-ai-judge-journalism-a-thiel-backed-startup-says-yes-even-if-it-risks-chilling-whistleblowers/",
+      "https://www.technologyreview.com/2026/04/15/1135898/cyberscammers-bypassing-bank-telegram/",
+      "https://techcrunch.com/2026/04/15/feds-will-require-data-centers-to-show-their-power-bills/",
+      "https://techcrunch.com/2026/04/15/hightouch-reaches-100m-arr-fueled-by-marketing-tools-powered-by-ai/",
+      "https://www.wired.com/story/ai-could-democratize-one-of-techs-most-valuable-resources/",
+      "https://arstechnica.com/ai/2026/04/bubble-watch-fashion-brand-allbirds-pivots-hard-to-become-ai-services-company/"
+    ],
+    "titles": [
+      "Adobe takes Creative Cloud into Claude Code-esque territory",
+      "OpenAI updates its Agents SDK to help enterprises build safer, more capable agents",
+      "Accel raises $5B to back late-stage bets",
+      "Google launches a Gemini AI app on Mac",
+      "Gemini 3.1 Flash TTS",
+      "Can AI judge journalism? A Thiel-backed startup says yes, even if it risks chilling whistleblowers",
+      "Cyberscammers are bypassing banks’ security with illicit tools sold on Telegram",
+      "Feds will require data centers to show their power bills",
+      "Hightouch reaches $100M ARR fueled by marketing tools powered by AI",
+      "AI Could Democratize One of Tech’s Most Valuable Resources",
+      "Allbirds abandons clothes, pivots to \"AI compute infrastructure\""
+    ]
+  },
+  {
     "date": "2026-04-12",
     "number": 11,
     "title": "Vingt pour cent",
