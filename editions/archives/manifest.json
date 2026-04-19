@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-04-20",
+    "number": 13,
+    "title": "OpenAI rentre au bureau",
+    "urls": [
+      "https://techcrunch.com/2026/04/17/kevin-weil-and-bill-peebles-exit-openai-as-company-continues-to-shed-side-quests/",
+      "https://futurism.com/artificial-intelligence/china-ai-race-stanford",
+      "https://techcrunch.com/2026/04/18/ai-chip-startup-cerebras-files-for-ipo/",
+      "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOdWxnVXdLUWNJdk5fa1hpOVJUM2Rya25tcGYyUjE1NWN3T3VCcWU2M09jdmpqOUl1OUkyaXdna0ZIRnFSZm1NazdpQkkxSXVvN2ExSXVoQ3ZMenREUzRxMkNuWXRpR3hTek01Q3FYTFY2MUI1OWJpTi1YeDZIUHh1Xy1jZzZ0RW9xMzZudzZNS2EtSFEydWVoaVhzelVWc3hYNXRXRUdzNnhGWFpUMHVNZ1JJRm04MXpPNldj?oc=5",
+      "https://news.google.com/rss/articles/CBMisgFBVV95cUxPUDRQSWFpczBwbHNaWHBwcHRuNWFfVFA3aHFZVzdCcTRtLXhtTW9DdXV1NV80ejk4VjNsVEk1UmZsa0drcmRSYTlCZFVTZWJFOXpQLU5TajctdmxQc2xGWmdmRUJVOFV1ZEJaclRXWjB0cE9zQkFST2dKTm5kWE9ZOWpzNC1uVUZXX2U3ZmZqcjJCaVM3bl9weXlYcTlYUlA0cUlTa0R3aWRxTy15M2pQeXl3?oc=5",
+      "https://techcrunch.com/2026/04/17/sam-altmans-project-world-looks-to-scale-its-human-verification-empire-first-stop-tinder/",
+      "https://futurism.com/artificial-intelligence/florida-mass-shooter-chatgpt",
+      "https://techcrunch.com/2026/04/18/anthropics-relationship-with-the-trump-administration-seems-to-be-thawing/",
+      "https://techcrunch.com/2026/04/19/the-12-month-window/",
+      "https://simonwillison.net/2026/Apr/18/opus-system-prompt/#atom-everything",
+      "https://gizmodo.com/salesforce-announces-huge-ai-initiative-and-calls-it-headless-360-2000748243"
+    ],
+    "titles": [
+      "Kevin Weil and Bill Peebles exit OpenAI as company continues to shed 'side quests'",
+      "China Is Starting to Pull Ahead of US in AI Race",
+      "AI chip startup Cerebras files for IPO",
+      "Google in talks with Marvell to build new AI chips, The Information reports - Reuters",
+      "Germany's Merz says industrial AI needs less stringent EU regulation - Reuters",
+      "Sam Altman's project World looks to scale its human verification empire. First stop: Tinder.",
+      "The Florida Mass Shooter's Conversations With ChatGPT Are Worse Than You Could Possibly Imagine",
+      "Anthropic's relationship with the Trump administration seems to be thawing",
+      "The 12-month window",
+      "Changes in the system prompt between Claude Opus 4.6 and 4.7",
+      "Salesforce Announces Huge AI Initiative and Calls It 'Headless 360'"
+    ]
+  },
+  {
     "date": "2026-04-16",
     "number": 12,
     "title": "Quelque chose comme une présence",
