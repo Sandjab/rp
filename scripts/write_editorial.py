@@ -290,7 +290,7 @@ def main():
 
         # Save raw response for debugging
         raw_path = PIPELINE_DIR / f"02_raw_attempt_{attempt}.txt"
-        raw_path.write_text(raw_response)
+        raw_path.write_text(raw_response, encoding="utf-8")
 
         logger.debug(f"Raw response: {len(raw_response)} chars, saved to {raw_path}")
 
