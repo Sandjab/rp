@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-05-04",
+    "number": 15,
+    "title": "Le moment institutionnel",
+    "urls": [
+      "https://www.technologyreview.com/2026/05/01/1136800/musk-v-altman-week-1-musk-says-he-was-duped-warns-ai-could-kill-us-all-and-admits-that-xai-distills-openais-models/",
+      "https://gizmodo.com/its-illegal-in-china-to-lay-someone-off-to-replace-them-with-ai-court-finds-2000753791",
+      "https://futurism.com/artificial-intelligence/white-house-terrified-anthropic-mythos",
+      "https://news.google.com/rss/articles/CBMixwFBVV95cUxOMGN6dXV0LU43a3VDd0JFTE1oYkVkZVBqVDhLalNKMExITzZfNWpuLUlaWXVKWVJZZDk1aTlmLVlIVTZqbDhISXpTMHc3N3k3QXlCZU0xSERVdFB6TW5WRW1oMVJrM3JPanEzeVBNV1R1ZXNjR2tmV0ZGUS1WRTZNRXREcWdyQ3BlVUlCZkdsRVdsNmtBTXYteFA1cUI3OVJsSmdxcW85Y0JrYm0zUkx4YkdfZExlRVRRR3JjYUZRc09aSGZUQm44?oc=5",
+      "https://arstechnica.com/tech-policy/2026/05/minnesota-set-to-be-first-state-to-ban-nudification-apps/",
+      "https://techcrunch.com/2026/05/02/ai-generated-actors-and-scripts-are-now-ineligible-for-oscars/",
+      "https://arstechnica.com/ai/2026/05/study-ai-models-that-consider-users-feeling-are-more-likely-to-make-errors/",
+      "https://arstechnica.com/ai/2026/05/amid-mythos-hyped-cybersecurity-prowess-researchers-find-gpt-5-5-is-just-as-good/",
+      "https://gizmodo.com/more-than-a-third-of-all-new-podcasts-are-ai-generated-2000753786",
+      "https://www.fool.com/investing/2026/05/03/3-ai-stocks-crushing-nvidia-this-year/",
+      "https://gizmodo.com/ecovacs-deebot-x12-omnicyclone-review-ai-cant-save-this-robot-vacuum-2000746396"
+    ],
+    "titles": [
+      "Musk v. Altman week 1: Elon Musk says he was duped, warns AI could kill us all, and admits that xAI distills OpenAI's models",
+      "It's Illegal in China to Lay Someone Off to Replace Them with AI, Court Finds",
+      "The White House Suddenly Seems Pretty Terrified of Anthropic",
+      "Exclusive: US officials weigh cutting deadlines to fix digital flaws amid worries over AI-powered hacking",
+      "Minnesota passes ban on fake AI nudes; app makers risk $500K fines",
+      "AI-generated actors and scripts are now ineligible for Oscars",
+      "Study: AI models that consider user's feeling are more likely to make errors",
+      "GPT-5.5 matches heavily hyped Mythos Preview in new cybersecurity tests",
+      "More Than a Third of All New Podcasts Are AI-Generated",
+      "3 AI Stocks Crushing Nvidia This Year",
+      "Ecovacs Deebot X12 OmniCyclone Review: AI Can't Save This Robot Vacuum"
+    ]
+  },
+  {
     "date": "2026-04-27",
     "number": 14,
     "title": "L'IA n'a plus de patrie, juste des actionnaires",
