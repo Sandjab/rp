@@ -1,5 +1,36 @@
 [
   {
+    "date": "2026-05-11",
+    "number": 16,
+    "title": "Cloudflare licencie au sommet, ou la fin discrète du pacte de Ford",
+    "urls": [
+      "https://techcrunch.com/2026/05/08/cloudflare-says-ai-made-1100-jobs-obsolete-even-as-revenue-hit-a-record-high/",
+      "https://techcrunch.com/2026/05/09/nvidia-has-already-committed-40b-to-equity-ai-deals-this-year/",
+      "https://www.technologyreview.com/2026/05/08/1137008/musk-v-altman-week-2-openai-fires-back-and-shivon-zilis-reveals-that-musk-tried-to-poach-sam-altman/",
+      "https://futurism.com/artificial-intelligence/study-ai-good-for-students-retracted",
+      "https://gizmodo.com/anthropic-has-added-several-more-religions-on-its-quest-to-inject-perfect-morals-into-claude-2000756740",
+      "https://www.theverge.com/ai-artificial-intelligence/902546/data-centers-ai-energy-power-grids-controversy",
+      "https://arstechnica.com/ai/2026/05/the-new-wild-west-of-ai-kids-toys/",
+      "https://arstechnica.com/gaming/2026/05/sony-says-efficient-ai-tools-will-lead-to-even-more-games-flooding-the-market/",
+      "https://arstechnica.com/google/2026/05/google-will-put-more-links-to-websites-in-ai-overviews/",
+      "https://techcrunch.com/2026/05/09/voice-ai-in-india-is-hard-wispr-flow-is-betting-on-it-anyway/",
+      "https://futurism.com/robots-and-machines/roomba-inventor-moves-into-demon-market"
+    ],
+    "titles": [
+      "Cloudflare says AI made 1,100 jobs obsolete, even as revenue hit a record high",
+      "Nvidia has already committed $40B to equity AI deals this year",
+      "Musk v. Altman week 2: OpenAI fires back, and Shivon Zilis reveals that Musk tried to poach Sam Altman",
+      "A Major Paper Claiming AI Is Good for Students Just Got Retracted",
+      "Anthropic Has Added Several More Religions on Its Quest to Inject Perfect Morals into Claude",
+      "All the latest updates on AI data centers",
+      "The new Wild West of AI kids' toys",
+      "Sony says \"efficient\" AI tools will lead to even more games flooding the market",
+      "Course correction: Google to link more sources in AI Overviews",
+      "Voice AI in India is hard. Wispr Flow is betting on it anyway.",
+      "Man Who Invented Roomba Moves Into Household Demon Market"
+    ]
+  },
+  {
     "date": "2026-05-04",
     "number": 15,
     "title": "Le moment institutionnel",
